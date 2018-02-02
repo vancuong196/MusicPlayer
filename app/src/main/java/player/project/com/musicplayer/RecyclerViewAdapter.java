@@ -37,18 +37,18 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(final RecyclerViewHolder holder, int position) {
-        holder.songName.setText(data.get(position));
-        holder.singerName.setText("Passenger");
+        // holder.songName.setText(data.get(position));
+        // holder.singerName.setText("Passenger");
         // bắt sự kiện khi kích vào LinearLayout
-        holder.line.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                holder.line.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorAccent));
-                if (onItemClickedListener != null) {
-                    onItemClickedListener.onItemClick(holder.songName.getText().toString());
-                }
-            }
-        });
+        //     holder.line.setOnClickListener(new View.OnClickListener() {
+        //      @Override
+        //      public void onClick(View v) {
+        //           holder.line.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorAccent));
+        //           if (onItemClickedListener != null) {
+        //               onItemClickedListener.onItemClick(holder.songName.getText().toString());
+        //           }
+        //       }
+        //    });
     }
 
     @Override
@@ -64,9 +64,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         public RecyclerViewHolder(View itemView) {
             super(itemView);
-            songName = (TextView) itemView.findViewById(R.id.song_name);
-            singerName = (TextView) itemView.findViewById(R.id.singer);
-            line = (LinearLayout) itemView.findViewById(R.id.line);
+            //     songName = (TextView) itemView.findViewById(R.id.song_name);
+            //     singerName = (TextView) itemView.findViewById(R.id.singer);
+            //     line = (LinearLayout) itemView.findViewById(R.id.line);
         }
     }
 
