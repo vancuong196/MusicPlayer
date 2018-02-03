@@ -2,9 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="#ffffff"
+    android:background="#aaaaaa"
     android:orientation="horizontal"
-    android:padding="5dip">
+    android:padding="5dip"
+    android:layout_marginTop="10dp">
 
     <!--  ListRow Left sied Thumbnail image -->
     <LinearLayout
@@ -24,20 +25,18 @@
 
     </LinearLayout>
 
-    <!-- Title Of Song-->
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/thumbnail"
         android:layout_toRightOf="@+id/thumbnail"
-        android:text="Rihanna Love the way lie"
+        android:text="Let her go"
         android:textColor="#040404"
         android:typeface="sans"
         android:textSize="15dip"
         android:textStyle="bold" />
 
-    <!-- Artist Name -->
     <TextView
         android:id="@+id/artist"
         android:layout_width="fill_parent"
@@ -47,9 +46,8 @@
         android:textSize="10dip"
         android:layout_marginTop="1dip"
         android:layout_toRightOf="@+id/thumbnail"
-        android:text="Just gona stand there and ..." />
+        android:text="Passenger" />
 
-    <!-- Rightend Duration -->
     <TextView
         android:id="@+id/duration"
         android:layout_width="wrap_content"
@@ -60,14 +58,13 @@
         android:text="5:45"
         android:layout_marginRight="5dip"
         android:textSize="10dip"
-        android:textColor="#10bcc9"
+        android:textColor="#000000"
         android:textStyle="bold" />
 
-    <!-- Rightend Arrow -->
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@android:drawable/arrow_down_float"
+        android:src="@android:drawable/ic_media_play"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true" />
 

@@ -1,74 +1,6 @@
 package player.project.com.musicplayer;
-/*
-import android.app.Activity;
-import android.media.MediaPlayer;
-import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import player.project.com.musicplayer.player.Player;
-
-public class MainActivity extends AppCompatActivity {
-
-
-    Button start,pause,stop;
-    Boolean t=false;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.content_main);
-
-        start=(Button)findViewById(R.id.button1);
-        pause=(Button)findViewById(R.id.button2);
-        stop=(Button)findViewById(R.id.button3);
-        //creating media player
-
-        final Player mp=Player.getInstance(MainActivity.this);
-        try{
-            //you can change the path, here path is external directory(e.g. sdcard) /Music/maine.mp3
-            mp.setDataSource(Environment.getExternalStorageDirectory().getPath()+"/Music/mainee.mp3");
-            mp.prepare();
-        }catch(Exception e){
-            System.out.println(e.toString());
-        }
-        mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            public void onPrepared(MediaPlayer player) {
-                t=true;
-            }
-        });
-
-        start.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (t){
-                mp.start();}
-            }
-        });
-
-        pause.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mp.pause();
-            }
-        });
-        stop.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mp.stop();
-            }
-        });
-
-    }
-}
-
-
-*/
-
 import android.app.SearchManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -90,7 +22,6 @@ import android.support.design.widget.TabLayout;
  */
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
@@ -99,12 +30,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         //
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -241,4 +172,70 @@ public class MainActivity extends AppCompatActivity {
 
     }
 }
+*/
+/*
+import android.app.Activity;
+import android.media.MediaPlayer;
+import android.os.Environment;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import player.project.com.musicplayer.player.Player;
+
+public class MainActivity extends AppCompatActivity {
+
+
+    Button start,pause,stop;
+    Boolean t=false;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.content_main);
+
+        start=(Button)findViewById(R.id.button1);
+        pause=(Button)findViewById(R.id.button2);
+        stop=(Button)findViewById(R.id.button3);
+        //creating media player
+
+        final Player mp=Player.getInstance(MainActivity.this);
+        try{
+            //you can change the path, here path is external directory(e.g. sdcard) /Music/maine.mp3
+            mp.setDataSource(Environment.getExternalStorageDirectory().getPath()+"/Music/mainee.mp3");
+            mp.prepare();
+        }catch(Exception e){
+            System.out.println(e.toString());
+        }
+        mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            public void onPrepared(MediaPlayer player) {
+                t=true;
+            }
+        });
+
+        start.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (t){
+                mp.start();}
+            }
+        });
+
+        pause.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mp.pause();
+            }
+        });
+        stop.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mp.stop();
+            }
+        });
+
+    }
+}
+
+
 */

@@ -6,7 +6,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@android:drawable/ic_menu_save"
             android:title="Local" />
         <item
             android:id="@+id/nav_gallery"
@@ -26,7 +26,7 @@
                 android:title="About us" />
             <item
                 android:id="@+id/nav_changlog"
-                android:icon="@drawable/ic_menu_send"
+                android:icon="@android:drawable/ic_menu_help"
                 android:title="Change log" />
             <item
                 android:id="@+id/nav_feedback"
