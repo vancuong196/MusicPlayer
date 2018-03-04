@@ -1,5 +1,6 @@
 package player.project.com.musicplayer;
 import android.app.SearchManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setBackgroundColor(Color.BLACK);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setBackgroundColor(Color.BLACK);
         tabLayout.setupWithViewPager(viewPager);
         //
 
@@ -55,10 +58,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new ListFragment(), "Song");
-        adapter.addFragment(new ListFragment(), "PlayList");
-        adapter.addFragment(new ListFragment(), "Artist");
-        adapter.addFragment(new ListFragment(), "Album");
+        adapter.addFragment(new SongListFragment(), "Song");
+        adapter.addFragment(new PlaylistFragment(), "PlayList");
+        adapter.addFragment(new ArtistFragment(), "Artist");
+        adapter.addFragment(new AlbumFragment(), "Album");
 
         viewPager.setAdapter(adapter);
     }

@@ -6,24 +6,30 @@ package player.project.com.musicplayer.models;
 
 public class Song {
     private String songName;
+    private String singerName;
+    private String duration;
     private String path;
-    private int playListID;
 
-    public Song(String songName, String path, int playListID) {
+    public Song(String songName, String singerName, String duration, String path) {
         this.songName = songName;
+        this.singerName = singerName;
+        this.duration = duration;
         this.path = path;
-        this.playListID = playListID;
     }
 
     public String getSongName() {
         return songName;
     }
 
-    public String getPath() {
-        return path;
+    public String getSingerName() {
+        return singerName;
     }
 
-    public int getPlayListID() {
-        return playListID;
+    public String getDuration() {
+        return duration;
+    }
+
+    public String getPath() {
+        return path;
     }
 }

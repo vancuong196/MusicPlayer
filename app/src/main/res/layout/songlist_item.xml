@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/line"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/rounded_rec"
@@ -7,7 +8,7 @@
     android:layout_marginBottom="10dp"
     android:layout_marginLeft="5dp"
     android:layout_marginRight="5dp"
-
+    android:descendantFocusability="blocksDescendants"
     >
 
     <!--  ListRow Left sied Thumbnail image -->
@@ -29,46 +30,47 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/tittle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/thumbnail"
         android:layout_toRightOf="@+id/thumbnail"
         android:text="Let her go"
-        android:textColor="#ffffff"
+        android:textColor="#000000"
+        android:singleLine="true"
         android:typeface="sans"
         android:textSize="15dip"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/artist"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/title"
-        android:textColor="#ffffff"
+        android:layout_below="@id/tittle"
+        android:textColor="#000000"
         android:textSize="10dip"
         android:layout_marginTop="1dip"
         android:layout_toRightOf="@+id/thumbnail"
+        android:singleLine="true"
         android:text="Passenger" />
 
     <TextView
         android:id="@+id/duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@id/title"
-        android:gravity="right"
+        android:layout_below="@+id/artist"
+        android:layout_toRightOf="@+id/thumbnail"
         android:text="5:45"
         android:layout_marginRight="5dip"
         android:textSize="10dip"
-        android:textColor="#ffffff"
-        android:textStyle="bold" />
+        android:textColor="#000000" />
 
-    <ImageView
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_media_play"
+        android:src="@drawable/ic_threedot"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        android:background="@android:color/transparent" />
 
 </RelativeLayout>

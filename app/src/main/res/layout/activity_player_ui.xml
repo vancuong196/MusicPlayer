@@ -61,7 +61,7 @@
             android:src="@android:drawable/ic_media_next" />
 
         <SeekBar
-            android:id="@+id/seekBar"
+            android:id="@+id/progress_bar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -71,22 +71,35 @@
             android:layout_marginEnd="16dp" />
 
         <TextView
+            android:id="@+id/tv_song_crtime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_above="@id/progress_bar"
+            android:layout_alignStart="@id/progress_bar"
             android:text="2:02"
-            android:textColor="#ffffff"
-            android:layout_above="@id/seekBar"
-            android:layout_alignStart="@id/seekBar" />
+            android:textColor="#ffffff" />
 
         <TextView
+            android:id="@+id/tv_song_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/btn_play"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:paddingBottom="30dp"
+            android:textSize="20dp"
+            android:text="Let Her go"
+            android:textColor="#ffffff" />
+
+        <TextView
+            android:id="@+id/tv_songduration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_above="@id/progress_bar"
+            android:layout_alignEnd="@id/progress_bar"
             android:text="5:02"
-            android:textColor="#ffffff"
-            android:layout_above="@id/seekBar"
-            android:layout_alignEnd="@id/seekBar"
 
-            />
+            android:textColor="#ffffff" />
     </RelativeLayout>
 
     <ListView
