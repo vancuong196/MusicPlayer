@@ -18,10 +18,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PlayerUi" />
+        <activity android:name=".PlayerActivity">
+
+        </activity>
 
         <service
-            android:name=".player.PlayerService"
+            android:name="player.project.com.musicplayer.PlayerService"
             android:enabled="true"
             android:exported="true"></service>
     </application>

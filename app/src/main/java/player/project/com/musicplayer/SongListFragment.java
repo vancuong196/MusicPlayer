@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,7 +54,7 @@ public class SongListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Song song = data.get(position);
-                Intent myIntent = new Intent(getActivity(), PlayerUi.class);
+                Intent myIntent = new Intent(getActivity(), PlayerActivity.class);
                 myIntent.putExtra("path", song.getPath());
                 myIntent.putExtra("name", song.getSongName());
                 myIntent.putExtra("duration", song.getDuration());

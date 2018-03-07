@@ -1,6 +1,9 @@
 package player.project.com.musicplayer;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -10,10 +13,12 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
-public class PlayerUi extends AppCompatActivity implements View.OnClickListener, MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener {
+public class PlayerActivity extends AppCompatActivity implements View.OnClickListener, MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener {
     ImageButton nextButton;
     ImageButton playButton;
     ImageButton prevButton;
@@ -24,6 +29,13 @@ public class PlayerUi extends AppCompatActivity implements View.OnClickListener,
     TextView songTitle;
     String songName;
     String duration;
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Toast.makeText(getApplicationContext(), "received", Toast.LENGTH_SHORT).show();
+        }
+    };
+
     private Handler mHandler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +43,7 @@ public class PlayerUi extends AppCompatActivity implements View.OnClickListener,
         Intent intent = getIntent();
         songName = intent.getStringExtra("name");
         duration = intent.getStringExtra("duration");
-        String path = intent.getStringExtra("path");
+        final String path = intent.getStringExtra("path");
         setContentView(R.layout.activity_player_ui);
         nextButton = findViewById(R.id.btn_next);
         playButton = findViewById(R.id.btn_play);
@@ -45,32 +57,30 @@ public class PlayerUi extends AppCompatActivity implements View.OnClickListener,
             @Override
             public void onClick(View v) {
                 // check for already playing
-                if (mediaPlayer.isPlaying()) {
-                    if (mediaPlayer != null) {
-                        mediaPlayer.pause();
-                        // Changing button image to play button
-                        playButton.setImageResource(R.drawable.ic_play);
-                    }
-                } else {
-                    // Resume song
-                    if (mediaPlayer != null) {
-                        mediaPlayer.start();
-                        // Changing button image to pause button
-                        playButton.setImageResource(R.drawable.ic_pause);
-                    }
-                }
+                Intent myIntent = new Intent(PlayerActivity.this, PlayerService.class);
+                ArrayList<String> pl = new ArrayList<>();
+                pl.add(path);
+                myIntent.putExtra(Constant.PLAYLIST_EX, pl);
+                myIntent.setAction(Constant.ACTION_PLAY);
+                startService(myIntent);
 
             }
         });
         prevButton.setOnClickListener(this);
         progressBar.setOnSeekBarChangeListener(this);
-        mediaPlayer = new MediaPlayer();
-        mediaPlayer.setOnCompletionListener(this);
-        play(path);
+        Intent myIntent = new Intent(PlayerActivity.this, PlayerService.class);
+        ArrayList<String> pl = new ArrayList<>();
+        pl.add(path);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.action.update");
+        registerReceiver(receiver, filter);
+        myIntent.putExtra(Constant.PLAYLIST_EX, pl);
+        myIntent.setAction(Constant.ACTION_PLAY);
+        startService(myIntent);
     }
 
     public void play(String path) {
-        mediaPlayer.reset();
+        /*mediaPlayer.reset();
         try {
             mediaPlayer.setDataSource(path);
         } catch (IOException e) {
@@ -80,13 +90,14 @@ public class PlayerUi extends AppCompatActivity implements View.OnClickListener,
             mediaPlayer.prepare();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        mediaPlayer.start();
+        } */
+
+        //  mediaPlayer.start();
         songTitle.setText(songName);
         tvDuration.setText("00:00");
         progressBar.setProgress(0);
         progressBar.setMax(100);
-        updateProgressBar();
+        //updateProgressBar();
     }
     @Override
     public void onClick(View v) {
@@ -151,11 +162,12 @@ public class PlayerUi extends AppCompatActivity implements View.OnClickListener,
         updateProgressBar();
     }
 
+
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mHandler.removeCallbacks(mUpdateTimeTask);
-        mediaPlayer.release();
+        //   mHandler.removeCallbacks(mUpdateTimeTask);
+        //   mediaPlayer.release();
     }
 
 }
