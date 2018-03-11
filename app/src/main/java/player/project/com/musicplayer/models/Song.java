@@ -1,20 +1,27 @@
 package player.project.com.musicplayer.models;
 
+import java.io.Serializable;
+
 /**
  * Created by Cuong on 2/1/2018.
  */
 
-public class Song {
+public class Song implements Serializable {
     private String songName;
-    private String singerName;
     private String duration;
+    private String artist;
+    private String album;
     private String path;
+    private int songId;
+    private static int id = 0;
 
-    public Song(String songName, String singerName, String duration, String path) {
+    public Song(String songName, String singerName, String album, String duration, String path) {
         this.songName = songName;
-        this.singerName = singerName;
+        this.artist = singerName;
         this.duration = duration;
+        this.album = album;
         this.path = path;
+        songId = id++;
     }
 
     public String getSongName() {
@@ -22,14 +29,31 @@ public class Song {
     }
 
     public String getSingerName() {
-        return singerName;
+        return artist;
+    }
+
+    public String getArtist() {
+        return artist;
+    }
+
+    public String getAlbum() {
+        return album;
+    }
+
+    public static int getId() {
+        return id;
     }
 
     public String getDuration() {
         return duration;
+
     }
 
     public String getPath() {
         return path;
+    }
+
+    public int getSongId() {
+        return songId;
     }
 }

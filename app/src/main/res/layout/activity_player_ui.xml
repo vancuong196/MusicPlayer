@@ -8,6 +8,14 @@
     android:weightSum="10"
     android:orientation="vertical">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#000000">
+
+
+    </android.support.v7.widget.Toolbar>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -103,6 +111,7 @@
     </RelativeLayout>
 
     <ListView
+        android:id="@+id/lv_play_ui"
         android:layout_marginTop="16dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

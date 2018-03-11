@@ -53,61 +53,15 @@ public class SongListFragment extends Fragment {
         mLvSongs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Song song = data.get(position);
                 Intent myIntent = new Intent(getActivity(), PlayerActivity.class);
-                myIntent.putExtra("path", song.getPath());
-                myIntent.putExtra("name", song.getSongName());
-                myIntent.putExtra("duration", song.getDuration());
+                myIntent.setAction(Constant.ACTION_PLAY_SONG_LIST);
+                myIntent.putExtra(Constant.SONG_LIST_EX, data);
+                myIntent.putExtra(Constant.SONG_POSTON_EX, position);
                 startActivity(myIntent);
             }
         });
         // Inflate the layout for this fragment
     }
 
-    public class SongListViewAdapter extends ArrayAdapter<Song> {
 
-
-        ArrayList<Song> dataSet;
-        Context mContext;
-
-        public SongListViewAdapter(Context context, int textViewResourceId) {
-            super(context, textViewResourceId);
-        }
-
-        public SongListViewAdapter(ArrayList<Song> data, Context context) {
-            super(context, R.layout.songlist_item, data);
-            this.dataSet = data;
-            this.mContext = context;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            // Get the data item for this position
-            Song song = dataSet.get(position);
-            // Check if an existing view is being reused, otherwise inflate the view
-            View v = convertView;
-            if (v == null) {
-                LayoutInflater inflater = LayoutInflater.from(getContext());
-                v = inflater.inflate(R.layout.songlist_item, null);
-
-            }
-            TextView tt1 = (TextView) v.findViewById(R.id.tittle);
-            TextView tt2 = (TextView) v.findViewById(R.id.artist);
-            TextView tt3 = (TextView) v.findViewById(R.id.duration);
-
-            if (tt1 != null) {
-                tt1.setText(song.getSongName());
-            }
-
-            if (tt2 != null) {
-                tt2.setText(song.getSingerName());
-            }
-
-            if (tt3 != null) {
-                tt3.setText(song.getDuration());
-            }
-            // Return the completed view to render on screen
-            return v;
-        }
-    }
 }

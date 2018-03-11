@@ -9,7 +9,9 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -18,7 +20,12 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class PlayerActivity extends AppCompatActivity implements View.OnClickListener, MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener {
+import player.project.com.musicplayer.controllers.SongController;
+import player.project.com.musicplayer.models.Song;
+
+import static android.widget.Toast.LENGTH_SHORT;
+
+public class PlayerActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
     ImageButton nextButton;
     ImageButton playButton;
     ImageButton prevButton;
@@ -27,24 +34,78 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
     TextView tvDuration;
     TextView currentTime;
     TextView songTitle;
-    String songName;
-    String duration;
+    long duration;
+    ArrayList<Song> songList;
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Toast.makeText(getApplicationContext(), "received", Toast.LENGTH_SHORT).show();
+            if (intent.getAction().equals(Constant.BROADCAST_CURRENT_PLAY_TIME)) {
+                long totalDuration = intent.getLongExtra(Constant.DURATION_EX, 0);
+                long currentDuration = intent.getLongExtra(Constant.CURRENT_EX, 0);
+                duration = totalDuration;
+                // Displaying Total Duration time
+                tvDuration.setText("" + Utilitys.milisecondToDuration(totalDuration));
+                // Displaying time completed playing
+                currentTime.setText("" + Utilitys.milisecondToDuration(currentDuration));
+                // Updating progress bar
+                int progress = (int) (Utilitys.getProgressPercentage(currentDuration, totalDuration));
+                //Log.d("Progress", ""+progress);
+                progressBar.setProgress(progress);
+            }
+            if (intent.getAction().equals(Constant.BROADCAST_SONG_CHANGED)) {
+                Song song = (Song) intent.getSerializableExtra(Constant.SONG_EX);
+                songTitle.setText(song.getSongName());
+            }
+            if (intent.getAction().equals(Constant.BROADCAST_MEDIA_PLAYER_STATE_CHANGED)) {
+                int status = intent.getIntExtra(Constant.MEDIA_STATE_EX, 0);
+                if (status == 0) {
+                    playButton.setImageResource(R.drawable.ic_play);
+                }
+                if (status == 1) {
+                    playButton.setImageResource(R.drawable.ic_pause);
+                }
+            }
         }
     };
-
     private Handler mHandler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent = getIntent();
-        songName = intent.getStringExtra("name");
-        duration = intent.getStringExtra("duration");
-        final String path = intent.getStringExtra("path");
         setContentView(R.layout.activity_player_ui);
+        uiInit();
+        songList = new ArrayList<>();
+        Intent intent = getIntent();
+        if (intent.getAction() != null && intent.getAction() == Constant.ACTION_PLAY_SONG_LIST) {
+            final ArrayList<Song> songs = (ArrayList<Song>) intent.getSerializableExtra(Constant.SONG_LIST_EX);
+            songList = songs;
+            songListInit();
+            Intent myIntent = new Intent(PlayerActivity.this, PlayerService.class);
+            myIntent.putExtra(Constant.SONG_LIST_EX, songs);
+            myIntent.setAction(Constant.ACTION_SONG_CHANGE);
+            startService(myIntent);
+
+        }
+
+        if (intent.getAction() != null && intent.getAction().equals(Constant.ACTION_PLAY)) {
+            return;
+        }
+
+    }
+
+    public void songListInit() {
+        ListView listView = findViewById(R.id.lv_play_ui);
+        ArrayList<Song> songs = this.songList;
+        SongListViewAdapter mLvAdapter = new SongListViewAdapter(songs, this);
+        listView.setAdapter(mLvAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        });
+    }
+
+    public void uiInit() {
         nextButton = findViewById(R.id.btn_next);
         playButton = findViewById(R.id.btn_play);
         prevButton = findViewById(R.id.btn_prev);
@@ -58,9 +119,6 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
             public void onClick(View v) {
                 // check for already playing
                 Intent myIntent = new Intent(PlayerActivity.this, PlayerService.class);
-                ArrayList<String> pl = new ArrayList<>();
-                pl.add(path);
-                myIntent.putExtra(Constant.PLAYLIST_EX, pl);
                 myIntent.setAction(Constant.ACTION_PLAY);
                 startService(myIntent);
 
@@ -68,76 +126,35 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         });
         prevButton.setOnClickListener(this);
         progressBar.setOnSeekBarChangeListener(this);
-        Intent myIntent = new Intent(PlayerActivity.this, PlayerService.class);
-        ArrayList<String> pl = new ArrayList<>();
-        pl.add(path);
+        // register recieve
         IntentFilter filter = new IntentFilter();
-        filter.addAction("android.action.update");
+        filter.addAction(Constant.BROADCAST_SONG_CHANGED);
+        filter.addAction(Constant.BROADCAST_CURRENT_PLAY_TIME);
         registerReceiver(receiver, filter);
-        myIntent.putExtra(Constant.PLAYLIST_EX, pl);
-        myIntent.setAction(Constant.ACTION_PLAY);
-        startService(myIntent);
     }
 
-    public void play(String path) {
-        /*mediaPlayer.reset();
-        try {
-            mediaPlayer.setDataSource(path);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            mediaPlayer.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } */
+    @Override
+    protected void onResume() {
 
-        //  mediaPlayer.start();
-        songTitle.setText(songName);
-        tvDuration.setText("00:00");
-        progressBar.setProgress(0);
-        progressBar.setMax(100);
-        //updateProgressBar();
+
+        super.onResume();
     }
+
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.btn_play) {
+        if (v.getId() == R.id.btn_next) {
+            Intent myIntent = new Intent(PlayerActivity.this, PlayerService.class);
+            myIntent.setAction(Constant.ACTION_NEXT);
+            startService(myIntent);
 
-        } else if (v.getId() == R.id.btn_next) {
-
-
-        } else if (v.getId() == R.id.btn_next) {
-
+        } else if (v.getId() == R.id.btn_prev) {
+            Intent myIntent = new Intent(PlayerActivity.this, PlayerService.class);
+            myIntent.setAction(Constant.ACTION_PREV);
+            IntentFilter filter = new IntentFilter();
+            startService(myIntent);
         }
     }
 
-    public void updateProgressBar() {
-        mHandler.postDelayed(mUpdateTimeTask, 100);
-    }
-
-    private Runnable mUpdateTimeTask = new Runnable() {
-        public void run() {
-            long totalDuration = mediaPlayer.getDuration();
-            long currentDuration = mediaPlayer.getCurrentPosition();
-
-            // Displaying Total Duration time
-            tvDuration.setText("" + Utilitys.milisecondToDuration(totalDuration));
-            // Displaying time completed playing
-            currentTime.setText("" + Utilitys.milisecondToDuration(currentDuration));
-            // Updating progress bar
-            int progress = (int) (Utilitys.getProgressPercentage(currentDuration, totalDuration));
-            //Log.d("Progress", ""+progress);
-            progressBar.setProgress(progress);
-
-            // Running this thread after 100 milliseconds
-            mHandler.postDelayed(this, 100);
-        }
-    };
-
-    @Override
-    public void onCompletion(MediaPlayer mp) {
-
-    }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -146,28 +163,29 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        mHandler.removeCallbacks(mUpdateTimeTask);
+
+        unregisterReceiver(receiver);
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        mHandler.removeCallbacks(mUpdateTimeTask);
-        int totalDuration = mediaPlayer.getDuration();
-        int currentPosition = Utilitys.progressToTimer(seekBar.getProgress(), totalDuration);
-
-        // forward or backward to certain seconds
-        mediaPlayer.seekTo(currentPosition);
-
-        // update timer progress again
-        updateProgressBar();
+        // unregister
+        int currentPosition = Utilitys.progressToTimer(seekBar.getProgress(), duration);
+        Intent myIntent = new Intent(this, PlayerService.class);
+        myIntent.putExtra(Constant.SEEK_TO_POSTION_EX, currentPosition);
+        myIntent.setAction(Constant.ACTION_SEEK);
+        startService(myIntent);
+        // register receiver again
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Constant.BROADCAST_SONG_CHANGED);
+        filter.addAction(Constant.BROADCAST_CURRENT_PLAY_TIME);
+        registerReceiver(receiver, filter);
     }
-
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //   mHandler.removeCallbacks(mUpdateTimeTask);
-        //   mediaPlayer.release();
+        unregisterReceiver(receiver);
     }
 
 }

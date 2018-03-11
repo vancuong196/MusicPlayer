@@ -4,6 +4,7 @@ package player.project.com.musicplayer.controllers;
  * Created by Cuong on 2/4/2018.
  */
 
+import android.media.MediaMetadata;
 import android.media.MediaMetadataRetriever;
 import android.os.Environment;
 
@@ -41,13 +42,12 @@ public class SongScaner {
                 System.out.println(file.getPath().toString());
                 MediaMetadataRetriever mmr = new MediaMetadataRetriever();
                 mmr.setDataSource(file.getPath());
-
                 String songName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
                 String duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
                 String singerName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+                String album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
 
-
-                Song song = new Song(file.getName().substring(0, (file.getName().length() - 4)), singerName, duration, file.getPath());
+                Song song = new Song(songName, singerName, album, duration, file.getPath());
                 // Adding each song to SongList
                 songsList.add(song);
             }
@@ -62,9 +62,9 @@ public class SongScaner {
                 String songName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
                 String duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
                 String singerName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+                String album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
 
-
-                Song song = new Song(file.getName().substring(0, (file.getName().length() - 4)), singerName, Utilitys.milisecondToDuration(duration), file.getPath());
+                Song song = new Song(songName, singerName, album, duration, file.getPath());
                 // Adding each song to SongList
                 songsList.add(song);
             }
