@@ -53,11 +53,11 @@ public class SongListFragment extends Fragment {
         mLvSongs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent myIntent = new Intent(getActivity(), PlayerActivity.class);
-                myIntent.setAction(Constant.ACTION_PLAY_SONG_LIST);
+                Intent myIntent = new Intent(getActivity(), PlayerService.class);
+                myIntent.setAction(Constant.ACTION_SONG_CHANGE);
                 myIntent.putExtra(Constant.SONG_LIST_EX, data);
                 myIntent.putExtra(Constant.SONG_POSTON_EX, position);
-                startActivity(myIntent);
+                getActivity().startService(myIntent);
             }
         });
         // Inflate the layout for this fragment

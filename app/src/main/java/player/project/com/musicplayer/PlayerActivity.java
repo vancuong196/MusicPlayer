@@ -51,6 +51,7 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
                 int progress = (int) (Utilitys.getProgressPercentage(currentDuration, totalDuration));
                 //Log.d("Progress", ""+progress);
                 progressBar.setProgress(progress);
+                playButton.setImageResource(R.drawable.ic_pause);
             }
             if (intent.getAction().equals(Constant.BROADCAST_SONG_CHANGED)) {
                 Song song = (Song) intent.getSerializableExtra(Constant.SONG_EX);
@@ -78,12 +79,18 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         if (intent.getAction() != null && intent.getAction() == Constant.ACTION_PLAY_SONG_LIST) {
             final ArrayList<Song> songs = (ArrayList<Song>) intent.getSerializableExtra(Constant.SONG_LIST_EX);
             songList = songs;
-            songListInit();
+            //songListInit();
             Intent myIntent = new Intent(PlayerActivity.this, PlayerService.class);
             myIntent.putExtra(Constant.SONG_LIST_EX, songs);
+            myIntent.putExtra(Constant.SONG_POSTON_EX, intent.getIntExtra(Constant.SONG_POSTON_EX, 0));
             myIntent.setAction(Constant.ACTION_SONG_CHANGE);
             startService(myIntent);
 
+        }
+        if (intent.getAction() != null && intent.getAction() == Constant.ACTION_UPDATE_UI_REQUEST) {
+            Intent myIntent = new Intent(PlayerActivity.this, PlayerService.class);
+            myIntent.setAction(Constant.ACTION_UPDATE_UI_REQUEST);
+            startService(myIntent);
         }
 
         if (intent.getAction() != null && intent.getAction().equals(Constant.ACTION_PLAY)) {
@@ -92,19 +99,23 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
-    public void songListInit() {
-        ListView listView = findViewById(R.id.lv_play_ui);
-        ArrayList<Song> songs = this.songList;
-        SongListViewAdapter mLvAdapter = new SongListViewAdapter(songs, this);
-        listView.setAdapter(mLvAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-            }
-        });
-    }
-
+    /*
+        public void songListInit() {
+            ListView listView = findViewById(R.id.lv_play_ui);
+            ArrayList<Song> songs = this.songList;
+            SongListViewAdapter mLvAdapter = new SongListViewAdapter(songs, this);
+            listView.setAdapter(mLvAdapter);
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Intent myIntent = new Intent(PlayerActivity.this, PlayerService.class);
+                    myIntent.setAction(Constant.ACTION_CHANGE_POSTION);
+                    myIntent.putExtra(Constant.SONG_POSTON_EX,position);
+                    startService(myIntent);
+                }
+            });
+        }
+    */
     public void uiInit() {
         nextButton = findViewById(R.id.btn_next);
         playButton = findViewById(R.id.btn_play);
@@ -128,6 +139,7 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         progressBar.setOnSeekBarChangeListener(this);
         // register recieve
         IntentFilter filter = new IntentFilter();
+        filter.addAction(Constant.BROADCAST_MEDIA_PLAYER_STATE_CHANGED);
         filter.addAction(Constant.BROADCAST_SONG_CHANGED);
         filter.addAction(Constant.BROADCAST_CURRENT_PLAY_TIME);
         registerReceiver(receiver, filter);

@@ -1,7 +1,14 @@
 package player.project.com.musicplayer;
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -11,22 +18,113 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.support.design.widget.TabLayout;
+
+import com.commit451.youtubeextractor.YouTubeExtraction;
+import com.commit451.youtubeextractor.YouTubeExtractor;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import player.project.com.musicplayer.models.Song;
 
 
 /**
  * Created by Cuong on 2/1/2018.
  */
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private SlidingUpPanelLayout mLayout;
+    ImageButton nextButton;
+    ImageButton playButton;
+    ImageButton prevButton;
+    SeekBar progressBar;
+    MediaPlayer mediaPlayer;
+    TextView tvDuration;
+    TextView currentTime;
+    TextView songTitle;
+    long duration;
+    ArrayList<Song> songList;
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Constant.BROADCAST_CURRENT_PLAY_TIME)) {
+                long totalDuration = intent.getLongExtra(Constant.DURATION_EX, 0);
+                long currentDuration = intent.getLongExtra(Constant.CURRENT_EX, 0);
+                duration = totalDuration;
+                // Displaying Total Duration time
+                tvDuration.setText("" + Utilitys.milisecondToDuration(totalDuration));
+                // Displaying time completed playing
+                currentTime.setText("" + Utilitys.milisecondToDuration(currentDuration));
+                // Updating progress bar
+                int progress = (int) (Utilitys.getProgressPercentage(currentDuration, totalDuration));
+                //Log.d("Progress", ""+progress);
+                progressBar.setProgress(progress);
+                playButton.setImageResource(R.drawable.ic_pause);
+            }
+            if (intent.getAction().equals(Constant.BROADCAST_SONG_CHANGED)) {
+                Song song = (Song) intent.getSerializableExtra(Constant.SONG_EX);
+                songTitle.setText(song.getSongName());
+            }
+            if (intent.getAction().equals(Constant.BROADCAST_MEDIA_PLAYER_STATE_CHANGED)) {
+                int status = intent.getIntExtra(Constant.MEDIA_STATE_EX, 0);
+                if (status == 0) {
+                    playButton.setImageResource(R.drawable.ic_play);
+                }
+                if (status == 1) {
+                    playButton.setImageResource(R.drawable.ic_pause);
+                }
+            }
+        }
+    };
+    private Handler mHandler = new Handler();
 
+    public void uiInit() {
+        nextButton = findViewById(R.id.btn_next);
+        playButton = findViewById(R.id.btn_play);
+        prevButton = findViewById(R.id.btn_prev);
+        progressBar = findViewById(R.id.progress_bar);
+        tvDuration = findViewById(R.id.tv_songduration);
+        currentTime = findViewById(R.id.tv_song_crtime);
+        songTitle = findViewById(R.id.tv_song_name);
+        nextButton.setOnClickListener(this);
+        playButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // check for already playing
+                Intent myIntent = new Intent(MainActivity.this, PlayerService.class);
+                myIntent.setAction(Constant.ACTION_PLAY);
+                startService(myIntent);
 
+            }
+        });
+        prevButton.setOnClickListener(this);
+        progressBar.setOnSeekBarChangeListener(this);
+        // register recieve
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Constant.BROADCAST_MEDIA_PLAYER_STATE_CHANGED);
+        filter.addAction(Constant.BROADCAST_SONG_CHANGED);
+        filter.addAction(Constant.BROADCAST_CURRENT_PLAY_TIME);
+        registerReceiver(receiver, filter);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,8 +149,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setBackgroundColor(Color.BLACK);
         tabLayout.setupWithViewPager(viewPager);
-        //
 
+
+        mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        mLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+            @Override
+            public void onPanelSlide(View panel, float slideOffset) {
+                //Log.i(TAG, "onPanelSlide, offset " + slideOffset);
+            }
+
+            @Override
+            public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
+                //   Log.i(TAG, "onPanelStateChanged " + newState);
+            }
+        });
+        mLayout.setFadeOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+            }
+        });
+
+        uiInit();
 
     }
 
@@ -122,9 +240,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+            return;
         }
+        if (mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
+            mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+
+        }
+
     }
 
 
@@ -149,6 +271,52 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.btn_next) {
+            Intent myIntent = new Intent(MainActivity.this, PlayerService.class);
+            myIntent.setAction(Constant.ACTION_NEXT);
+            startService(myIntent);
+
+        } else if (v.getId() == R.id.btn_prev) {
+            Intent myIntent = new Intent(MainActivity.this, PlayerService.class);
+            myIntent.setAction(Constant.ACTION_PREV);
+            IntentFilter filter = new IntentFilter();
+            startService(myIntent);
+        }
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        unregisterReceiver(receiver);
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        // unregister
+        int currentPosition = Utilitys.progressToTimer(seekBar.getProgress(), duration);
+        Intent myIntent = new Intent(this, PlayerService.class);
+        myIntent.putExtra(Constant.SEEK_TO_POSTION_EX, currentPosition);
+        myIntent.setAction(Constant.ACTION_SEEK);
+        startService(myIntent);
+        // register receiver again
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Constant.BROADCAST_SONG_CHANGED);
+        filter.addAction(Constant.BROADCAST_CURRENT_PLAY_TIME);
+        registerReceiver(receiver, filter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(receiver);
+        super.onDestroy();
     }
 }
 /*

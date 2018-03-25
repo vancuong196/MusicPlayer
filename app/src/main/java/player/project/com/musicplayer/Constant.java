@@ -12,7 +12,9 @@ public final class Constant {
     static String CURRENT_EX = "current_ex";
     static String DURATION_EX = "duration_ex";
     static String MEDIA_STATE_EX = "mediastateex";
+    static String ACTION_CHANGE_POSTION = "changepostion";
     static String ACTION_PLAY_YOUTUBE = "youtube";
+    static String ACTION_UPDATE_UI_REQUEST = "updatesongrequest";
     static String ACTION_PLAY = "1";
     static String ACTION_PLAY_SONG_LIST = "action.playsongs";
     static String SONG_POSTON_EX = "songpostiontoplaex";

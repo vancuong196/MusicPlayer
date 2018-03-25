@@ -38,6 +38,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 if (mMediaPlayer != null) {
                     if (mMediaPlayer.isPlaying()) {
                         mMediaPlayer.pause();
+                        buildNotification(mPlayList.get(currentPostion), false);
                         broadcastMediaStateChange(0);
                         stopBroadcastCurrentPlayTime();
                     } else {
@@ -48,18 +49,18 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
 
                 }
             }
-            if (actionCode == Constant.ACTION_SONG_CHANGE) {
+            if (actionCode == Constant.ACTION_CHANGE_POSTION) {
+                int postion = intent.getIntExtra(Constant.SONG_POSTON_EX, 0);
+                play(postion);
+            } else if (actionCode == Constant.ACTION_SONG_CHANGE) {
                 mPlayList = (ArrayList<Song>) intent.getSerializableExtra(Constant.SONG_LIST_EX);
                 int postion = intent.getIntExtra(Constant.SONG_POSTON_EX, 0);
                 play(postion);
-            }
-            if (actionCode == Constant.ACTION_NEXT) {
+            } else if (actionCode == Constant.ACTION_NEXT) {
                 next();
-            }
-            if (actionCode == Constant.ACTION_PREV) {
+            } else if (actionCode == Constant.ACTION_PREV) {
                 previous();
-            }
-            if (actionCode.equals(Constant.ACTION_PLAY_YOUTUBE)) {
+            } else if (actionCode.equals(Constant.ACTION_PLAY_YOUTUBE)) {
 
                 WebView webview = new WebView(this);
                 final WebSettings settings = webview.getSettings();
@@ -74,10 +75,12 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 webview.loadDataWithBaseURL("http://www.youtube.com", html, "text/html", "UTF-8", "");
 
 
-            }
-            if (actionCode.equals(Constant.ACTION_SEEK)) {
+            } else if (actionCode.equals(Constant.ACTION_SEEK)) {
                 int milis = intent.getIntExtra(Constant.SEEK_TO_POSTION_EX, 0);
                 seekTo(milis);
+            }
+            if (actionCode.equals(Constant.ACTION_UPDATE_UI_REQUEST)) {
+                broadcastSongChange(currentPostion);
             }
 
         }
@@ -126,7 +129,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         broadcastSongChange(postion);
         broadcastCurrentPlayTime();
         currentPostion = postion;
-        buildNotification();
+        buildNotification(mPlayList.get(postion), true);
     }
 
     public void broadcastSongChange(int postion) {
@@ -193,10 +196,10 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
 
     }
 
-    public void buildNotification() {
+    public void buildNotification(Song song, boolean isOnGoing) {
 
         Intent notificationIntent = new Intent(this, PlayerActivity.class);
-        notificationIntent.setAction(Constant.ACTION_PLAY);
+        notificationIntent.setAction(Constant.ACTION_UPDATE_UI_REQUEST);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
@@ -221,14 +224,14 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 R.drawable.ic_music);
 
         notification = new NotificationCompat.Builder(this)
-                .setContentTitle("Let her go")
-                .setTicker("Let her go")
-                .setContentText("Passenger")
+                .setContentTitle(song.getSongName())
+                .setTicker(song.getSongName())
+                .setContentText(song.getSingerName())
                 .setSmallIcon(R.drawable.ic_play)
                 .setLargeIcon(
                         Bitmap.createScaledBitmap(icon, 128, 128, false))
                 .setContentIntent(pendingIntent)
-                .setOngoing(true)
+                .setOngoing(isOnGoing)
                 .addAction(android.R.drawable.ic_media_previous,
                         "", ppreviousIntent)
                 .addAction(android.R.drawable.ic_media_play, "",
