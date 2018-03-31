@@ -9,21 +9,13 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
-import player.project.com.musicplayer.controllers.SongController;
 import player.project.com.musicplayer.models.Song;
-
-import static android.widget.Toast.LENGTH_SHORT;
 
 public class PlayerActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
     ImageButton nextButton;
@@ -73,7 +65,7 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_ui);
-        uiInit();
+        //   uiInit();
         songList = new ArrayList<>();
         Intent intent = getIntent();
         if (intent.getAction() != null && intent.getAction() == Constant.ACTION_PLAY_SONG_LIST) {
@@ -116,6 +108,7 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
             });
         }
     */
+ /*
     public void uiInit() {
         nextButton = findViewById(R.id.btn_next);
         playButton = findViewById(R.id.btn_play);
@@ -144,7 +137,7 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         filter.addAction(Constant.BROADCAST_CURRENT_PLAY_TIME);
         registerReceiver(receiver, filter);
     }
-
+*/
     @Override
     protected void onResume() {
 

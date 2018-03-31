@@ -1,12 +1,13 @@
 package player.project.com.musicplayer;
+
+import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
-import android.media.MediaPlayer;
-import android.net.Uri;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -18,30 +19,25 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.support.design.widget.TabLayout;
 
-import com.commit451.youtubeextractor.YouTubeExtraction;
-import com.commit451.youtubeextractor.YouTubeExtractor;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+import player.project.com.musicplayer.controllers.SettingManager;
 import player.project.com.musicplayer.models.Song;
 
 
@@ -53,84 +49,51 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private SlidingUpPanelLayout mLayout;
-    ImageButton nextButton;
-    ImageButton playButton;
-    ImageButton prevButton;
+    ImageView btnNext;
+    ImageView btnPlay;
+    ImageView btnPrev;
+    ImageView btnMenu;
+    ImageView btnAlarm;
+    ImageView btnRepeat;
+    ImageView btnShuffle;
+    ImageButton btnWidgetPlay;
+    ImageButton btnWidgetNext;
+    CircleImageView coverArt;
+    TextView tvSongNameWidget;
+    TextView tvSingerNameWidget;
     SeekBar progressBar;
-    MediaPlayer mediaPlayer;
     TextView tvDuration;
-    TextView currentTime;
-    TextView songTitle;
+    TextView tvCurrentTime;
+    TextView tvSongName;
+    TextView tvSingerName;
+    ListView mLvSongs;
+    PendingSongListAdapter mLvAdapter;
+
     long duration;
     ArrayList<Song> songList;
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Constant.BROADCAST_CURRENT_PLAY_TIME)) {
-                long totalDuration = intent.getLongExtra(Constant.DURATION_EX, 0);
-                long currentDuration = intent.getLongExtra(Constant.CURRENT_EX, 0);
-                duration = totalDuration;
-                // Displaying Total Duration time
-                tvDuration.setText("" + Utilitys.milisecondToDuration(totalDuration));
-                // Displaying time completed playing
-                currentTime.setText("" + Utilitys.milisecondToDuration(currentDuration));
-                // Updating progress bar
-                int progress = (int) (Utilitys.getProgressPercentage(currentDuration, totalDuration));
-                //Log.d("Progress", ""+progress);
-                progressBar.setProgress(progress);
-                playButton.setImageResource(R.drawable.ic_pause);
-            }
-            if (intent.getAction().equals(Constant.BROADCAST_SONG_CHANGED)) {
-                Song song = (Song) intent.getSerializableExtra(Constant.SONG_EX);
-                songTitle.setText(song.getSongName());
-            }
-            if (intent.getAction().equals(Constant.BROADCAST_MEDIA_PLAYER_STATE_CHANGED)) {
-                int status = intent.getIntExtra(Constant.MEDIA_STATE_EX, 0);
-                if (status == 0) {
-                    playButton.setImageResource(R.drawable.ic_play);
-                }
-                if (status == 1) {
-                    playButton.setImageResource(R.drawable.ic_pause);
-                }
-            }
-        }
-    };
     private Handler mHandler = new Handler();
 
-    public void uiInit() {
-        nextButton = findViewById(R.id.btn_next);
-        playButton = findViewById(R.id.btn_play);
-        prevButton = findViewById(R.id.btn_prev);
-        progressBar = findViewById(R.id.progress_bar);
-        tvDuration = findViewById(R.id.tv_songduration);
-        currentTime = findViewById(R.id.tv_song_crtime);
-        songTitle = findViewById(R.id.tv_song_name);
-        nextButton.setOnClickListener(this);
-        playButton.setOnClickListener(new View.OnClickListener() {
+    // ONCREATE
+    public void pendSongListInit(ArrayList<Song> data) {
+        mLvSongs = findViewById(R.id.lv_pending_songs);
+        mLvAdapter = new PendingSongListAdapter(data, this);
+        mLvSongs.setAdapter(mLvAdapter);
+        mLvSongs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                // check for already playing
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent myIntent = new Intent(MainActivity.this, PlayerService.class);
-                myIntent.setAction(Constant.ACTION_PLAY);
+                myIntent.setAction(Constant.ACTION_CHANGE_POSTION);
+                myIntent.putExtra(Constant.SONG_POSTON_EX, position);
                 startService(myIntent);
-
             }
         });
-        prevButton.setOnClickListener(this);
-        progressBar.setOnSeekBarChangeListener(this);
-        // register recieve
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Constant.BROADCAST_MEDIA_PLAYER_STATE_CHANGED);
-        filter.addAction(Constant.BROADCAST_SONG_CHANGED);
-        filter.addAction(Constant.BROADCAST_CURRENT_PLAY_TIME);
-        registerReceiver(receiver, filter);
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setBackgroundColor(Color.BLACK);
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
@@ -147,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setBackgroundColor(Color.BLACK);
+
         tabLayout.setupWithViewPager(viewPager);
 
 
@@ -161,6 +124,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
                 //   Log.i(TAG, "onPanelStateChanged " + newState);
+                // mLayout.setDragView(findViewById(R.layout.song_list1));
+                LinearLayout m = findViewById(R.id.miniLayout);
+                if (previousState.equals(SlidingUpPanelLayout.PanelState.DRAGGING) && newState == SlidingUpPanelLayout.PanelState.EXPANDED) {
+                    m.setVisibility(LinearLayout.GONE);
+                } else {
+                    m.setVisibility(LinearLayout.VISIBLE);
+                }
             }
         });
         mLayout.setFadeOnClickListener(new View.OnClickListener() {
@@ -170,9 +140,112 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        uiInit();
+        playerUiInit();
+        setMiniWidgetVisible(false);
 
     }
+
+    public void setMiniWidgetVisible(boolean b) {
+        final float scale = this.getResources().getDisplayMetrics().density;
+        int pixels = (int) (60 * scale + 0.5f);
+        if (b) {
+            mLayout.setPanelHeight(pixels);
+        } else {
+            mLayout.setPanelHeight(0);
+        }
+    }
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Constant.BROADCAST_CURRENT_PLAY_TIME)) {
+                long totalDuration = intent.getLongExtra(Constant.DURATION_EX, 0);
+                long currentDuration = intent.getLongExtra(Constant.CURRENT_EX, 0);
+                duration = totalDuration;
+                // Displaying Total Duration time
+                tvDuration.setText("" + Utilitys.milisecondToDuration(totalDuration));
+                // Displaying time completed playing
+                tvCurrentTime.setText("" + Utilitys.milisecondToDuration(currentDuration));
+                // Updating progress bar
+                int progress = (int) (Utilitys.getProgressPercentage(currentDuration, totalDuration));
+                //Log.d("Progress", ""+progress);
+                progressBar.setProgress(progress);
+                btnPlay.setImageResource(R.drawable.ic_pause);
+
+            }
+            if (intent.getAction().equals(Constant.BROADCAST_SONG_CHANGED)) {
+                Song song = (Song) intent.getSerializableExtra(Constant.SONG_EX);
+                tvSongName.setText(song.getSongName());
+                tvSongNameWidget.setText(song.getSongName());
+                tvSingerName.setText(song.getSingerName());
+                tvSingerNameWidget.setText(song.getSingerName());
+
+                //     byte [] data= song.getCoverPicture();
+                //    Bitmap bitmap;
+                //    if(data != null)
+                //    {
+                //      bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+
+                //     }
+                //     else
+                //     {
+                //        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_music); //any default cover resourse folder
+                //   }
+                //     coverArt.setImageBitmap(bitmap);
+
+
+            }
+            if (intent.getAction().equals(Constant.BROADCAST_MEDIA_PLAYER_STATE_CHANGED)) {
+                int status = intent.getIntExtra(Constant.MEDIA_STATE_EX, 0);
+                if (status == 0) {
+                    btnPlay.setImageResource(R.drawable.ic_play);
+                    btnWidgetPlay.setImageResource(R.drawable.ic_play);
+                }
+                if (status == 1) {
+                    btnPlay.setImageResource(R.drawable.ic_pause);
+                    btnWidgetPlay.setImageResource(R.drawable.ic_pause);
+                }
+            }
+        }
+    };
+
+
+    public void playerUiInit() {
+        tvSingerNameWidget = findViewById(R.id.singer_name_widget);
+        tvSongNameWidget = findViewById(R.id.song_name_widget);
+        coverArt = findViewById(R.id.logo_widget);
+        btnMenu = findViewById(R.id.btn_menu);
+        btnAlarm = findViewById(R.id.btn_alarm);
+        btnNext = findViewById(R.id.btn_next);
+        btnPlay = findViewById(R.id.btn_play);
+        btnPrev = findViewById(R.id.btn_prev);
+        btnRepeat = findViewById(R.id.btn_repeat);
+        btnShuffle = findViewById(R.id.btn_shuffle);
+        progressBar = findViewById(R.id.skb_progress);
+        tvDuration = findViewById(R.id.tv_duration);
+        tvCurrentTime = findViewById(R.id.tv_current_time);
+        tvSongName = findViewById(R.id.tv_song_name);
+        tvSingerName = findViewById(R.id.tv_singer_name);
+        btnWidgetPlay = findViewById(R.id.btn_play_widget);
+        btnWidgetNext = findViewById(R.id.btn_next_widget);
+        btnWidgetPlay.setOnClickListener(this);
+        btnWidgetNext.setOnClickListener(this);
+        btnNext.setOnClickListener(this);
+        btnPlay.setOnClickListener(this);
+        btnMenu.setOnClickListener(this);
+        btnAlarm.setOnClickListener(this);
+        btnPrev.setOnClickListener(this);
+        btnShuffle.setOnClickListener(this);
+        btnRepeat.setOnClickListener(this);
+        progressBar.setOnSeekBarChangeListener(this);
+        // register recieve
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Constant.BROADCAST_MEDIA_PLAYER_STATE_CHANGED);
+        filter.addAction(Constant.BROADCAST_SONG_CHANGED);
+        filter.addAction(Constant.BROADCAST_CURRENT_PLAY_TIME);
+        registerReceiver(receiver, filter);
+    }
+
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
@@ -275,17 +348,50 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.btn_next) {
+        int id = v.getId();
+        if (id == R.id.btn_next || id == R.id.btn_next_widget) {
             Intent myIntent = new Intent(MainActivity.this, PlayerService.class);
             myIntent.setAction(Constant.ACTION_NEXT);
             startService(myIntent);
 
-        } else if (v.getId() == R.id.btn_prev) {
+        } else if (id == R.id.btn_prev) {
             Intent myIntent = new Intent(MainActivity.this, PlayerService.class);
             myIntent.setAction(Constant.ACTION_PREV);
             IntentFilter filter = new IntentFilter();
             startService(myIntent);
+        } else if (id == R.id.btn_play || id == R.id.btn_play_widget) {
+            // check for already playing
+            Intent myIntent = new Intent(MainActivity.this, PlayerService.class);
+            myIntent.setAction(Constant.ACTION_PLAY);
+            startService(myIntent);
+        } else if (id == R.id.btn_menu) {
+
+        } else if (id == R.id.btn_alarm) {
+            showDialog(12);
+
+        } else if (id == R.id.btn_repeat) {
+            if (SettingManager.getInstance(this).getrMode() == Constant.SETTING_RMODE_ONE) {
+                SettingManager.getInstance(this).setrMode(Constant.SETTING_RMODE_ALL);
+            } else {
+                SettingManager.getInstance(this).setrMode(Constant.SETTING_RMODE_ONE);
+            }
+
+        } else if (id == R.id.btn_shuffle) {
+            if (SettingManager.getInstance(this).getsMode() == Constant.SETTING_SMODE_ON) {
+                SettingManager.getInstance(this).setsMode(Constant.SETTING_SMODE_OFF);
+            } else {
+                SettingManager.getInstance(this).setsMode(Constant.SETTING_RMODE_ONE);
+            }
         }
+
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        if (id == 12) {
+            new TimerDialog(this).show();
+        }
+        return super.onCreateDialog(id);
     }
 
     @Override

@@ -1,29 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="25dp">
 
-    <LinearLayout
+    <RelativeLayout
+        android:weightSum="10"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="15dp"
         android:orientation="horizontal">
 
-        <ImageView
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:src="@drawable/ic_share" />
+        <ImageButton
+            android:background="@android:color/transparent"
+            android:layout_alignParentLeft="true"
+            android:layout_weight="2"
+            android:layout_gravity="center"
+            android:id="@+id/btn_alarm"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_alarm" />
 
-        <ImageView
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:src="@drawable/ic_menu"
-            android:paddingLeft="280dp"
-            android:layout_weight="1"
+        <TextView
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:layout_toRightOf="@id/btn_alarm"
+            android:id="@+id/tv_timer"
+            android:text="00:00"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
 
-            />
+        <ImageButton
+            android:background="@android:color/transparent"
+            android:id="@+id/btn_menu"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:scaleType="fitXY"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center"
+            android:layout_marginEnd="14dp"
+            android:layout_weight="2"
+            android:src="@drawable/ic_menu" />
 
 
-    </LinearLayout>
+    </RelativeLayout>
 
 
 </android.support.v7.widget.Toolbar>

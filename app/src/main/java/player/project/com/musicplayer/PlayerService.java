@@ -3,7 +3,9 @@ package player.project.com.musicplayer;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
@@ -18,6 +20,7 @@ import android.webkit.WebView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import player.project.com.musicplayer.controllers.SettingManager;
 import player.project.com.musicplayer.models.Song;
@@ -30,10 +33,17 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     private SettingManager mSettingManager;
     private Handler mHandler = new Handler();
     private int currentPostion;
+    private ArrayList<Integer> playedList;
+    int timer;
+    boolean isTimerSet = false;
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
             String actionCode = intent.getAction();
+            if (actionCode == Constant.ACTION_UPDATE_TIMER) {
+                timer = intent.getIntExtra(Constant.TIMER_EX, 0);
+                mHandler.postDelayed(mTimerTask, 60 * timer * 1000);
+            }
             if (actionCode == Constant.ACTION_PLAY) {
                 if (mMediaPlayer != null) {
                     if (mMediaPlayer.isPlaying()) {
@@ -43,6 +53,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                         stopBroadcastCurrentPlayTime();
                     } else {
                         mMediaPlayer.start();
+                        buildNotification(mPlayList.get(currentPostion), true);
                         broadcastMediaStateChange(1);
                         broadcastCurrentPlayTime();
                     }
@@ -53,6 +64,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 int postion = intent.getIntExtra(Constant.SONG_POSTON_EX, 0);
                 play(postion);
             } else if (actionCode == Constant.ACTION_SONG_CHANGE) {
+                playedList = new ArrayList<>();
                 mPlayList = (ArrayList<Song>) intent.getSerializableExtra(Constant.SONG_LIST_EX);
                 int postion = intent.getIntExtra(Constant.SONG_POSTON_EX, 0);
                 play(postion);
@@ -95,8 +107,8 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
 
     @Override
     public void onCreate() {
-
-        mSettingManager = SettingManager.getInstance();
+        playedList = new ArrayList<>();
+        mSettingManager = SettingManager.getInstance(this);
 
         super.onCreate();
     }
@@ -113,6 +125,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         stopBroadcastCurrentPlayTime();
         if (mMediaPlayer == null) {
             mMediaPlayer = new MediaPlayer();
+            mMediaPlayer.setOnCompletionListener(this);
         }
         mMediaPlayer.reset();
         try {
@@ -126,6 +139,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             e.printStackTrace();
         }
         mMediaPlayer.start();
+        playedList.add(postion);
         broadcastSongChange(postion);
         broadcastCurrentPlayTime();
         currentPostion = postion;
@@ -138,9 +152,14 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         sendBroadcast(myIntent);
     }
     public void next() {
-        if (currentPostion < mPlayList.size() - 1) {
-            play(currentPostion + 1);
-        } else play(0);
+        if (SettingManager.getInstance(this).getsMode() == Constant.SETTING_SMODE_OFF) {
+            if (currentPostion < mPlayList.size() - 1) {
+                play(currentPostion + 1);
+            } else play(0);
+        } else {
+            int postion = new Random().nextInt(mPlayList.size());
+            play(postion);
+        }
     }
 
     public void previous() {
@@ -171,6 +190,15 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         mHandler.removeCallbacks(mUpdateTimeTask);
     }
 
+    private Runnable mTimerTask = new Runnable() {
+        @Override
+        public void run() {
+            if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+                mMediaPlayer.stop();
+            }
+        }
+    };
+
     private Runnable mUpdateTimeTask = new Runnable() {
         public void run() {
             long totalDuration = mMediaPlayer.getDuration();
@@ -193,12 +221,20 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
 
     @Override
     public void onCompletion(MediaPlayer mp) {
+        System.out.println("Complete");
+        SettingManager setting = SettingManager.getInstance(this);
+        if (setting.getrMode() == Constant.SETTING_RMODE_ONE) {
+            play(currentPostion);
+        } else {
+            next();
+        }
 
     }
 
+
     public void buildNotification(Song song, boolean isOnGoing) {
 
-        Intent notificationIntent = new Intent(this, PlayerActivity.class);
+        Intent notificationIntent = new Intent(this, MainActivity.class);
         notificationIntent.setAction(Constant.ACTION_UPDATE_UI_REQUEST);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -219,27 +255,45 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         nextIntent.setAction(Constant.ACTION_NEXT);
         PendingIntent pnextIntent = PendingIntent.getService(this, 0,
                 nextIntent, 0);
+//Todo fix error here
+        //     Bitmap icon = BitmapFactory.decodeResource(Resources.getSystem(),R.drawable.ic_music);
+        if (isOnGoing) {
+            notification = new NotificationCompat.Builder(this)
+                    .setUsesChronometer(true)
+                    .setContentTitle(song.getSongName())
+                    .setTicker(song.getSongName())
+                    .setContentText(song.getSingerName())
+                    .setSmallIcon(R.drawable.ic_music)
+                    .setContentIntent(pendingIntent)
+                    .setOngoing(true)
+                    .addAction(R.drawable.ic_back,
+                            "", ppreviousIntent)
+                    .addAction(R.drawable.ic_pause, "",
+                            pplayIntent)
+                    .addAction(R.drawable.ic_forward, "",
+                            pnextIntent).build();
+            startForeground(12, notification);
+        } else {
 
-        Bitmap icon = BitmapFactory.decodeResource(getResources(),
-                R.drawable.ic_music);
+            notification = new NotificationCompat.Builder(this)
+                    .setUsesChronometer(true)
+                    .setContentTitle(song.getSongName())
+                    .setTicker(song.getSongName())
+                    .setContentText(song.getSingerName())
+                    .setSmallIcon(R.drawable.ic_music)
+                    .setContentIntent(pendingIntent)
+                    .setOngoing(false)
+                    .setAutoCancel(true)
+                    .setPriority(Notification.PRIORITY_DEFAULT)
+                    .addAction(R.drawable.ic_back,
+                            "", ppreviousIntent)
+                    .addAction(R.drawable.ic_play, "",
+                            pplayIntent)
+                    .addAction(R.drawable.ic_forward, "",
+                            pnextIntent).build();
+            stopForeground(true);
 
-        notification = new NotificationCompat.Builder(this)
-                .setContentTitle(song.getSongName())
-                .setTicker(song.getSongName())
-                .setContentText(song.getSingerName())
-                .setSmallIcon(R.drawable.ic_play)
-                .setLargeIcon(
-                        Bitmap.createScaledBitmap(icon, 128, 128, false))
-                .setContentIntent(pendingIntent)
-                .setOngoing(isOnGoing)
-                .addAction(android.R.drawable.ic_media_previous,
-                        "", ppreviousIntent)
-                .addAction(android.R.drawable.ic_media_play, "",
-                        pplayIntent)
-                .addAction(android.R.drawable.ic_media_next, "",
-                        pnextIntent).build();
-        startForeground(Constant.SETTING_RMODE_ALL,
-                notification);
+        }
 
     }
 }

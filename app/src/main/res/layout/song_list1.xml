@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="#ffffff"
     android:descendantFocusability="blocksDescendants">
 
     <LinearLayout
@@ -14,14 +13,14 @@
 
 
         <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/logo_widget"
+            android:id="@+id/logo"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_marginLeft="10dp"
             android:src="@drawable/aa"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp" />
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp" />
 
         <LinearLayout
             android:layout_weight="4"
@@ -32,17 +31,15 @@
             android:paddingLeft="20dp">
 
             <TextView
-                android:id="@+id/song_name_widget"
+                android:id="@+id/song_name"
                 android:layout_width="match_parent"
-                android:singleLine="true"
                 android:layout_height="wrap_content"
                 android:textColor="@color/textblue"
                 android:textSize="13dp"
                 android:text="Clean Bendit - Symponi ft. Zavra" />
 
             <TextView
-                android:singleLine="true"
-                android:id="@+id/singer_name_widget"
+                android:id="@+id/singer_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
@@ -53,23 +50,11 @@
         </LinearLayout>
 
         <ImageButton
-            android:id="@+id/btn_play_widget"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_gravity="center"
             android:layout_height="50dp"
-            android:src="@drawable/ic_play"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@android:color/transparent" />
-
-        <ImageButton
-            android:id="@+id/btn_next_widget"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_gravity="center"
-            android:layout_height="50dp"
-            android:src="@drawable/ic_forward"
+            android:src="@drawable/ic_threedot"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@android:color/transparent" />

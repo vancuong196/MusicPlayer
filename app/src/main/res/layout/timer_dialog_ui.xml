@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="350dp"
+    android:layout_gravity="center"
+    android:layout_height="200dp">
+
+    <LinearLayout
+        android:background="#556789"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_width="350dp"
+        android:layout_height="200dp">
+
+        <TextView
+            android:id="@+id/tv_dialog_time"
+            android:textSize="25dp"
+            android:text="0 minute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <SeekBar
+            android:id="@+id/skb_timer"
+            android:layout_gravity="center"
+            android:paddingTop="25dp"
+            android:paddingBottom="25dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <RelativeLayout
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/btn_dialog_ok"
+                android:text="Ok"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:layout_toEndOf="@id/btn_dialog_ok"
+                android:id="@+id/btn_dialog_cancel"
+                android:text="Cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

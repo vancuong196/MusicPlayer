@@ -1,42 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <FrameLayout
+
+    <LinearLayout
+
+        android:id="@+id/main"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="220dp"
             android:background="@drawable/background"
             android:orientation="vertical">
 
             <include layout="@layout/toolbar" />
 
-            <customfonts.MyTextView_Roboto_Medium
+            <TextView
+                android:id="@+id/tv_song_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:singleLine="true"
                 android:paddingLeft="28dp"
                 android:text="Look What You Made Me Do"
                 android:textColor="#ffffff"
-                android:textSize="17dp" />
+                android:textSize="20dp" />
 
-            <customfonts.MyTextView_Roboto_Regular
+            <TextView
+                android:id="@+id/tv_singer_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:paddingLeft="28dp"
                 android:text="Taylor Swift"
+                android:singleLine="true"
                 android:textColor="#ffffff"
                 android:textSize="13dp" />
 
-            <customfonts.MyTextView_Roboto_Regular
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
@@ -46,6 +54,7 @@
                 android:textSize="10dp" />
 
             <SeekBar
+                android:id="@+id/skb_progress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -63,7 +72,8 @@
                 android:layout_marginTop="3dp"
                 android:orientation="horizontal">
 
-                <customfonts.MyTextView_Roboto_Regular
+                <TextView
+                    android:id="@+id/tv_current_time"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -72,7 +82,8 @@
                     android:textColor="#ffffff"
                     android:textSize="10dp" />
 
-                <customfonts.MyTextView_Roboto_Regular
+                <TextView
+                    android:id="@+id/tv_duration"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -83,57 +94,74 @@
                     android:textSize="10dp" />
             </LinearLayout>
         </LinearLayout>
-    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="17dp"
-        android:layout_marginTop="17dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="7dp"
+        android:layout_marginTop="7dp"
         android:orientation="horizontal">
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="18dp"
+        <ImageButton
+            android:id="@+id/btn_repeat"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:paddingLeft="28dp"
+            android:background="@android:color/transparent"
+            android:paddingLeft="22dp"
             android:src="@drawable/ic_repeat" />
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
+        <ImageButton
+
+            android:id="@+id/btn_prev"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_gravity="center"
             android:layout_weight="1"
+            android:background="@android:color/transparent"
             android:paddingLeft="22dp"
             android:src="@drawable/ic_back" />
 
-        <ImageView
-            android:id="@+id/playbutton1"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
+        <LinearLayout
+            android:gravity="center"
             android:layout_gravity="center"
+            android:layout_width="50dp"
+            android:layout_weight="1"
             android:layout_marginLeft="11dp"
             android:layout_marginRight="11dp"
-            android:layout_weight="1"
+            android:layout_height="50dp">
+
+            <ImageButton
+
+                android:id="@+id/btn_play"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+
             android:background="@drawable/circle"
             android:padding="15dp"
             android:src="@drawable/ic_pause" />
+        </LinearLayout>
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
+        <ImageButton
+            android:id="@+id/btn_next"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_gravity="center"
             android:layout_weight="1"
+            android:background="@android:color/transparent"
             android:paddingRight="22dp"
             android:src="@drawable/ic_forward" />
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="18dp"
+        <ImageButton
+            android:id="@+id/btn_shuffle"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_gravity="center"
-            android:layout_marginRight="28dp"
             android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:paddingRight="22dp"
             android:src="@drawable/ic_shuffle" />
     </LinearLayout>
 
@@ -142,8 +170,21 @@
         android:layout_height="1dp"
         android:background="@color/Viewline" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv"
+        <ListView
+
+            android:id="@+id/lv_pending_songs"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+            android:layout_height="match_parent">
+
+        </ListView>
 </LinearLayout>
+
+    <include
+        android:id="@+id/miniLayout"
+        android:layout_alignParentTop="true"
+        android:visibility="visible"
+        layout="@layout/mini_player_widget"
+        android:layout_width="match_parent"
+        android:layout_height="60dp" />
+
+</RelativeLayout>
