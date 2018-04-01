@@ -25,7 +25,7 @@
             android:id="@+id/list_image"
             android:layout_width="50dip"
             android:layout_height="50dip"
-            android:src="@drawable/ic_play" />
+            android:src="@drawable/play" />
 
     </LinearLayout>
 

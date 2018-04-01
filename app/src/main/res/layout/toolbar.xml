@@ -6,7 +6,7 @@
     <RelativeLayout
         android:weightSum="10"
         android:layout_width="match_parent"
-        android:layout_height="15dp"
+        android:layout_height="25dp"
         android:orientation="horizontal">
 
         <ImageButton
@@ -16,12 +16,14 @@
             android:layout_gravity="center"
             android:id="@+id/btn_alarm"
             android:layout_width="25dp"
-            android:layout_height="25dp"
             android:scaleType="fitXY"
-            android:src="@drawable/ic_alarm" />
+            android:layout_height="25dp"
+            android:src="@drawable/alarm" />
 
         <TextView
+            android:textColor="#ffffff"
             android:gravity="center"
+            android:textSize="15dp"
             android:paddingLeft="10dp"
             android:layout_toRightOf="@id/btn_alarm"
             android:id="@+id/tv_timer"
@@ -34,13 +36,12 @@
             android:id="@+id/btn_menu"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:scaleType="fitXY"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             android:layout_gravity="center"
             android:layout_marginEnd="14dp"
             android:layout_weight="2"
-            android:src="@drawable/ic_menu" />
+            android:src="@drawable/ic_lyric" />
 
 
     </RelativeLayout>

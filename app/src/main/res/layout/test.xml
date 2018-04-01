@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".Activities.MainActivity">
 
 
     <LinearLayout
@@ -16,7 +16,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="220dp"
+            android:layout_height="300dp"
             android:background="@drawable/background"
             android:orientation="vertical">
 
@@ -29,11 +29,13 @@
                 android:layout_marginTop="10dp"
                 android:singleLine="true"
                 android:paddingLeft="28dp"
+                android:paddingTop="30dp"
                 android:text="Look What You Made Me Do"
                 android:textColor="#ffffff"
                 android:textSize="20dp" />
 
             <TextView
+                android:paddingTop="15dp"
                 android:id="@+id/tv_singer_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -44,16 +46,9 @@
                 android:textColor="#ffffff"
                 android:textSize="13dp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:paddingLeft="29dp"
-                android:text="826,122 plays"
-                android:textColor="#ffffff"
-                android:textSize="10dp" />
 
             <SeekBar
+                android:paddingTop="20dp"
                 android:id="@+id/skb_progress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -64,6 +59,7 @@
                 android:theme="@style/MySeekBarTheme" />
 
             <LinearLayout
+                android:paddingTop="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="15dp"
@@ -102,28 +98,28 @@
         android:layout_marginTop="7dp"
         android:orientation="horizontal">
 
-        <ImageButton
+        <ImageView
             android:id="@+id/btn_repeat"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:paddingLeft="22dp"
-            android:src="@drawable/ic_repeat" />
+            android:src="@drawable/repeat" />
 
-        <ImageButton
-
+        <ImageView
             android:id="@+id/btn_prev"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:paddingLeft="22dp"
-            android:src="@drawable/ic_back" />
+            android:src="@drawable/previous" />
 
         <LinearLayout
+
             android:gravity="center"
             android:layout_gravity="center"
             android:layout_width="50dp"
@@ -132,7 +128,7 @@
             android:layout_marginRight="11dp"
             android:layout_height="50dp">
 
-            <ImageButton
+            <ImageView
 
                 android:id="@+id/btn_play"
                 android:layout_width="50dp"
@@ -141,28 +137,28 @@
 
             android:background="@drawable/circle"
             android:padding="15dp"
-            android:src="@drawable/ic_pause" />
+                android:src="@drawable/pause" />
         </LinearLayout>
 
-        <ImageButton
+        <ImageView
             android:id="@+id/btn_next"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:paddingRight="22dp"
-            android:src="@drawable/ic_forward" />
+            android:src="@drawable/next" />
 
-        <ImageButton
+        <ImageView
             android:id="@+id/btn_shuffle"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:paddingRight="22dp"
-            android:src="@drawable/ic_shuffle" />
+            android:src="@drawable/shuffle" />
     </LinearLayout>
 
     <View

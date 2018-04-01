@@ -36,6 +36,4 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:26.1.0'
     implementation 'com.android.support:cardview-v7:26.1.0'
     //implementation files('libs/YouTubeAndroidPlayerApi.jar')
-    implementation 'com.github.Commit451:YouTubeExtractor:4.0.1'
-
 }

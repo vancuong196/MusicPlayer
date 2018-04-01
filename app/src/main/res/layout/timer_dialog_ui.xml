@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="350dp"
+    android:layout_width="300dp"
     android:layout_gravity="center"
     android:layout_height="200dp">
 
     <LinearLayout
-        android:background="#556789"
+        android:background="#20696969"
         android:gravity="center"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
         android:orientation="vertical"
-        android:layout_width="350dp"
+        android:layout_width="300dp"
         android:layout_height="200dp">
 
         <TextView
@@ -19,6 +21,8 @@
             android:layout_height="wrap_content" />
 
         <SeekBar
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
             android:id="@+id/skb_timer"
             android:layout_gravity="center"
             android:paddingTop="25dp"
@@ -36,9 +40,15 @@
                 android:text="Ok"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
+            <Button
+                android:layout_toRightOf="@+id/btn_dialog_ok"
+                android:id="@+id/btn_dialog_disable_timer"
+                android:text="Disble"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
             <Button
-                android:layout_toEndOf="@id/btn_dialog_ok"
+                android:layout_toEndOf="@id/btn_dialog_disable_timer"
                 android:id="@+id/btn_dialog_cancel"
                 android:text="Cancel"
                 android:layout_width="wrap_content"
