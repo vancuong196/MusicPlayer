@@ -6,19 +6,19 @@
     android:descendantFocusability="blocksDescendants">
 
     <LinearLayout
-        android:id="@+id/song_line"
+        android:id="@+id/artist_line"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
 
         <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/logo"
+            android:id="@+id/img_atist_logo"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_marginLeft="10dp"
-            android:src="@drawable/aa"
+            android:src="@drawable/ic_music"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp" />
 
@@ -31,35 +31,23 @@
             android:paddingLeft="20dp">
 
             <TextView
-                android:id="@+id/song_name"
+                android:id="@+id/tv_artist_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/textblue"
                 android:textSize="13dp"
-                android:text="Clean Bendit - Symponi ft. Zavra" />
+                android:text="Passenger" />
 
             <TextView
-                android:id="@+id/singer_name"
+                android:id="@+id/tv_artist_detail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:textSize="11dp"
-                android:text="Music category - Pop" />
-
+                android:text="10 songs | 1 album" />
 
         </LinearLayout>
-
-        <ImageButton
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_gravity="center"
-            android:layout_height="50dp"
-            android:src="@drawable/ic_threedot"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@android:color/transparent" />
     </LinearLayout>
-
 
     <View
         android:layout_width="match_parent"

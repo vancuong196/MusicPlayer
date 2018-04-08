@@ -1,14 +1,20 @@
 package player.project.com.musicplayer.Activities;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
@@ -29,28 +35,26 @@ import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.support.design.widget.TabLayout;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import player.project.com.musicplayer.Controllers.SettingManager;
+import player.project.com.musicplayer.Controllers.SongController;
+import player.project.com.musicplayer.Controllers.SongScaner;
 import player.project.com.musicplayer.CustomAdapter.PendingSongListAdapter;
 import player.project.com.musicplayer.CustomAdapter.ViewPagerAdapter;
 import player.project.com.musicplayer.Dialog.LyricDialog;
+import player.project.com.musicplayer.Dialog.TimerDialog;
 import player.project.com.musicplayer.Fragments.AlbumFragment;
 import player.project.com.musicplayer.Fragments.ArtistFragment;
-import player.project.com.musicplayer.Controllers.SettingManager;
-import player.project.com.musicplayer.Controllers.SongScaner;
 import player.project.com.musicplayer.Fragments.PlaylistFragment;
 import player.project.com.musicplayer.Fragments.SongListFragment;
 import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.Service.PlayerService;
-import player.project.com.musicplayer.Controllers.SongController;
-import player.project.com.musicplayer.Dialog.TimerDialog;
 import player.project.com.musicplayer.Ultilities.Constant;
-import player.project.com.musicplayer.Ultilities.LyricFetch;
 import player.project.com.musicplayer.Ultilities.Utilitys;
 import player.project.com.musicplayer.models.Song;
 
@@ -60,9 +64,6 @@ import player.project.com.musicplayer.models.Song;
  */
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
-    private SlidingUpPanelLayout mLayout;
     ImageView btnNext;
     ImageView btnPlay;
     ImageView btnPrev;
@@ -88,26 +89,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Toolbar toolbar;
     long duration;
     Song currentSong;
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
+    private SlidingUpPanelLayout mLayout;
     // ONCREATE
-    public void pendSongListInit(ArrayList<Song> data) {
-        mLvSongs = findViewById(R.id.lv_pending_songs);
-        mLvAdapter = new PendingSongListAdapter(data, this);
-        mLvSongs.setAdapter(mLvAdapter);
-        mLvSongs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent myIntent = new Intent(MainActivity.this, PlayerService.class);
-                myIntent.setAction(Constant.ACTION_CHANGE_POSTION);
-                myIntent.putExtra(Constant.SONG_POSTON_EX, position);
-                startService(myIntent);
-            }
-        });
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        int version = Build.VERSION.SDK_INT;
+        if (version > Build.VERSION_CODES.LOLLIPOP) {
+            if (!checkIfHavePermisson()) {
+                requestForPermission();
+            }
+        }
         setContentView(R.layout.activity_main);
+
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -234,21 +231,47 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         playerUiInit();
         setMiniWidgetVisible(false);
         if (new SongController(getApplicationContext()).count() == 0) {
-            new SongScaner().scan(new SongController(getApplicationContext()));
+            new SongScaner(this).scan();
 
         }
 
     }
 
-    public void setMiniWidgetVisible(boolean b) {
-        final float scale = this.getResources().getDisplayMetrics().density;
-        int pixels = (int) (60 * scale + 0.5f);
-        if (b) {
-            mLayout.setPanelHeight(pixels);
-            mLayout.addPanelSlideListener(mLideUpListener);
+    public void pendSongListInit(ArrayList<Song> data) {
+        mLvSongs = findViewById(R.id.lv_pending_songs);
+        mLvAdapter = new PendingSongListAdapter(data, this);
+        mLvSongs.setAdapter(mLvAdapter);
+        mLvSongs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent myIntent = new Intent(MainActivity.this, PlayerService.class);
+                myIntent.setAction(Constant.ACTION_CHANGE_POSTION);
+                myIntent.putExtra(Constant.SONG_POSTON_EX, position);
+                startService(myIntent);
+            }
+        });
+    }
+
+    private boolean checkIfHavePermisson() {
+        int result = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        return result == PackageManager.PERMISSION_GRANTED ? true : false;
+    }
+
+    private void requestForPermission() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1010);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 1010) {
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "This application need READ_EXTERNAL_STORAGE permission to work correctly!", Toast.LENGTH_LONG).show();
+                finish();
+            }
         } else {
-            mLayout.setPanelHeight(0);
-            mLayout.removePanelSlideListener(mLideUpListener);
+
+
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
@@ -317,6 +340,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     };
 
+    public void setMiniWidgetVisible(boolean b) {
+        final float scale = this.getResources().getDisplayMetrics().density;
+        int pixels = (int) (60 * scale + 0.5f);
+        if (b) {
+            mLayout.setPanelHeight(pixels);
+            mLayout.addPanelSlideListener(mLideUpListener);
+        } else {
+            mLayout.setPanelHeight(0);
+            mLayout.removePanelSlideListener(mLideUpListener);
+        }
+    }
 
     public void playerUiInit() {
         tvSingerNameWidget = findViewById(R.id.singer_name_widget);
@@ -431,10 +465,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         if (id == R.id.action_recan) {
             new SongController(this).deleteAllSong();
-            new SongScaner().scan(new SongController(this));
-            mLvAdapter.clear();
-            mLvAdapter.addAll(new SongController(this).getAllSongs());
-            mLvAdapter.notifyDataSetChanged();
+            new SongScaner(this).scan();
+
+            //mLvAdapter.addAll(new SongController(this).getAllSongs());
+            //mLvAdapter.notifyDataSetChanged();
         }
         if (id == R.id.action_exit) {
             finish();
@@ -465,9 +499,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_about) {
 
         } else if (id == R.id.nav_changlog) {
 

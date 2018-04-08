@@ -1,7 +1,6 @@
 package player.project.com.musicplayer.CustomAdapter;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
@@ -27,7 +26,7 @@ public class SongListViewAdapter extends ArrayAdapter<Song> {
     }
 
     public SongListViewAdapter(ArrayList<Song> data, Context context) {
-        super(context, R.layout.song_list1, data);
+        super(context, R.layout.lv_songs_item, data);
         this.dataSet = data;
         this.mContext = context;
         song = new Song();
@@ -41,7 +40,7 @@ public class SongListViewAdapter extends ArrayAdapter<Song> {
         View v = convertView;
         if (v == null) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
-            v = inflater.inflate(R.layout.song_list1, null);
+            v = inflater.inflate(R.layout.lv_songs_item, null);
 
         }
         CircleImageView tt1 = v.findViewById(R.id.logo);

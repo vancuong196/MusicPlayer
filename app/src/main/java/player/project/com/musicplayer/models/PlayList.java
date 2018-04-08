@@ -5,16 +5,17 @@ package player.project.com.musicplayer.models;
  */
 
 public class PlayList {
-    private int id;
-    private String name;
 
-    public PlayList(int id, String name) {
-        this.id = id;
+    private String name;
+    private int numberOfSongs;
+
+    public PlayList(String name, int numberOfSongs) {
+        this.numberOfSongs = numberOfSongs;
         this.name = name;
     }
 
-    public int getId() {
-        return id;
+    public int getNumberOfSongs() {
+        return numberOfSongs;
     }
 
     public String getName() {

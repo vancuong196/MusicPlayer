@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content">
+
+    <FrameLayout
+        android:id="@+id/album_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:background="@drawable/rounded_rec"
+        android:layout_margin="5dp">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:padding="1dp"
+                android:id="@+id/album_art"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@android:color/black"
+                android:src="@drawable/background"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:scaleType="fitXY"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintDimensionRatio="h,1:1" />
+
+            <TextView
+                android:id="@+id/album_title"
+                android:layout_width="0dp"
+                android:textSize="12dp"
+                android:textStyle="bold"
+                android:layout_height="wrap_content"
+                android:text="Album name"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:paddingTop="5dp"
+                android:paddingLeft="5dp"
+                android:paddingStart="5dp"
+                android:paddingRight="0dp"
+                android:paddingEnd="0dp"
+                tools:text="Album Name"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/album_art" />
+
+            <TextView
+                android:id="@+id/album_detail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Artist name"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="10dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingStart="5dp"
+                android:paddingRight="0dp"
+                android:paddingEnd="0dp"
+                tools:text="Artist Name"
+                app:layout_constraintTop_toBottomOf="@+id/album_title"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+
+        </android.support.constraint.ConstraintLayout>
+
+    </FrameLayout>
+
+</LinearLayout>

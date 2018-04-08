@@ -1,0 +1,61 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="player.project.com.musicplayer.Fragments.SearchFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:text="Albums"
+                android:textStyle="bold"
+                android:paddingLeft="10dp"
+                android:textAlignment="textStart"
+                android:layout_width="match_parent"
+                android:layout_height="40dp" />
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </ListView>
+
+            <TextView
+                android:text="Artists"
+                android:textStyle="bold"
+                android:paddingLeft="10dp"
+                android:textAlignment="textStart"
+                android:layout_width="match_parent"
+                android:layout_height="40dp" />
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </ListView>
+
+            <TextView
+                android:text="Songs"
+                android:textStyle="bold"
+                android:paddingLeft="10dp"
+                android:textAlignment="textStart"
+                android:layout_width="match_parent"
+                android:layout_height="40dp" />
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </ListView>
+
+        </LinearLayout>
+    </ScrollView>
+
+</FrameLayout>

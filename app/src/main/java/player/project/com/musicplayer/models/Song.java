@@ -1,6 +1,7 @@
 package player.project.com.musicplayer.models;
 
 import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
 
 import java.io.Serializable;
 
@@ -91,4 +92,5 @@ public class Song implements Serializable {
     public int getSongId() {
         return songId;
     }
+
 }

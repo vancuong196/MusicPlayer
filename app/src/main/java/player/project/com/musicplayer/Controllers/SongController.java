@@ -12,6 +12,8 @@ import android.provider.MediaStore;
 
 import java.util.ArrayList;
 
+import player.project.com.musicplayer.models.Album;
+import player.project.com.musicplayer.models.Artist;
 import player.project.com.musicplayer.models.Song;
 
 
@@ -32,33 +34,7 @@ public class SongController extends SQLiteOpenHelper {
     private static final String ALBUM = "album";
     private static final String PATH = "path";
     private static final String Lyric = "lyric";
-    private Context mContext;
 
-    /*
-        public ArrayList<Song> getSongListFromMediaStore() {
-            ContentResolver contentResolver = mContext.getContentResolver();
-            Uri songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-            ArrayList<Song> songs = new ArrayList<>();
-            Cursor songCursor = contentResolver.query(songUri, null, null, null, null);
-
-            if (songCursor != null && songCursor.moveToFirst()) {
-                int songId = songCursor.getColumnIndex(MediaStore.Audio.Media._ID);
-                int songTitle = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
-                int songArtist = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
-                int songAlbum = songCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
-                int songDuration = songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
-                do {
-                    long currentId = songCursor.getLong(songId);
-                    String currentTitle = songCursor.getString(songTitle);
-                    String currentAtist = songCursor.getString(songArtist);
-                    String currentAlbum = songCursor.getString(songAlbum);
-                    String currentPath = songCursor.getString(songArtist);
-                    // String duration = UltilisongCursor.getLong(songDuration);
-                    //  songs.add(new Song((int)currentId,currentTitle,currentAtist,currentAlbum,);
-                } while (songCursor.moveToNext());
-            }
-        }
-    */
     public SongController(Context context) {
         super(context, DATABASE_NAME, null, VERSION);
     }
@@ -186,5 +162,105 @@ public class SongController extends SQLiteOpenHelper {
         db.close();
     }
 
+
+    public ArrayList<Album> getAllAlbums() {
+
+        ArrayList<Album> albums = new ArrayList<Album>();
+        String selectQuery = "SELECT " + ALBUM + ",count(*) as numberOfSongs," + ARTIST + " FROM " + TABLE_NAME + " group by " + ALBUM + "," + ARTIST;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Album album = new Album();
+                album.setAlbumName(cursor.getString(0));
+                album.setNumberOfSong(cursor.getInt(1));
+                album.setArtist(cursor.getString(2));
+                albums.add(album);
+            } while (cursor.moveToNext());
+        }
+        db.close();
+        return albums;
+    }
+
+    public ArrayList<Song> getAllSongBelongToAlbums(String albumName, String artist) {
+
+        ArrayList<Song> songs = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + TABLE_NAME + " where " + ALBUM + " like '" + albumName + "' AND " + ARTIST + " like'" + artist + "'";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Song song = new Song();
+                song.setSongId(Integer.parseInt(cursor.getString(0)));
+                song.setSongName(cursor.getString(1));
+                song.setArtist(cursor.getString(2));
+                song.setAlbum(cursor.getString(3));
+                song.setDuration(cursor.getString(4));
+                song.setPath(cursor.getString(5));
+                songs.add(song);
+            } while (cursor.moveToNext());
+        }
+        db.close();
+        return songs;
+    }
+
+    public ArrayList<Song> getAllSongBelongArtist(String artist) {
+
+        ArrayList<Song> songs = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + TABLE_NAME + " where " + ARTIST + " like'" + artist + "'";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Song song = new Song();
+                song.setSongId(Integer.parseInt(cursor.getString(0)));
+                song.setSongName(cursor.getString(1));
+                song.setArtist(cursor.getString(2));
+                song.setAlbum(cursor.getString(3));
+                song.setDuration(cursor.getString(4));
+                song.setPath(cursor.getString(5));
+                songs.add(song);
+            } while (cursor.moveToNext());
+        }
+        db.close();
+        return songs;
+    }
+
+    public ArrayList<Artist> getAllArtist() {
+
+        ArrayList<Artist> artists = new ArrayList<>();
+        String selectQuery = "SELECT " + ARTIST + ",count(*) as numberOfSongs" + " FROM " + TABLE_NAME + " group by " + ARTIST;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Artist artist = new Artist();
+                artist.setName(cursor.getString(0));
+                artist.setNumberOfSong(cursor.getInt(1));
+                artist.setNumberOfAlbum(this.countAlbumOfArtist(cursor.getString(0)));
+                artists.add(artist);
+            } while (cursor.moveToNext());
+        }
+        db.close();
+        return artists;
+    }
+
+    public int countAlbumOfArtist(String artistName) {
+        ArrayList<Album> albums = this.getAllAlbums();
+        int c = 0;
+        for (Album album : albums) {
+            if (album.getArtist().equalsIgnoreCase(artistName)) {
+                c += 1;
+            }
+        }
+        return c;
+    }
 
 }

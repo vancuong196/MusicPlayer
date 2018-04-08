@@ -24,7 +24,7 @@ public class PendingSongListAdapter extends ArrayAdapter<Song> {
     }
 
     public PendingSongListAdapter(ArrayList<Song> data, Context context) {
-        super(context, R.layout.song_list, data);
+        super(context, R.layout.lv_song_item_simple, data);
         this.dataSet = data;
         this.mContext = context;
     }
@@ -37,7 +37,7 @@ public class PendingSongListAdapter extends ArrayAdapter<Song> {
         View v = convertView;
         if (v == null) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
-            v = inflater.inflate(R.layout.song_list, null);
+            v = inflater.inflate(R.layout.lv_song_item_simple, null);
 
         }
         TextView tt1 = v.findViewById(R.id.song_name);
