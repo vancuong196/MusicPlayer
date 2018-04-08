@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/fragmentBackgroundColor"
     tools:context="player.project.com.musicplayer.Fragments.SearchFragment">
 
     <ScrollView
@@ -14,6 +15,7 @@
             android:layout_height="match_parent">
 
             <TextView
+                android:background="@color/white"
                 android:text="Albums"
                 android:textStyle="bold"
                 android:paddingLeft="10dp"
@@ -22,12 +24,14 @@
                 android:layout_height="40dp" />
 
             <ListView
+                android:id="@+id/lv_albums_search_result"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
             </ListView>
 
             <TextView
+                android:background="@color/white"
                 android:text="Artists"
                 android:textStyle="bold"
                 android:paddingLeft="10dp"
@@ -36,12 +40,14 @@
                 android:layout_height="40dp" />
 
             <ListView
+                android:id="@+id/lv_albums_artist_result"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
             </ListView>
 
             <TextView
+                android:background="@color/white"
                 android:text="Songs"
                 android:textStyle="bold"
                 android:paddingLeft="10dp"
@@ -50,6 +56,7 @@
                 android:layout_height="40dp" />
 
             <ListView
+                android:id="@+id/lv_songs_search"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 

@@ -2,6 +2,7 @@ package player.project.com.musicplayer.Activities;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.app.FragmentManager;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -51,6 +53,7 @@ import player.project.com.musicplayer.Dialog.TimerDialog;
 import player.project.com.musicplayer.Fragments.AlbumFragment;
 import player.project.com.musicplayer.Fragments.ArtistFragment;
 import player.project.com.musicplayer.Fragments.PlaylistFragment;
+import player.project.com.musicplayer.Fragments.SearchFragment;
 import player.project.com.musicplayer.Fragments.SongListFragment;
 import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.Service.PlayerService;
@@ -430,7 +433,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onClick(View v) {
-
+                Fragment searchFragment = new SearchFragment();
+                android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+                tabLayout.setVisibility(View.GONE);
+                fragmentManager.beginTransaction().replace(R.id.viewpager, searchFragment, "TAG").commit();
             }
         });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -487,6 +493,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
 
         }
+        tabLayout.setVisibility(View.VISIBLE);
 
     }
 
