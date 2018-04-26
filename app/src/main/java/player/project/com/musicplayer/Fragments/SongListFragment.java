@@ -2,6 +2,7 @@ package player.project.com.musicplayer.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -32,6 +33,7 @@ public class SongListFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
 
@@ -46,13 +48,24 @@ public class SongListFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mLvSongs = view.findViewById(R.id.lv_songs);
-        data = new SongController(getContext()).getAllSongs();
+    public void onResume() {
 
-        mLvAdapter = new SongListViewAdapter(data, view.getContext());
-        mLvSongs.setAdapter(mLvAdapter);
+        super.onResume();
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        System.out.println("ON CrEATED WIEW");
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                data = new SongController(getContext()).getAllSongs();
+                mLvAdapter = new SongListViewAdapter(data, getView().getContext());
+                mLvSongs.setAdapter(mLvAdapter);
+            }
+        });
+
+        mLvSongs = view.findViewById(R.id.lv_songs);
         mLvSongs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -65,6 +78,9 @@ public class SongListFragment extends Fragment {
                 getActivity().startService(myIntent);
             }
         });
+        super.onViewCreated(view, savedInstanceState);
+
+
         // Inflate the layout for this fragment
     }
 

@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -495,9 +496,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    boolean isExit = false;
     @Override
     public void onBackPressed() {
-        getSupportFragmentManager().popBackStack();
+        Fragment f = getSupportFragmentManager().findFragmentById(R.id.root_fragment);
+        if (!(f instanceof RootFragment)) {
+            getSupportFragmentManager().popBackStackImmediate();
+        } else {
+            if (isExit == true) {
+                finish();
+            }
+            isExit = true;
+            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    isExit = false;
+                }
+            }, 2000);
+        }
     }
 
     @Override

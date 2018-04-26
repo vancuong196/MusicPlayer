@@ -14,11 +14,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 
 import player.project.com.musicplayer.Activities.MainActivity;
+import player.project.com.musicplayer.Controllers.SongController;
+import player.project.com.musicplayer.Controllers.SongScaner;
 import player.project.com.musicplayer.CustomAdapter.ViewPagerAdapter;
 import player.project.com.musicplayer.R;
 
@@ -37,6 +40,11 @@ public class RootFragment extends Fragment {
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -98,7 +106,7 @@ public class RootFragment extends Fragment {
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
         adapter.addFragment(new SongListFragment(), "");
         adapter.addFragment(new PlaylistFragment(), "");
         adapter.addFragment(new ArtistFragment(), "");
@@ -122,9 +130,8 @@ public class RootFragment extends Fragment {
             public void onClick(View v) {
                 Fragment searchFragment = new SearchFragment();
                 android.support.v4.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                //tabLayout.setVisibility(View.GONE);
-                fragmentManager.beginTransaction().addToBackStack("");
-                fragmentManager.beginTransaction().setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out).replace(R.id.root_fragment, searchFragment, "TAG").commit();
+                fragmentManager.saveFragmentInstanceState(RootFragment.this);
+                fragmentManager.beginTransaction().setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out).addToBackStack("frag").replace(R.id.root_fragment, searchFragment, "TAG").commit();
 
             }
         });
@@ -146,4 +153,27 @@ public class RootFragment extends Fragment {
         });
 
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        if (id == R.id.action_recan) {
+            new SongController(getActivity()).deleteAllSong();
+            new SongScaner(getActivity()).scan();
+
+            //mLvAdapter.addAll(new SongController(this).getAllSongs());
+            //mLvAdapter.notifyDataSetChanged();
+        }
+        if (id == R.id.action_exit) {
+            getActivity().finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 }

@@ -14,44 +14,19 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
             <EditText
                 android:id="@+id/inputSearch"
                 android:layout_width="fill_parent"
+                android:imeOptions="actionSearch"
+                android:singleLine="true"
+                android:inputType="text"
                 android:layout_height="wrap_content"
                 android:drawableRight="@android:drawable/ic_menu_search"
                 android:hint="Search..." />
-            <TextView
-                android:background="@color/white"
-                android:text="Albums"
-                android:textStyle="bold"
-                android:paddingLeft="10dp"
-                android:textAlignment="textStart"
-                android:layout_width="match_parent"
-                android:layout_height="40dp" />
-
-            <ListView
-                android:id="@+id/lv_albums_search_result"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            </ListView>
-
-            <TextView
-                android:background="@color/white"
-                android:text="Artists"
-                android:textStyle="bold"
-                android:paddingLeft="10dp"
-                android:textAlignment="textStart"
-                android:layout_width="match_parent"
-                android:layout_height="40dp" />
-
-            <ListView
-                android:id="@+id/lv_albums_artist_result"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            </ListView>
-
             <TextView
                 android:background="@color/white"
                 android:text="Songs"
@@ -60,11 +35,11 @@
                 android:textAlignment="textStart"
                 android:layout_width="match_parent"
                 android:layout_height="40dp" />
-
+            </LinearLayout>
             <ListView
                 android:id="@+id/lv_songs_search"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
             </ListView>
 
