@@ -53,6 +53,7 @@ import player.project.com.musicplayer.Dialog.TimerDialog;
 import player.project.com.musicplayer.Fragments.AlbumFragment;
 import player.project.com.musicplayer.Fragments.ArtistFragment;
 import player.project.com.musicplayer.Fragments.PlaylistFragment;
+import player.project.com.musicplayer.Fragments.RootFragment;
 import player.project.com.musicplayer.Fragments.SearchFragment;
 import player.project.com.musicplayer.Fragments.SongListFragment;
 import player.project.com.musicplayer.R;
@@ -92,8 +93,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Toolbar toolbar;
     long duration;
     Song currentSong;
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
+    //  private TabLayout tabLayout;
+    // private ViewPager viewPager;
     private SlidingUpPanelLayout mLayout;
     // ONCREATE
 
@@ -108,9 +109,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         setContentView(R.layout.activity_main);
 
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        //      toolbar = findViewById(R.id.toolbar);
+        //       setSupportActionBar(toolbar);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         //
         drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -120,7 +121,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        //
+        Fragment rootFragment = new RootFragment();
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        //tabLayout.setVisibility(View.GONE);
+        fragmentManager.beginTransaction().setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out).replace(R.id.root_fragment, rootFragment, "TAG").commit();
+
+        /*
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -161,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
         });
-
+*/
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
 
         mLideUpListener = new SlidingUpPanelLayout.PanelSlideListener() {
@@ -420,84 +426,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         viewPager.setAdapter(adapter);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
-        // Retrieve the SearchView and plug it into SearchManager
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setQueryHint("Search");
-
-        searchView.setOnSearchClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Fragment searchFragment = new SearchFragment();
-                android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-                tabLayout.setVisibility(View.GONE);
-                fragmentManager.beginTransaction().replace(R.id.viewpager, searchFragment, "TAG").commit();
-            }
-        });
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                // use this method when query submitted
-
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                // use this method for auto complete search process
-                return false;
-            }
-
-
-        });
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        if (id == R.id.action_recan) {
-            new SongController(this).deleteAllSong();
-            new SongScaner(this).scan();
-
-            //mLvAdapter.addAll(new SongController(this).getAllSongs());
-            //mLvAdapter.notifyDataSetChanged();
-        }
-        if (id == R.id.action_exit) {
-            finish();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-            return;
-        }
-        if (mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
-            mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-
-        }
-        tabLayout.setVisibility(View.VISIBLE);
-
-    }
-
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -565,6 +493,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        getSupportFragmentManager().popBackStack();
     }
 
     @Override

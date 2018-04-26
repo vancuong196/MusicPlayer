@@ -38,11 +38,18 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <FrameLayout
+                android:id="@+id/root_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </FrameLayout>
+            <!--
             <include
                 layout="@layout/content_main"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
-
+-->
         </LinearLayout>
 
         <RelativeLayout
