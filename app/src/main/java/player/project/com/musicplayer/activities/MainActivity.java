@@ -24,8 +24,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -75,13 +78,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     CircleImageView coverArt;
     TextView tvSongNameWidget;
     TextView tvSingerNameWidget;
-    SeekBar progressBar;
+    SeekBar mainSeekBar;
+    SeekBar widgetSeekBar;
     TextView tvDuration;
     TextView tvTimer;
     TextView tvCurrentTime;
     TextView tvSongName;
     TextView tvSingerName;
-    public DrawerLayout drawer;
     ListView mLvSongs;
     PendingSongListAdapter mLvAdapter;
     SlidingUpPanelLayout.PanelSlideListener mLideUpListener;
@@ -92,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // private ViewPager viewPager;
     private SlidingUpPanelLayout mLayout;
     // ONCREATE
-
+    boolean isGrandtedPermission = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 requestForPermission();
             }
         }
-        setContentView(R.layout.content_main);
+        setContentView(R.layout.activity_main);
 
         //      toolbar = findViewById(R.id.toolbar);
         //       setSupportActionBar(toolbar);
@@ -160,7 +163,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 */
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
-
         mLideUpListener = new SlidingUpPanelLayout.PanelSlideListener() {
             float previous = 0;
             boolean isup = false;
@@ -223,13 +225,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
-                //   Log.i(TAG, "onPanelStateChanged " + newState);
-                // mLayout.setDragView(findViewById(R.layout.song_list1));
 
             }
         };
+
         playerUiInit();
+
         setMiniWidgetVisible(false);
+
         if (new SongController(getApplicationContext()).count() == 0) {
             new SongScaner(this).scan();
 
@@ -268,6 +271,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Toast.makeText(this, "This application need READ_EXTERNAL_STORAGE permission to work correctly!", Toast.LENGTH_LONG).show();
                 finish();
             }
+
         } else {
 
 
@@ -289,7 +293,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 // Updating progress bar
                 int progress = (int) (Ultility.getProgressPercentage(currentDuration, totalDuration));
                 //Log.d("Progress", ""+progress);
-                progressBar.setProgress(progress);
+                mainSeekBar.setProgress(progress);
+                widgetSeekBar.setProgress(progress);
 
 
             }
@@ -344,9 +349,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         final float scale = this.getResources().getDisplayMetrics().density;
         int pixels = (int) (60 * scale + 0.5f);
         if (b) {
+            FrameLayout layout = findViewById(R.id.root_fragment);
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) layout.getLayoutParams();
+            params.setMargins(0, 0, 0, pixels);
+            layout.setLayoutParams(params);
             mLayout.setPanelHeight(pixels);
             mLayout.addPanelSlideListener(mLideUpListener);
+
         } else {
+
+            FrameLayout layout = findViewById(R.id.root_fragment);
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) layout.getLayoutParams();
+            params.setMargins(0, 0, 0, 0);
+            layout.setLayoutParams(params);
             mLayout.setPanelHeight(0);
             mLayout.removePanelSlideListener(mLideUpListener);
         }
@@ -379,7 +394,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
             btnShuffle.setImageResource(R.drawable.shuffle);
         }
-        progressBar = findViewById(R.id.skb_progress);
+        mainSeekBar = findViewById(R.id.skb_progress);
+        widgetSeekBar = findViewById(R.id.mini_player_widget_skb);
         tvDuration = findViewById(R.id.tv_duration);
         tvCurrentTime = findViewById(R.id.tv_current_time);
         tvSongName = findViewById(R.id.tv_song_name);
@@ -395,7 +411,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         btnPrev.setOnClickListener(this);
         btnShuffle.setOnClickListener(this);
         btnRepeat.setOnClickListener(this);
-        progressBar.setOnSeekBarChangeListener(this);
+        mainSeekBar.setOnSeekBarChangeListener(this);
         // register recieve
         IntentFilter filter = new IntentFilter();
         filter.addAction(Constant.BROADCAST_MEDIA_PLAYER_STATE_CHANGED);
@@ -403,18 +419,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         filter.addAction(Constant.BROADCAST_CURRENT_PLAY_TIME);
         filter.addAction(Constant.BROADCAST_TIMER);
         registerReceiver(receiver, filter);
-    }
-
-
-    private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new SongListFragment(), "");
-        adapter.addFragment(new PlaylistFragment(), "");
-        adapter.addFragment(new ArtistFragment(), "");
-        adapter.addFragment(new AlbumFragment(), "");
-
-
-        viewPager.setAdapter(adapter);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

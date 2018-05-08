@@ -1,16 +1,18 @@
 package player.project.com.musicplayer.models;
 
+import java.io.Serializable;
+
 /**
  * Created by Cuong on 5/7/2018.
  */
 
-public class OnlinePlaylist {
+public class OnlineAlbum implements Serializable {
     String tittle;
     String decription;
     String numberOfSong;
     String type;
 
-    public OnlinePlaylist() {
+    public OnlineAlbum() {
     }
 
     public String getTittle() {
@@ -18,7 +20,7 @@ public class OnlinePlaylist {
         return tittle;
     }
 
-    public OnlinePlaylist(String tittle, String decription, String numberOfSong, String type) {
+    public OnlineAlbum(String tittle, String decription, String numberOfSong, String type) {
         this.tittle = tittle;
         this.decription = decription;
         this.numberOfSong = numberOfSong;
@@ -56,7 +58,7 @@ public class OnlinePlaylist {
 
     @Override
     public String toString() {
-        return "OnlinePlaylist{" +
+        return "OnlineAlbum{" +
                 "tittle='" + tittle + '\'' +
                 ", decription='" + decription + '\'' +
                 ", numberOfSong='" + numberOfSong + '\'' +

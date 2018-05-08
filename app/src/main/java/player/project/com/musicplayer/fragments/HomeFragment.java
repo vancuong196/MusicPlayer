@@ -1,48 +1,32 @@
 package player.project.com.musicplayer.fragments;
 
 
-import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Rect;
-import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
-import player.project.com.musicplayer.activities.MainActivity;
-import player.project.com.musicplayer.controllers.SongController;
-import player.project.com.musicplayer.customadapter.AlbumListViewAdapter;
 import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.customadapter.OnlineAlbumListAdapter;
-import player.project.com.musicplayer.models.Albumt;
-import player.project.com.musicplayer.models.OnlinePlaylist;
-import player.project.com.musicplayer.service.PlayerService;
-import player.project.com.musicplayer.ultilities.Constant;
-import player.project.com.musicplayer.models.Album;
+import player.project.com.musicplayer.models.OnlineAlbum;
 import player.project.com.musicplayer.ultilities.XmlParser;
 
 
@@ -54,8 +38,8 @@ public class HomeFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private OnlineAlbumListAdapter adapter;
-    private ArrayList<OnlinePlaylist> albumList;
-
+    private ArrayList<OnlineAlbum> albumList;
+    private ProgressBar prgStatus;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -72,7 +56,7 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
+        prgStatus = view.findViewById(R.id.prg_status);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         albumList = new ArrayList<>();
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 1);
@@ -115,7 +99,7 @@ public class HomeFragment extends Fragment {
     private class FetchOnlinePlaylistTask extends AsyncTask<Void, Void, Boolean> {
 
 
-        ArrayList<OnlinePlaylist> list;
+        ArrayList<OnlineAlbum> list;
 
         @Override
         protected void onPreExecute() {
@@ -124,6 +108,7 @@ public class HomeFragment extends Fragment {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
+            prgStatus.setVisibility(View.VISIBLE);
             URL url = null;
             try {
                 url = new URL(INDEX_URL);
@@ -149,8 +134,9 @@ public class HomeFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Boolean success) {
-
+            prgStatus.setVisibility(View.GONE);
             if (success) {
+
                 albumList = list;
                 System.out.println(list);
                 adapter = new OnlineAlbumListAdapter(getContext(), albumList);
@@ -208,7 +194,7 @@ import player.project.com.musicplayer.customadapter.AlbumListViewAdapter;
 import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.customadapter.OnlineAlbumListAdapter;
 import player.project.com.musicplayer.models.Albumt;
-import player.project.com.musicplayer.models.OnlinePlaylist;
+import player.project.com.musicplayer.models.OnlineAlbum;
 import player.project.com.musicplayer.service.PlayerService;
 import player.project.com.musicplayer.ultilities.Constant;
 import player.project.com.musicplayer.models.Album;
@@ -221,7 +207,7 @@ public class HomeFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private OnlineAlbumListAdapter adapter;
-    private ArrayList<OnlinePlaylist> albumList;
+    private ArrayList<OnlineAlbum> albumList;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -311,7 +297,7 @@ public class HomeFragment extends Fragment {
     private class FetchFeedTask extends AsyncTask<Void, Void, Boolean> {
 
 
-        ArrayList<OnlinePlaylist> list;
+        ArrayList<OnlineAlbum> list;
         @Override
         protected void onPreExecute() {
 

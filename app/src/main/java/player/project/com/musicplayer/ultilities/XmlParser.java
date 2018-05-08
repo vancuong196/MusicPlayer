@@ -9,9 +9,8 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
-import player.project.com.musicplayer.models.OnlinePlaylist;
+import player.project.com.musicplayer.models.OnlineAlbum;
 
 /**
  * Created by Cuong on 5/7/2018.
@@ -19,7 +18,7 @@ import player.project.com.musicplayer.models.OnlinePlaylist;
 
 public class XmlParser {
 
-    public ArrayList<OnlinePlaylist> parsePlayList(InputStream inputStream) throws XmlPullParserException,
+    public ArrayList<OnlineAlbum> parsePlayList(InputStream inputStream) throws XmlPullParserException,
             IOException {
         String title = null;
         String link = null;
@@ -27,7 +26,7 @@ public class XmlParser {
         String type = null;
         String description = null;
         boolean isItem = false;
-        ArrayList<OnlinePlaylist> items = new ArrayList<>();
+        ArrayList<OnlineAlbum> items = new ArrayList<>();
 
         try {
             XmlPullParser xmlPullParser = Xml.newPullParser();
@@ -80,7 +79,7 @@ public class XmlParser {
                 if (title != null && link != null && description != null && numberOfSong != null && type != null) {
                     System.out.println("debug" + isItem);
                     if (isItem) {
-                        OnlinePlaylist item = new OnlinePlaylist(title, description, numberOfSong, type);
+                        OnlineAlbum item = new OnlineAlbum(title, description, numberOfSong, type);
                         items.add(item);
                     }
 
