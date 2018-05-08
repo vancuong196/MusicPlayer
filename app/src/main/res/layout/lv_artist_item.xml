@@ -15,12 +15,12 @@
         <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/img_atist_logo"
             android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="10dp"
+            android:layout_width="@dimen/lv_artist_img_artist_height"
+            android:layout_height="@dimen/lv_artist_img_artist_weight"
+            android:layout_marginLeft="@dimen/lv_artist_img_artist_margin_left"
             android:src="@drawable/ic_music"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginTop="@dimen/lv_artist_img_margin_top"
+            android:layout_marginBottom="@dimen/lv_artist_img_margin_bot" />
 
         <LinearLayout
             android:layout_weight="4"
@@ -28,22 +28,22 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center"
-            android:paddingLeft="20dp">
+            android:paddingLeft="@dimen/lv_artist_layout_detail_padding_left">
 
             <TextView
                 android:id="@+id/tv_artist_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/textblue"
-                android:textSize="13dp"
+                android:textSize="@dimen/lv_artist_tv_artist_name_size"
                 android:text="Passenger" />
 
             <TextView
                 android:id="@+id/tv_artist_detail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:textSize="11dp"
+                android:layout_marginTop="@dimen/lv_artist_tv_artist_deatail_margin_top"
+                android:textSize="@dimen/lv_artist_tv_artist_detail_size"
                 android:text="10 songs | 1 album" />
 
         </LinearLayout>
@@ -51,7 +51,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/lv_artist_line_height"
         android:background="@color/Viewline" />
 
 

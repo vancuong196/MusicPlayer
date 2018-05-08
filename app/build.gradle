@@ -9,6 +9,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
     }
     buildTypes {
         release {
@@ -18,12 +19,13 @@ android {
     }
 }
 
+
 dependencies {
     repositories {
         mavenCentral()
+        google()
     }
-    compile 'com.sothree.slidinguppanel:library:3.4.0'
-    compile 'de.hdodenhof:circleimageview:2.2.0'
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
@@ -35,5 +37,11 @@ dependencies {
     implementation 'com.android.support:design:26.1.0'
     implementation 'com.android.support:recyclerview-v7:26.1.0'
     implementation 'com.android.support:cardview-v7:26.1.0'
-    //implementation files('libs/YouTubeAndroidPlayerApi.jar')
+    implementation files('libs/glide-full-4.7.0.jar')
+    //image cache
+
+    //slideup panel
+    compile 'com.sothree.slidinguppanel:library:3.4.0'
+    //circel imageview
+    compile 'de.hdodenhof:circleimageview:2.2.0'
 }

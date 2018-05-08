@@ -18,11 +18,11 @@
             android:id="@+id/logo_widget"
             android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="10dp"
+            android:layout_height="@dimen/mini_player_cimg_height"
+            android:layout_marginLeft="@dimen/mini_player_cimg_margin_left"
             android:src="@drawable/ic_music"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp" />
+            android:layout_marginTop="@dimen/mini_player_cimg_margin_top"
+            android:layout_marginBottom="@dimen/mini_player_cimg_margin_bot" />
 
         <LinearLayout
             android:layout_weight="4"
@@ -30,7 +30,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center"
-            android:paddingLeft="20dp">
+            android:paddingLeft="@dimen/mini_player_layout_padding_left">
 
             <TextView
                 android:id="@+id/song_name_widget"
@@ -38,7 +38,7 @@
                 android:singleLine="true"
                 android:layout_height="wrap_content"
                 android:textColor="@color/textblue"
-                android:textSize="13dp"
+                android:textSize="@dimen/mini_player_tv_song_name_size"
                 android:text="" />
 
             <TextView
@@ -46,8 +46,8 @@
                 android:id="@+id/singer_name_widget"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:textSize="11dp"
+                android:layout_marginTop="@dimen/mini_player_tv_singer_name_margin_top"
+                android:textSize="@dimen/mini_player_tv_singer_name_size"
                 android:text="" />
 
 

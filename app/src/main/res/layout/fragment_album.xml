@@ -5,11 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/fragmentBackgroundColor"
-    tools:context="player.project.com.musicplayer.Fragments.AlbumFragment">
+    tools:context="player.project.com.musicplayer.fragments.AlbumFragment">
 
     <GridView
-        android:layout_margin="10dp"
+        android:layout_margin="@dimen/fragment_album_grip_view_margin_top"
         android:numColumns="2"
         android:id="@+id/lv_albums"
         android:layout_width="match_parent"

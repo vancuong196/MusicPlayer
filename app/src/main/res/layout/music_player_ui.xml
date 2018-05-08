@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.MainActivity">
+    tools:context=".activities.MainActivity">
 
 
     <LinearLayout
@@ -16,7 +16,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="260dp"
+            android:layout_height="@dimen/music_player_ui_layout_height"
             android:background="@drawable/background"
             android:orientation="vertical">
 
@@ -26,46 +26,46 @@
                 android:id="@+id/tv_song_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="@dimen/music_player_ui_tv_song_name_margin_top"
                 android:singleLine="true"
-                android:paddingLeft="28dp"
-                android:paddingTop="20dp"
+                android:paddingLeft="@dimen/music_player_ui_tv_song_name_margin_left"
+                android:paddingTop="@dimen/music_player_ui_tv_song_name_padding_top"
                 android:text="Look What You Made Me Do"
                 android:textColor="#ffffff"
-                android:textSize="20dp" />
+                android:textSize="@dimen/music_player_ui_tv_song_name_size" />
 
             <TextView
-                android:paddingTop="8dp"
+                android:paddingTop="@dimen/music_player_ui_tv_singer_name_padding_top"
                 android:id="@+id/tv_singer_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:paddingLeft="28dp"
+                android:layout_marginTop="@dimen/music_player_ui_tv_singer_name_margin_top"
+                android:paddingLeft="@dimen/music_player_ui_tv_singer_name_margin_left"
                 android:text="Taylor Swift"
                 android:singleLine="true"
-                android:textColor="#ffffff"
-                android:textSize="13dp" />
+                android:textColor="@color/white_color"
+                android:textSize="@dimen/music_player_ui_tv_singer_name_size" />
 
 
             <SeekBar
-                android:paddingTop="15dp"
+                android:paddingTop="@dimen/music_player_ui_seekbar_padding_top"
                 android:id="@+id/skb_progress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginLeft="@dimen/music_player_ui_seekbar_margin_left"
+                android:layout_marginRight="@dimen/music_player_ui_seekbar_margin_right"
+                android:layout_marginTop="@dimen/music_player_ui_seekbar_margin_top"
                 android:progressBackgroundTint="@color/white"
                 android:theme="@style/MySeekBarTheme" />
 
             <LinearLayout
-                android:paddingTop="5dp"
+                android:paddingTop="@dimen/music_ui_layout_bot_padding_top"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:layout_marginLeft="7dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginTop="3dp"
+                android:layout_marginBottom="@dimen/music_ui_layout_bot_margin_bot"
+                android:layout_marginLeft="@dimen/music_ui_layout_bot_margin_left"
+                android:layout_marginRight="@dimen/music_ui_layout_bot_margin_right"
+                android:layout_marginTop="@dimen/music_ui_layout_bot_margin_top"
                 android:orientation="horizontal">
 
                 <TextView
@@ -73,10 +73,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:paddingLeft="26dp"
+                    android:paddingLeft="@dimen/music_ui_tv_current_time_padding_leff"
                     android:text="1:58"
-                    android:textColor="#ffffff"
-                    android:textSize="10dp" />
+                    android:textColor="@color/white_color"
+                    android:textSize="@dimen/music_ui_tv_current_time_size" />
 
                 <TextView
                     android:id="@+id/tv_duration"
@@ -84,10 +84,10 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="end"
-                    android:paddingRight="26dp"
+                    android:paddingRight="@dimen/music_ui_tv_duration_padding_left"
                     android:text="3:12"
-                    android:textColor="#ffffff"
-                    android:textSize="10dp" />
+                    android:textColor="@color/white_color"
+                    android:textSize="@dimen/music_ui_tv_duration_size" />
             </LinearLayout>
         </LinearLayout>
 

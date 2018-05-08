@@ -15,16 +15,16 @@
             android:layout_weight="2"
             android:layout_gravity="center"
             android:id="@+id/btn_alarm"
-            android:layout_width="25dp"
+            android:layout_width="@dimen/music_player_toolbar_img_button_width"
             android:scaleType="fitXY"
-            android:layout_height="25dp"
+            android:layout_height="@dimen/music_player_toolbar_img_button_layout_height"
             android:src="@drawable/alarm" />
 
         <TextView
-            android:textColor="#ffffff"
+            android:textColor="@color/white_color"
             android:gravity="center"
-            android:textSize="15dp"
-            android:paddingLeft="10dp"
+            android:textSize="@dimen/music_player_toolbar_img_tv_timer_size"
+            android:paddingLeft="@dimen/music_player_toolbar_img_tv_timer_left"
             android:layout_toRightOf="@id/btn_alarm"
             android:id="@+id/tv_timer"
             android:text=""
@@ -34,12 +34,12 @@
         <ImageButton
             android:background="@android:color/transparent"
             android:id="@+id/btn_menu"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="@dimen/music_player_toolbar_img_img_btn_menu_witdh"
+            android:layout_height="@dimen/music_player_toolbar_img_img_btn_menu_height"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             android:layout_gravity="center"
-            android:layout_marginEnd="14dp"
+            android:layout_marginEnd="@dimen/music_player_toolbar_img_img_btn_menu_margin_end"
             android:layout_weight="2"
             android:src="@drawable/ic_lyric" />
 

@@ -2,14 +2,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fragmentBackgroundColor"
-    tools:context="player.project.com.musicplayer.Fragments.SearchFragment">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    tools:context="player.project.com.musicplayer.fragments.SearchFragment">
 
-        <LinearLayout
+
+    <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -26,24 +23,25 @@
                 android:inputType="text"
                 android:layout_height="wrap_content"
                 android:drawableRight="@android:drawable/ic_menu_search"
-                android:hint="Search..." />
+                android:hint="Type to search..." />
             <TextView
                 android:background="@color/white"
                 android:text="Songs"
                 android:textStyle="bold"
-                android:paddingLeft="10dp"
+                android:paddingLeft="@dimen/fragment_search_tv_song_padding_left"
                 android:textAlignment="textStart"
                 android:layout_width="match_parent"
-                android:layout_height="40dp" />
+                android:layout_height="@dimen/fragment_search_tv_song_layout_height" />
             </LinearLayout>
-            <ListView
+
+        <android.support.v7.widget.RecyclerView
                 android:id="@+id/lv_songs_search"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-            </ListView>
+        </android.support.v7.widget.RecyclerView>
 
         </LinearLayout>
-    </ScrollView>
+
 
 </FrameLayout>

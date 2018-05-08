@@ -13,7 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.MainActivity">
+        <activity android:name=".activities.MainActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,12 +23,12 @@
         </activity>
 
         <service
-            android:name=".Service.PlayerService"
+            android:name=".service.PlayerService"
             android:enabled="true"
             android:exported="true"
             android:process=":media" />
 
-        <activity android:name=".Dialog.LyricDialog"></activity>
+        <activity android:name=".dialogs.LyricDialog"></activity>
     </application>
 
 </manifest>

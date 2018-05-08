@@ -16,11 +16,11 @@
             android:id="@+id/logo"
             android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="10dp"
+            android:layout_height="@dimen/lv_song_item_img_music_height"
+            android:layout_marginLeft="@dimen/lv_song_item_img_music_margin_left"
             android:src="@drawable/ic_music"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginTop="@dimen/lv_song_item_img_music_margin_top"
+            android:layout_marginBottom="@dimen/lv_song_item_img_music_margin_bot" />
 
         <LinearLayout
             android:layout_weight="4"
@@ -28,22 +28,22 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center"
-            android:paddingLeft="20dp">
+            android:paddingLeft="@dimen/lv_song_item_layout_margin_left">
 
             <TextView
                 android:id="@+id/song_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/textblue"
-                android:textSize="13dp"
+                android:textSize="@dimen/lv_song_tv_song_name_size"
                 android:text="Clean Bendit - Symponi ft. Zavra" />
 
             <TextView
                 android:id="@+id/singer_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:textSize="11dp"
+                android:layout_marginTop="@dimen/lv_song_item_tv_singer_name_margin_top"
+                android:textSize="@dimen/lv_song_tv_singer_name_size"
                 android:text="Music category - Pop" />
 
 

@@ -15,18 +15,18 @@
 
         <TextView
             android:id="@+id/tv_dialog_time"
-            android:textSize="25dp"
+            android:textSize="@dimen/songlist_item_tv_dialog_time_size"
             android:text="0 minute"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <SeekBar
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
+            android:layout_marginLeft="@dimen/songlist_item_seekbar_margin_left"
+            android:layout_marginRight="@dimen/songlist_item_seekbar_margin_right"
             android:id="@+id/skb_timer"
             android:layout_gravity="center"
-            android:paddingTop="25dp"
-            android:paddingBottom="25dp"
+            android:paddingTop="@dimen/songlist_item_seekbar_padding_top"
+            android:paddingBottom="@dimen/songlist_item_seekbar_padding_bot"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="10"
-    tools:context="player.project.com.musicplayer.PlayerActivity">
+    tools:context=".activities.MainActivity">
     <!--
         <RelativeLayout
             android:layout_width="match_parent"

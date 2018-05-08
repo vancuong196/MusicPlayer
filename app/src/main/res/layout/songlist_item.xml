@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:padding="3dip"
         android:layout_alignParentLeft="true"
-        android:background="#ffffff"
+        android:background="@color/white_color"
         android:layout_marginRight="5dip">
 
         <ImageView
