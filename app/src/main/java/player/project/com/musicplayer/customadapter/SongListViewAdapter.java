@@ -70,13 +70,19 @@ public class SongListViewAdapter extends RecyclerView.Adapter<SongListViewAdapte
         holder.line.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                System.out.println("debug-");
                 Intent myIntent = new Intent(mContext, PlayerService.class);
+                System.out.println("debug--");
                 myIntent.setAction(Constant.ACTION_SONG_CHANGE);
+                System.out.println("debug---");
                 myIntent.putExtra(Constant.SONG_LIST_EX, dataSet);
+                System.out.println("debug----");
                 myIntent.putExtra(Constant.SONG_POSTON_EX, pos);
                 ((MainActivity) mContext).setMiniWidgetVisible(true);
                 ((MainActivity) mContext).pendSongListInit(dataSet);
+                System.out.println("debug-----");
                 mContext.startService(myIntent);
+                System.out.println("debug------");
             }
         });
         String path = song.getPath();

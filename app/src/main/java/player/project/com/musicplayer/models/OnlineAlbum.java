@@ -11,6 +11,8 @@ public class OnlineAlbum implements Serializable {
     String decription;
     String numberOfSong;
     String type;
+    String link;
+    String imageLink;
 
     public OnlineAlbum() {
     }
@@ -20,16 +22,36 @@ public class OnlineAlbum implements Serializable {
         return tittle;
     }
 
-    public OnlineAlbum(String tittle, String decription, String numberOfSong, String type) {
+    public OnlineAlbum(String tittle, String decription, String numberOfSong, String type, String link, String imageLink) {
         this.tittle = tittle;
         this.decription = decription;
         this.numberOfSong = numberOfSong;
         this.type = type;
+        this.link = link;
+        this.imageLink = imageLink;
     }
+
+    public String getLink() {
+
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
 
     public void setTittle(String tittle) {
 
         this.tittle = tittle;
+    }
+
+    public String getImageLink() {
+        return imageLink;
+    }
+
+    public void setImageLink(String imageLink) {
+        this.imageLink = imageLink;
     }
 
     public String getDecription() {

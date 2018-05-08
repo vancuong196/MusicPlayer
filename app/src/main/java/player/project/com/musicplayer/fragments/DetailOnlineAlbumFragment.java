@@ -2,6 +2,7 @@ package player.project.com.musicplayer.fragments;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -16,15 +17,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.activities.MainActivity;
+import player.project.com.musicplayer.customadapter.OnlineAlbumListAdapter;
 import player.project.com.musicplayer.customadapter.SongListViewAdapter;
 import player.project.com.musicplayer.models.OnlineAlbum;
 import player.project.com.musicplayer.models.Song;
 import player.project.com.musicplayer.ultilities.Ultility;
+import player.project.com.musicplayer.ultilities.XmlParser;
 
 /**
  * Created by Cuong on 5/3/2018.
@@ -38,8 +45,7 @@ public class DetailOnlineAlbumFragment extends Fragment {
     TextView tvNumberOfSong;
     TextView tvArtistName;
     ImageView imgCover;
-    String albumName;
-
+    OnlineAlbum onlineAlbum;
     public DetailOnlineAlbumFragment() {
         // Required empty public constructor
     }
@@ -76,7 +82,7 @@ public class DetailOnlineAlbumFragment extends Fragment {
         mLvSongs = view.findViewById(R.id.lv_songs);
 
         Bundle args = getArguments();
-        OnlineAlbum onlineAlbum = (OnlineAlbum) args.getSerializable("album");
+        onlineAlbum = (OnlineAlbum) args.getSerializable("album");
 
         tvAlbumName.setText(onlineAlbum.getTittle());
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
@@ -104,6 +110,7 @@ public class DetailOnlineAlbumFragment extends Fragment {
             }
         });*/
         mLvSongs.setAdapter(mLvAdapter);
+        prepareAlbums();
         super.onViewCreated(view, savedInstanceState);
 
 
@@ -128,7 +135,7 @@ public class DetailOnlineAlbumFragment extends Fragment {
                     scrollRange = appBarLayout.getTotalScrollRange();
                 }
                 if (scrollRange + verticalOffset == 0) {
-                    collapsingToolbar.setTitle("Album: " + albumName);
+                    collapsingToolbar.setTitle("Album: " + onlineAlbum.getTittle());
                     isShow = true;
                 } else if (isShow) {
                     collapsingToolbar.setTitle(" ");
@@ -138,6 +145,51 @@ public class DetailOnlineAlbumFragment extends Fragment {
         });
     }
 
+    private void prepareAlbums() {
+        new FetchOnlineAlbumTask().execute((Void) null);
+    }
+
+    private class FetchOnlineAlbumTask extends AsyncTask<Void, Void, Boolean> {
+
+
+        ArrayList<OnlineAlbum> list;
+
+        @Override
+        protected void onPreExecute() {
+
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            //prgStatus.setVisibility(View.VISIBLE);
+            URL url = null;
+            try {
+                url = new URL(onlineAlbum.getLink());
+                InputStream inputStream = url.openConnection().getInputStream();
+                data = new XmlParser().parseSongList(inputStream);
+                return true;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                return false;
+            } catch (Exception e) {
+                System.out.println(e);
+                return false;
+            }
+
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            //prgStatus.setVisibility(View.GONE);
+            if (success) {
+
+                mLvAdapter = new SongListViewAdapter(data, getContext());
+                mLvSongs.setAdapter(mLvAdapter);
+            } else {
+                Toast.makeText(getActivity(), "Cannot load online content, please try again later", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
     private int dpToPx(int dp) {
         Resources r = getResources();
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));

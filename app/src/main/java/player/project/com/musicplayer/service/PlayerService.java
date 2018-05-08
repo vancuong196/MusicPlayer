@@ -9,6 +9,7 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -35,6 +36,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     boolean isTimerSet = false;
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d("debug------", "-----------------");
         if (intent != null) {
             String actionCode = intent.getAction();
             if (actionCode == Constant.ACTION_UPDATE_TIMER) {
@@ -75,9 +77,11 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 play(postion);
 
             } else if (actionCode == Constant.ACTION_SONG_CHANGE) {
+
                 playedList = new ArrayList<>();
                 mPlayList = (ArrayList<Song>) intent.getSerializableExtra(Constant.SONG_LIST_EX);
                 int postion = intent.getIntExtra(Constant.SONG_POSTON_EX, 0);
+
                 play(postion);
             } else if (actionCode == Constant.ACTION_NEXT) {
                 next();
@@ -124,6 +128,8 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         }
 
         try {
+            System.out.println("preparing to play----------------");
+            System.out.println(mPlayList.get(postion).getPath());
             mMediaPlayer.setDataSource(mPlayList.get(postion).getPath());
         } catch (IOException e) {
             e.printStackTrace();

@@ -15,7 +15,16 @@ public class Song implements Serializable {
     private String artist;
     private String album;
     private String path;
+    private String coverPath;
     private int songId;
+
+    public String getCoverPath() {
+        return coverPath;
+    }
+
+    public void setCoverPath(String coverPath) {
+        this.coverPath = coverPath;
+    }
 
     public Song(String songName, String singerName, String album, String duration, String path) {
         this.songName = songName;
