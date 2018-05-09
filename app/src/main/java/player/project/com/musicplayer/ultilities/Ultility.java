@@ -7,7 +7,12 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
 import player.project.com.musicplayer.R;
+import player.project.com.musicplayer.models.Song;
 
 /**
  * Created by Cuong on 3/4/2018.
@@ -111,5 +116,31 @@ public class Ultility {
                 return null;
             }
         }
+    }
+
+    public static ArrayList<Song> randomSongListMaker(ArrayList<Song> songs, int postion) {
+        ArrayList<Song> cSongs = (ArrayList<Song>) songs.clone();
+        if (postion != -1) {
+            Song currentItem = cSongs.get(postion);
+            cSongs.remove(postion);
+            Collections.shuffle(cSongs);
+            cSongs.add(0, currentItem);
+            return cSongs;
+        } else {
+            Collections.shuffle(cSongs);
+            return cSongs;
+        }
+
+    }
+
+    public static void sortSongList(ArrayList<Song> songs) {
+        // Sorting
+        Collections.sort(songs, new Comparator<Song>() {
+            @Override
+            public int compare(Song song1, Song song2) {
+
+                return song1.getSongName().toLowerCase().compareTo(song2.getSongName().toLowerCase());
+            }
+        });
     }
 }

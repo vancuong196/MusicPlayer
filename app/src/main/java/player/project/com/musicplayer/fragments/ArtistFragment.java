@@ -63,8 +63,6 @@ public class ArtistFragment extends Fragment {
                 myIntent.setAction(Constant.ACTION_SONG_CHANGE);
                 myIntent.putExtra(Constant.SONG_LIST_EX, songs);
                 myIntent.putExtra(Constant.SONG_POSTON_EX, 0);
-                ((MainActivity) getActivity()).setMiniWidgetVisible(true);
-                ((MainActivity) getActivity()).pendSongListInit(songs);
                 getActivity().startService(myIntent);
             }
         });

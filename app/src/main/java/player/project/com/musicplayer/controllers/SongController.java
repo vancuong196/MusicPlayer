@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import player.project.com.musicplayer.models.Album;
 import player.project.com.musicplayer.models.Artist;
 import player.project.com.musicplayer.models.Song;
+import player.project.com.musicplayer.ultilities.Ultility;
 
 
 /**
@@ -113,6 +114,7 @@ public class SongController extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         db.close();
+        Ultility.sortSongList(songs);
         return songs;
     }
 
@@ -202,6 +204,7 @@ public class SongController extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         db.close();
+        Ultility.sortSongList(songs);
         return songs;
     }
 
@@ -226,6 +229,7 @@ public class SongController extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         db.close();
+        Ultility.sortSongList(songs);
         return songs;
     }
 

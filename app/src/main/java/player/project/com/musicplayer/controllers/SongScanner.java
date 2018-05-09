@@ -8,29 +8,37 @@ import android.content.Context;
 import android.media.MediaMetadataRetriever;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 
+import player.project.com.musicplayer.activities.MainActivity;
 import player.project.com.musicplayer.models.Song;
-public class SongScaner {
+
+public class SongScanner {
 
 
     // SDCard Path
     final String MEDIA_PATH_IN = Environment.getExternalStorageDirectory().getPath();
+    File[] list;
     private ArrayList<Song> songsList = new ArrayList<Song>();
     Context mContext;
     SongController songController;
     // Constructor
 
-    public SongScaner(@NonNull Context context) {
+    public SongScanner(@NonNull Context context) {
         mContext = context;
+        list = mContext.getExternalFilesDirs(null);
         songController = new SongController(mContext);
     }
 
     public void scan() {
-        scanPath(MEDIA_PATH_IN);
+        for (int i = 0; i < list.length; i++) {
+            System.out.println("Path----------------" + list[i].getParentFile().getParentFile().getParentFile().getParentFile().getPath());
+            scanPath(list[i].getParentFile().getParentFile().getParentFile().getParentFile().getPath());
+        }
     }
     /**
      * Function to read all mp3 files from sdcard

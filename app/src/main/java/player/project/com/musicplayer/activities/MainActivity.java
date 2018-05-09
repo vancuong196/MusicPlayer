@@ -1,37 +1,27 @@
 package player.project.com.musicplayer.activities;
 
-import android.Manifest;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.TranslateAnimation;
-import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,17 +33,11 @@ import java.util.ArrayList;
 import de.hdodenhof.circleimageview.CircleImageView;
 import player.project.com.musicplayer.controllers.SettingManager;
 import player.project.com.musicplayer.controllers.SongController;
-import player.project.com.musicplayer.controllers.SongScaner;
+import player.project.com.musicplayer.controllers.SongScanner;
 import player.project.com.musicplayer.customadapter.PendingSongListAdapter;
-import player.project.com.musicplayer.customadapter.ViewPagerAdapter;
 import player.project.com.musicplayer.dialogs.LyricDialog;
 import player.project.com.musicplayer.dialogs.TimerDialog;
-import player.project.com.musicplayer.fragments.AlbumFragment;
-import player.project.com.musicplayer.fragments.ArtistFragment;
-import player.project.com.musicplayer.fragments.HomeFragment;
-import player.project.com.musicplayer.fragments.PlaylistFragment;
 import player.project.com.musicplayer.fragments.RootFragment;
-import player.project.com.musicplayer.fragments.SongListFragment;
 import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.service.PlayerService;
 import player.project.com.musicplayer.ultilities.Constant;
@@ -85,9 +69,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     TextView tvCurrentTime;
     TextView tvSongName;
     TextView tvSingerName;
-    ListView mLvSongs;
+    RecyclerView mLvSongs;
+    SettingManager mSettingManager;
     PendingSongListAdapter mLvAdapter;
     SlidingUpPanelLayout.PanelSlideListener mLideUpListener;
+    ArrayList<Song> currentSonglist;
     Toolbar toolbar;
     long duration;
     Song currentSong;
@@ -99,70 +85,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        int version = Build.VERSION.SDK_INT;
-        if (version > Build.VERSION_CODES.LOLLIPOP) {
-            if (!checkIfHavePermisson()) {
-                requestForPermission();
-            }
-        }
+
         setContentView(R.layout.activity_main);
-
-        //      toolbar = findViewById(R.id.toolbar);
-        //       setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        //
-        //drawer = findViewById(R.id.drawer_layout);
-
-        //    NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        //    navigationView.setNavigationItemSelectedListener(this);
+        mSettingManager = SettingManager.getInstance(getApplicationContext());
         Fragment rootFragment = new RootFragment();
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-        //tabLayout.setVisibility(View.GONE);
         fragmentManager.beginTransaction().setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out).replace(R.id.root_fragment, rootFragment, "TAG").commit();
-
-        /*
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
-
-
-        tabLayout.getTabAt(0).setIcon(R.drawable.music_note);
-        tabLayout.getTabAt(1).setIcon(R.drawable.playlist_play);
-        tabLayout.getTabAt(2).setIcon(R.drawable.artist);
-        tabLayout.getTabAt(3).setIcon(R.drawable.album);
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-
-                switch (tab.getPosition()) {
-                    case 0:
-                        getSupportActionBar().setTitle("Song");
-                        break;
-                    case 1:
-                        getSupportActionBar().setTitle("Playlist");
-                        break;
-                    case 2:
-                        getSupportActionBar().setTitle("Artist");
-                        break;
-                    case 3:
-                        getSupportActionBar().setTitle("Album");
-                        break;
-                }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-*/
-        mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        mLayout = findViewById(R.id.sliding_layout);
         mLideUpListener = new SlidingUpPanelLayout.PanelSlideListener() {
             float previous = 0;
             boolean isup = false;
@@ -172,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
                 final LinearLayout m = findViewById(R.id.miniLayout);
-                Log.i("Panel:------------", "onPanelSlide, offset " + slideOffset);
                 if (slideOffset > previous && (slideOffset - previous > 0.2)) {
                     isup = true;
                     previous = slideOffset;
@@ -234,50 +162,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setMiniWidgetVisible(false);
 
         if (new SongController(getApplicationContext()).count() == 0) {
-            new SongScaner(this).scan();
+            new SongScanner(this).scan();
 
         }
+        Intent myIntent = new Intent(this, PlayerService.class);
+        myIntent.setAction(Constant.ACTION_UPDATE_UI_REQUEST);
+        startService(myIntent);
 
     }
 
-    public void pendSongListInit(ArrayList<Song> data) {
+    public void pendSongListInit(ArrayList<Song> data, int postion) {
+        currentSonglist = data;
         mLvSongs = findViewById(R.id.lv_pending_songs);
-        mLvAdapter = new PendingSongListAdapter(data, this);
+        mLvAdapter = new PendingSongListAdapter(data, this, postion);
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 1);
+        mLvSongs.setLayoutManager(mLayoutManager);
         mLvSongs.setAdapter(mLvAdapter);
-        mLvSongs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent myIntent = new Intent(MainActivity.this, PlayerService.class);
-                myIntent.setAction(Constant.ACTION_CHANGE_POSTION);
-                myIntent.putExtra(Constant.SONG_POSTON_EX, position);
-                startService(myIntent);
-            }
-        });
+
     }
 
-    private boolean checkIfHavePermisson() {
-        int result = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-        return result == PackageManager.PERMISSION_GRANTED ? true : false;
-    }
 
-    private void requestForPermission() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1010);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == 1010) {
-            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "This application need READ_EXTERNAL_STORAGE permission to work correctly!", Toast.LENGTH_LONG).show();
-                finish();
-            }
-
-        } else {
-
-
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -342,6 +246,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     tvTimer.setText("");
                 }
             }
+            if (intent.getAction().equals(Constant.BROADCAST_PLAYLIST_CHANGED)) {
+                ArrayList<Song> songs = (ArrayList<Song>) intent.getSerializableExtra(Constant.SONG_LIST_EX);
+                int postion = intent.getIntExtra(Constant.SONG_POSTON_EX, 0);
+                setMiniWidgetVisible(true);
+                pendSongListInit(songs, postion);
+            }
         }
     };
 
@@ -378,7 +288,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         btnPlay = findViewById(R.id.btn_play);
         btnPrev = findViewById(R.id.btn_prev);
         btnRepeat = findViewById(R.id.btn_repeat);
-        int mode = SettingManager.getInstance(this).getrMode();
+        int mode = mSettingManager.getrMode();
         if (mode == Constant.SETTING_REPEAT_MODE_ONE) {
             btnRepeat.setImageResource(R.drawable.repeat_once);
         } else if (mode == Constant.SETTING_REPEAT_MODE_ALL) {
@@ -389,7 +299,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             btnRepeat.setImageResource(R.drawable.repeat_off);
         }
         btnShuffle = findViewById(R.id.btn_shuffle);
-        if (SettingManager.getInstance(this).getsMode() == Constant.SETTING_SHUFFLE_MODE_OFF) {
+        if (mSettingManager.getsMode() == Constant.SETTING_SHUFFLE_MODE_OFF) {
             btnShuffle.setImageResource(R.drawable.shuffle_disabled);
         } else {
             btnShuffle.setImageResource(R.drawable.shuffle);
@@ -418,7 +328,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         filter.addAction(Constant.BROADCAST_SONG_CHANGED);
         filter.addAction(Constant.BROADCAST_CURRENT_PLAY_TIME);
         filter.addAction(Constant.BROADCAST_TIMER);
+        filter.addAction(Constant.BROADCAST_PLAYLIST_CHANGED);
         registerReceiver(receiver, filter);
+
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -466,26 +378,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             showDialog(12);
 
         } else if (id == R.id.btn_repeat) {
-            int mode = SettingManager.getInstance(getApplicationContext()).getrMode();
+            int mode = mSettingManager.getrMode();
             if (mode == Constant.SETTING_REPEAT_MODE_ONE) {
-                SettingManager.getInstance(getApplicationContext()).setrMode(Constant.SETTING_REPEAT_MODE_ALL);
+                mSettingManager.setrMode(Constant.SETTING_REPEAT_MODE_ALL);
                 btnRepeat.setImageResource(R.drawable.repeat);
             } else if (mode == Constant.SETTING_REPEAT_MODE_ALL) {
-                SettingManager.getInstance(getApplicationContext()).setrMode(Constant.SETTING_REPEAT_MODE_OFF);
+                mSettingManager.setrMode(Constant.SETTING_REPEAT_MODE_OFF);
                 btnRepeat.setImageResource(R.drawable.repeat_off);
             } else if (mode == Constant.SETTING_REPEAT_MODE_OFF) {
-                SettingManager.getInstance(getApplicationContext()).setrMode(Constant.SETTING_REPEAT_MODE_ONE);
+                mSettingManager.setrMode(Constant.SETTING_REPEAT_MODE_ONE);
                 btnRepeat.setImageResource(R.drawable.repeat_once);
             }
 
         } else if (id == R.id.btn_shuffle) {
-            if (SettingManager.getInstance(getApplicationContext()).getsMode() == Constant.SETTING_SHUFFLE_MODE_ON) {
-                SettingManager.getInstance(getApplicationContext()).setsMode(Constant.SETTING_SHUFFLE_MODE_OFF);
+            if (mSettingManager.getsMode() == Constant.SETTING_SHUFFLE_MODE_ON) {
+                mSettingManager.setsMode(Constant.SETTING_SHUFFLE_MODE_OFF);
                 btnShuffle.setImageResource(R.drawable.shuffle_disabled);
             } else {
-                SettingManager.getInstance(getApplicationContext()).setsMode(Constant.SETTING_SHUFFLE_MODE_ON);
+                mSettingManager.setsMode(Constant.SETTING_SHUFFLE_MODE_ON);
                 btnShuffle.setImageResource(R.drawable.shuffle);
             }
+            Intent myIntent = new Intent(this, PlayerService.class);
+            myIntent.setAction(Constant.REQUEST_UPDATE_SHUFFLE_MODE);
+            startService(myIntent);
         }
 
     }
@@ -496,6 +411,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Fragment f = getSupportFragmentManager().findFragmentById(R.id.root_fragment);
         if (!(f instanceof RootFragment)) {
             getSupportFragmentManager().popBackStackImmediate();
+        } else if (mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
+            mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         } else {
             if (isExit == true) {
                 finish();

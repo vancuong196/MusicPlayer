@@ -45,9 +45,9 @@ public class OnlineAlbumListAdapter extends RecyclerView.Adapter<OnlineAlbumList
             super(view);
             btnExplore = view.findViewById(R.id.btn_explore);
             btnShuffleAll = view.findViewById(R.id.btn_shuffle);
-            title = (TextView) view.findViewById(R.id.title);
-            count = (TextView) view.findViewById(R.id.count);
-            thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
+            title = view.findViewById(R.id.title);
+            count = view.findViewById(R.id.count);
+            thumbnail = view.findViewById(R.id.thumbnail);
             description = view.findViewById(R.id.tv_description);
             cardView = view.findViewById(R.id.item_view);
             // overflow = (ImageView) view.findViewById(R.id.overflow);

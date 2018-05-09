@@ -166,13 +166,12 @@
         android:layout_height="1dp"
         android:background="@color/Viewline" />
 
-        <ListView
-
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/lv_pending_songs"
-        android:layout_width="match_parent"
+            android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        </ListView>
+        </android.support.v7.widget.RecyclerView>
 </LinearLayout>
 
     <include

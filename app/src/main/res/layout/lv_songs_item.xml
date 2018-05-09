@@ -6,14 +6,16 @@
     android:descendantFocusability="blocksDescendants">
 
     <LinearLayout
+        android:background="@android:drawable/list_selector_background"
         android:id="@+id/song_line"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/logo"
+            android:background="@drawable/ic_music"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="@dimen/lv_song_item_img_music_height"
@@ -22,28 +24,28 @@
             android:layout_marginBottom="@dimen/lv_song_item_img_music_margin_bot" />
 
         <LinearLayout
-            android:layout_weight="4"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:orientation="vertical"
+            android:layout_weight="6"
             android:gravity="center"
+            android:orientation="vertical"
             android:paddingLeft="@dimen/lv_song_item_layout_margin_left">
 
             <TextView
                 android:id="@+id/song_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text=""
                 android:textColor="@color/textblue"
-                android:textSize="@dimen/lv_song_tv_song_name_size"
-                android:text="" />
+                android:textSize="@dimen/lv_song_tv_song_name_size" />
 
             <TextView
                 android:id="@+id/singer_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/lv_song_item_tv_singer_name_margin_top"
-                android:textSize="@dimen/lv_song_tv_singer_name_size"
-                android:text="" />
+                android:text=""
+                android:textSize="@dimen/lv_song_tv_singer_name_size" />
 
 
         </LinearLayout>

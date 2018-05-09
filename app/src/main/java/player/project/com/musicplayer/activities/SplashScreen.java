@@ -1,9 +1,16 @@
 package player.project.com.musicplayer.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import player.project.com.musicplayer.R;
 
@@ -13,6 +20,18 @@ public class SplashScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
+        int version = Build.VERSION.SDK_INT;
+        if (version > Build.VERSION_CODES.LOLLIPOP) {
+            if (!checkIfHavePermisson()) {
+                requestForPermission();
+            } else {
+                startMainActivity();
+            }
+        }
+
+    }
+
+    public void startMainActivity() {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -23,4 +42,37 @@ public class SplashScreen extends AppCompatActivity {
             }
         }, 3000);
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 1010) {
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "This application need READ_EXTERNAL_STORAGE permission to work correctly!", Toast.LENGTH_LONG).show();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        finish();
+                    }
+                }, 3000);
+
+            } else {
+                startMainActivity();
+            }
+
+        } else {
+
+
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    private boolean checkIfHavePermisson() {
+        int result = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        return result == PackageManager.PERMISSION_GRANTED ? true : false;
+    }
+
+    private void requestForPermission() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1010);
+    }
+
 }

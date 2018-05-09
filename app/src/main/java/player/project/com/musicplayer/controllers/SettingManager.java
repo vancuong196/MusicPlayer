@@ -2,6 +2,8 @@ package player.project.com.musicplayer.controllers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 
 import player.project.com.musicplayer.ultilities.Constant;
 
@@ -13,8 +15,13 @@ public class SettingManager {
     int sMode;
     int rMode;
     Context context;
+    SharedPreferences settings;
     private static class SettingMangagerHolder {
         static SettingManager instance = new SettingManager();
+    }
+
+    private SettingManager() {
+
     }
 
     public static SettingManager getInstance(Context context) {
@@ -23,28 +30,33 @@ public class SettingManager {
     }
 
     public int getsMode() {
-        SharedPreferences settings = context.getSharedPreferences("PlayerMode", 0);
-
-        return settings.getInt("shuffle", Constant.SETTING_SHUFFLE_MODE_OFF);
+        settings = context.getSharedPreferences("playersetting", Context.MODE_MULTI_PROCESS);
+        int mode = settings.getInt("shuffle", Constant.SETTING_SHUFFLE_MODE_OFF);
+        System.out.println("get smode " + mode);
+        return mode;
 
     }
 
     public int getrMode() {
-        SharedPreferences settings = context.getSharedPreferences("PlayerMode", 0);
-        return settings.getInt("repeat", Constant.SETTING_REPEAT_MODE_OFF);
+        settings = context.getSharedPreferences("playersetting", Context.MODE_MULTI_PROCESS);
+        int mode = settings.getInt("repeat", Constant.SETTING_REPEAT_MODE_OFF);
+        System.out.println("get rmode " + mode);
+        return mode;
     }
 
     public void setsMode(int mode) {
-        SharedPreferences settings = context.getSharedPreferences("PlayerMode", 0);
+        settings = context.getSharedPreferences("playersetting", Context.MODE_MULTI_PROCESS);
         SharedPreferences.Editor editor = settings.edit();
         editor.putInt("shuffle", mode);
+        System.out.println("set smode " + mode);
         editor.commit();
     }
 
     public void setrMode(int mode) {
-        SharedPreferences settings = context.getSharedPreferences("PlayerMode", 0);
+        settings = context.getSharedPreferences("playersetting", Context.MODE_MULTI_PROCESS);
         SharedPreferences.Editor editor = settings.edit();
         editor.putInt("repeat", mode);
+        System.out.println("set rmode " + mode);
         editor.commit();
     }
 }

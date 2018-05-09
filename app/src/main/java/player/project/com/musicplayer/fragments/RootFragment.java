@@ -1,7 +1,6 @@
 package player.project.com.musicplayer.fragments;
 
 
-import android.app.SearchManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -9,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -22,11 +20,9 @@ import android.view.ViewGroup;
 
 import player.project.com.musicplayer.activities.MainActivity;
 import player.project.com.musicplayer.controllers.SongController;
-import player.project.com.musicplayer.controllers.SongScaner;
+import player.project.com.musicplayer.controllers.SongScanner;
 import player.project.com.musicplayer.customadapter.ViewPagerAdapter;
 import player.project.com.musicplayer.R;
-
-import static android.content.Context.SEARCH_SERVICE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -161,7 +157,7 @@ public class RootFragment extends Fragment {
         }
         if (id == R.id.action_recan) {
             new SongController(getActivity()).deleteAllSong();
-            new SongScaner(getActivity()).scan();
+            new SongScanner(getActivity()).scan();
 
             //mLvAdapter.addAll(new SongController(this).getAllSongs());
             //mLvAdapter.notifyDataSetChanged();

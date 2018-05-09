@@ -1,60 +1,103 @@
 package player.project.com.musicplayer.customadapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import player.project.com.musicplayer.R;
+import player.project.com.musicplayer.activities.MainActivity;
+import player.project.com.musicplayer.service.PlayerService;
+import player.project.com.musicplayer.ultilities.Constant;
 import player.project.com.musicplayer.ultilities.Ultility;
 import player.project.com.musicplayer.models.Song;
 
-public class PendingSongListAdapter extends ArrayAdapter<Song> {
+public class PendingSongListAdapter extends RecyclerView.Adapter<PendingSongListAdapter.MyViewHolder> {
 
 
     ArrayList<Song> dataSet;
     Context mContext;
+    int playPostion;
 
-    public PendingSongListAdapter(Context context, int textViewResourceId) {
-        super(context, textViewResourceId);
-    }
+    public class MyViewHolder extends RecyclerView.ViewHolder {
 
-    public PendingSongListAdapter(ArrayList<Song> data, Context context) {
-        super(context, R.layout.lv_song_item_simple, data);
-        this.dataSet = data;
-        this.mContext = context;
+        TextView tvSongName;
+        TextView tvSingerName;
+        TextView tvDuration;
+        LinearLayout line;
+
+        public MyViewHolder(View v) {
+            super(v);
+            tvDuration = v.findViewById(R.id.time);
+            tvSingerName = (TextView) v.findViewById(R.id.singer_name);
+            tvSongName = (TextView) v.findViewById(R.id.song_name);
+            line = v.findViewById(R.id.song_line);
+        }
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        // Get the data item for this position
-        Song song = dataSet.get(position);
-        // Check if an existing view is being reused, otherwise inflate the view
-        View v = convertView;
-        if (v == null) {
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            v = inflater.inflate(R.layout.lv_song_item_simple, null);
+    public PendingSongListAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.lv_song_item_simple, parent, false);
 
-        }
-        TextView tt1 = v.findViewById(R.id.song_name);
-        TextView tt3 = (TextView) v.findViewById(R.id.singer_name);
-        TextView tt2 = (TextView) v.findViewById(R.id.time);
-        if (tt1 != null) {
-            tt1.setText(song.getSongName());
-        }
-
-        if (tt3 != null) {
-            tt3.setText(song.getSingerName());
-        }
-
-        if (tt2 != null) {
-            tt2.setText(Ultility.milisecondToDuration(song.getDuration()));
-        }
-        // Return the completed view to render on screen
-        return v;
+        return new PendingSongListAdapter.MyViewHolder(itemView);
     }
+
+    @Override
+    public void onBindViewHolder(final PendingSongListAdapter.MyViewHolder holder, final int position) {
+        Song song = dataSet.get(position);
+        if (position == playPostion) {
+            holder.line.setSelected(true);
+        } else {
+            holder.line.setSelected(false);
+        }
+        holder.tvSingerName.setText(song.getSingerName());
+        holder.tvSongName.setText(song.getSongName());
+        holder.tvDuration.setText(Ultility.milisecondToDuration(song.getDuration()));
+        final int pos = position;
+        holder.line.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(mContext, PlayerService.class);
+                myIntent.putExtra(Constant.SONG_POSTON_EX, position);
+                myIntent.setAction(Constant.ACTION_CHANGE_POSTION);
+                playPostion = pos;
+                holder.line.setSelected(true);
+
+                mContext.startService(myIntent);
+            }
+        });
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return dataSet.size();
+    }
+
+    public PendingSongListAdapter(ArrayList<Song> data, Context context, int postion) {
+        this.dataSet = data;
+        this.mContext = context;
+        this.playPostion = postion;
+    }
+
+
+    public interface ItemTouchHelperAdapter {
+
+        void onItemMove(int fromPosition, int toPosition);
+
+        void onItemDismiss(int position);
+    }
+
 }
