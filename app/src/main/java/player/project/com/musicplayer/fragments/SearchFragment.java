@@ -1,7 +1,6 @@
 package player.project.com.musicplayer.fragments;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -16,20 +15,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import player.project.com.musicplayer.activities.MainActivity;
+import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.controllers.SongController;
 import player.project.com.musicplayer.customadapter.SongListViewAdapter;
-import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.models.Song;
-import player.project.com.musicplayer.service.PlayerService;
-import player.project.com.musicplayer.ultilities.Constant;
 
 /**
  * A simple {@link Fragment} subclass.

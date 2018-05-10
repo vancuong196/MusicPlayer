@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/frg_song"
 
-    tools:context="player.project.com.musicplayer.fragments.SongListFragment">
+    tools:context="player.project.com.musicplayer.fragments.SongFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/lv_songs"

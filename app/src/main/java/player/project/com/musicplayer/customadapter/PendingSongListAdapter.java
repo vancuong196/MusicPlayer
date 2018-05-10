@@ -29,6 +29,7 @@ public class PendingSongListAdapter extends RecyclerView.Adapter<PendingSongList
     ArrayList<Song> dataSet;
     Context mContext;
     int playPostion;
+    PendingSongListAdapter.MyViewHolder lastSelectHolder;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -58,6 +59,7 @@ public class PendingSongListAdapter extends RecyclerView.Adapter<PendingSongList
     public void onBindViewHolder(final PendingSongListAdapter.MyViewHolder holder, final int position) {
         Song song = dataSet.get(position);
         if (position == playPostion) {
+            lastSelectHolder = holder;
             holder.line.setSelected(true);
         } else {
             holder.line.setSelected(false);
@@ -73,8 +75,11 @@ public class PendingSongListAdapter extends RecyclerView.Adapter<PendingSongList
                 myIntent.putExtra(Constant.SONG_POSTON_EX, position);
                 myIntent.setAction(Constant.ACTION_CHANGE_POSTION);
                 playPostion = pos;
+                if (lastSelectHolder != null) {
+                    lastSelectHolder.line.setSelected(false);
+                }
                 holder.line.setSelected(true);
-
+                lastSelectHolder = holder;
                 mContext.startService(myIntent);
             }
         });
@@ -92,7 +97,11 @@ public class PendingSongListAdapter extends RecyclerView.Adapter<PendingSongList
         this.playPostion = postion;
     }
 
+    public void setItemSelected(int postion) {
+        playPostion = postion;
+        notifyDataSetChanged();
 
+    }
     public interface ItemTouchHelperAdapter {
 
         void onItemMove(int fromPosition, int toPosition);

@@ -4,19 +4,16 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.Objects;
 
 import player.project.com.musicplayer.controllers.SettingManager;
 import player.project.com.musicplayer.activities.MainActivity;
@@ -42,13 +39,13 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         if (intent != null) {
             String actionCode = intent.getAction();
             //request update timer
-            if (actionCode == Constant.ACTION_UPDATE_TIMER) {
+            if (Objects.equals(actionCode, Constant.ACTION_UPDATE_TIMER)) {
                 isTimerSet = true;
                 timer = intent.getIntExtra(Constant.TIMER_EX, 0) * 60;
                 mHandler.postDelayed(mTimerTask, 1000);
             }
             // request disable timer
-            else if (actionCode == Constant.ACTION_DISABLE_TIMER) {
+            else if (Objects.equals(actionCode, Constant.ACTION_DISABLE_TIMER)) {
 
                 try {
                     mHandler.removeCallbacks(mTimerTask);
@@ -61,7 +58,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 sendBroadcast(myIntent);
             }
             // request change media player state
-            if (actionCode == Constant.ACTION_PLAY) {
+            if (Objects.equals(actionCode, Constant.ACTION_PLAY)) {
                 if (mMediaPlayer != null) {
                     if (mMediaPlayer.isPlaying()) {
                         mMediaPlayer.pause();
@@ -78,13 +75,13 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 }
             }
             // request move to a postion in current playlist
-            else if (actionCode == Constant.ACTION_CHANGE_POSTION) {
+            else if (Objects.equals(actionCode, Constant.ACTION_CHANGE_POSTION)) {
                 int postion = intent.getIntExtra(Constant.SONG_POSTON_EX, 0);
                 play(postion);
 
             }
             // Request change current playlist and play song at postion given.
-            else if (actionCode == Constant.ACTION_SONG_CHANGE) {
+            else if (Objects.equals(actionCode, Constant.ACTION_SONG_CHANGE)) {
                 ArrayList<Song> songs = (ArrayList<Song>) intent.getSerializableExtra(Constant.SONG_LIST_EX);
                 int postion = intent.getIntExtra(Constant.SONG_POSTON_EX, 0);
                 int shuffleMode = mSettingManager.getsMode();
@@ -100,7 +97,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                     isShufflePlayList = false;
                 }
 
-            } else if (actionCode == Constant.REQUEST_UPDATE_SHUFFLE_MODE) {
+            } else if (Objects.equals(actionCode, Constant.REQUEST_UPDATE_SHUFFLE_MODE)) {
                 int shuffleMode = mSettingManager.getsMode();
                 if (shuffleMode == Constant.SETTING_SHUFFLE_MODE_ON) {
                     if (!isShufflePlayList) {
@@ -119,20 +116,20 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 broadcastPlayListChanged(currentPostion);
             }
             // Request play next song
-            else if (actionCode == Constant.ACTION_NEXT) {
+            else if (Objects.equals(actionCode, Constant.ACTION_NEXT)) {
                 next();
             }
             // Request play previous song
-            else if (actionCode == Constant.ACTION_PREV) {
+            else if (Objects.equals(actionCode, Constant.ACTION_PREV)) {
                 previous();
             }
             // Request seek to a postion of current playing song
-            else if (actionCode.equals(Constant.ACTION_SEEK)) {
+            else if (Objects.equals(actionCode, Constant.ACTION_SEEK)) {
                 int milis = intent.getIntExtra(Constant.SEEK_TO_POSTION_EX, 0);
                 seekTo(milis);
             }
             // Request information to update UI.
-            if (actionCode.equals(Constant.ACTION_UPDATE_UI_REQUEST)) {
+            if (Objects.equals(actionCode, Constant.ACTION_UPDATE_UI_REQUEST)) {
                 broadcastPlayListChanged(currentPostion);
                 if (mPlayList != null) {
                     broadcastSongChange(currentPostion);
@@ -187,12 +184,16 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             System.out.println(mPlayList.get(postion).getPath());
             mMediaPlayer.setDataSource(mPlayList.get(postion).getPath());
         } catch (IOException e) {
+            // Todo broadcast to activity that service cant not play this song.
             e.printStackTrace();
+            next();
         }
         try {
             mMediaPlayer.prepare();
         } catch (IOException e) {
             e.printStackTrace();
+            // Todo broadcast to activity that service cant not play this song.
+            next();
         }
         mMediaPlayer.start();
         broadcastSongChange(postion);
@@ -203,6 +204,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
 
     public void broadcastSongChange(int postion) {
         Intent myIntent = new Intent(Constant.BROADCAST_SONG_CHANGED);
+        myIntent.putExtra(Constant.SONG_POSTON_EX, postion);
         myIntent.putExtra(Constant.SONG_EX, mPlayList.get(postion));
         sendBroadcast(myIntent);
     }
@@ -296,9 +298,6 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        System.out.println("Complete");
-
-
         int rmode = mSettingManager.getrMode();
         if (rmode == Constant.SETTING_REPEAT_MODE_ONE) {
             play(currentPostion);
@@ -341,6 +340,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
 //Todo fix error here
         //     Bitmap icon = BitmapFactory.decodeResource(Resources.getSystem(),R.drawable.ic_music);
         if (isOnGoing) {
+
             notification = new NotificationCompat.Builder(this)
                     .setUsesChronometer(true)
                     .setContentTitle(song.getSongName())
@@ -355,6 +355,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                             pplayIntent)
                     .addAction(R.drawable.next, "",
                             pnextIntent).build();
+
             startForeground(12, notification);
         } else {
 

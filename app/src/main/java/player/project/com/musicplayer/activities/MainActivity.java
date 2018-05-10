@@ -15,7 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
@@ -79,9 +78,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Song currentSong;
     //  private TabLayout tabLayout;
     // private ViewPager viewPager;
-    private SlidingUpPanelLayout mLayout;
-    // ONCREATE
-    boolean isGrandtedPermission = false;
+    private SlidingUpPanelLayout mSildingUpPanelLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,7 +89,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Fragment rootFragment = new RootFragment();
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out).replace(R.id.root_fragment, rootFragment, "TAG").commit();
-        mLayout = findViewById(R.id.sliding_layout);
+        mSildingUpPanelLayout = findViewById(R.id.sliding_layout);
+        mSildingUpPanelLayout.getChildAt(1).setOnClickListener(null);
         mLideUpListener = new SlidingUpPanelLayout.PanelSlideListener() {
             float previous = 0;
             boolean isup = false;
@@ -187,6 +186,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Constant.BROADCAST_CURRENT_PLAY_TIME)) {
+
                 long totalDuration = intent.getLongExtra(Constant.DURATION_EX, 0);
                 long currentDuration = intent.getLongExtra(Constant.CURRENT_EX, 0);
                 duration = totalDuration;
@@ -204,6 +204,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             if (intent.getAction().equals(Constant.BROADCAST_SONG_CHANGED)) {
                 Song song = (Song) intent.getSerializableExtra(Constant.SONG_EX);
+                int postion = intent.getIntExtra(Constant.SONG_POSTON_EX, 0);
+                if (mLvAdapter != null) {
+                    mLvAdapter.setItemSelected(postion);
+                }
                 currentSong = song;
                 tvSongName.setText(song.getSongName());
                 tvSongNameWidget.setText(song.getSongName());
@@ -255,6 +259,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     };
 
+    public void setBtnShuffle() {
+        if (btnShuffle != null) {
+            btnShuffle.setImageResource(R.drawable.shuffle);
+        }
+    }
     public void setMiniWidgetVisible(boolean b) {
         final float scale = this.getResources().getDisplayMetrics().density;
         int pixels = (int) (60 * scale + 0.5f);
@@ -263,8 +272,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) layout.getLayoutParams();
             params.setMargins(0, 0, 0, pixels);
             layout.setLayoutParams(params);
-            mLayout.setPanelHeight(pixels);
-            mLayout.addPanelSlideListener(mLideUpListener);
+            mSildingUpPanelLayout.setPanelHeight(pixels);
+            mSildingUpPanelLayout.addPanelSlideListener(mLideUpListener);
 
         } else {
 
@@ -272,8 +281,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) layout.getLayoutParams();
             params.setMargins(0, 0, 0, 0);
             layout.setLayoutParams(params);
-            mLayout.setPanelHeight(0);
-            mLayout.removePanelSlideListener(mLideUpListener);
+            mSildingUpPanelLayout.setPanelHeight(0);
+            mSildingUpPanelLayout.removePanelSlideListener(mLideUpListener);
         }
     }
 
@@ -303,6 +312,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             btnShuffle.setImageResource(R.drawable.shuffle_disabled);
         } else {
             btnShuffle.setImageResource(R.drawable.shuffle);
+
         }
         mainSeekBar = findViewById(R.id.skb_progress);
         widgetSeekBar = findViewById(R.id.mini_player_widget_skb);
@@ -389,7 +399,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 mSettingManager.setrMode(Constant.SETTING_REPEAT_MODE_ONE);
                 btnRepeat.setImageResource(R.drawable.repeat_once);
             }
-
         } else if (id == R.id.btn_shuffle) {
             if (mSettingManager.getsMode() == Constant.SETTING_SHUFFLE_MODE_ON) {
                 mSettingManager.setsMode(Constant.SETTING_SHUFFLE_MODE_OFF);
@@ -398,6 +407,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 mSettingManager.setsMode(Constant.SETTING_SHUFFLE_MODE_ON);
                 btnShuffle.setImageResource(R.drawable.shuffle);
             }
+            btnShuffle.setEnabled(false);
+            btnShuffle.setClickable(false);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    btnShuffle.setEnabled(true);
+                    btnShuffle.setClickable(true);
+                }
+            }, 1000);
             Intent myIntent = new Intent(this, PlayerService.class);
             myIntent.setAction(Constant.REQUEST_UPDATE_SHUFFLE_MODE);
             startService(myIntent);
@@ -411,8 +429,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Fragment f = getSupportFragmentManager().findFragmentById(R.id.root_fragment);
         if (!(f instanceof RootFragment)) {
             getSupportFragmentManager().popBackStackImmediate();
-        } else if (mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
-            mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        } else if (mSildingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
+            mSildingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         } else {
             if (isExit == true) {
                 finish();

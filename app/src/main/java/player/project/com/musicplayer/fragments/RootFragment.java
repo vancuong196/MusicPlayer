@@ -7,7 +7,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -17,22 +16,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-
+import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.activities.MainActivity;
 import player.project.com.musicplayer.controllers.SongController;
 import player.project.com.musicplayer.controllers.SongScanner;
 import player.project.com.musicplayer.customadapter.ViewPagerAdapter;
-import player.project.com.musicplayer.R;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class RootFragment extends Fragment {
 
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
     Toolbar toolbar;
-    DrawerLayout drawer;
 
     public RootFragment() {
         // Required empty public constructor
@@ -54,9 +49,9 @@ public class RootFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        viewPager = (ViewPager) view.findViewById(R.id.viewpager);
+        ViewPager viewPager = view.findViewById(R.id.viewpager);
         setupViewPager(viewPager);
-        tabLayout = (TabLayout) view.findViewById(R.id.tabs);
+        TabLayout tabLayout = view.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
         toolbar = view.findViewById(R.id.toolbar);
@@ -119,7 +114,7 @@ public class RootFragment extends Fragment {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
         adapter.addFragment(new HomeFragment(), "Online");
-        adapter.addFragment(new SongListFragment(), "Songs");
+        adapter.addFragment(new SongFragment(), "Songs");
         adapter.addFragment(new PlaylistFragment(), "Playlist");
         adapter.addFragment(new ArtistFragment(), "Artist");
         adapter.addFragment(new AlbumFragment(), "Album");

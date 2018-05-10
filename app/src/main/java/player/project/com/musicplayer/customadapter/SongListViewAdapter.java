@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -64,7 +65,7 @@ public class SongListViewAdapter extends RecyclerView.Adapter<SongListViewAdapte
 
     @Override
     public void onBindViewHolder(final SongListViewAdapter.MyViewHolder holder, int position) {
-        Song song = dataSet.get(position);
+        final Song song = dataSet.get(position);
         holder.tvSingerName.setText(song.getSingerName());
         holder.tvSongName.setText(song.getSongName());
         final int pos = position;
@@ -77,6 +78,7 @@ public class SongListViewAdapter extends RecyclerView.Adapter<SongListViewAdapte
                 myIntent.putExtra(Constant.SONG_LIST_EX, dataSet);
                 myIntent.putExtra(Constant.SONG_POSTON_EX, pos);
                 mContext.startService(myIntent);
+                Toast.makeText(mContext, "Playing: " + song.getSongName(), Toast.LENGTH_SHORT).show();
 
             }
         });

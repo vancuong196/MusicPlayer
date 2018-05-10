@@ -9,30 +9,29 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
+import java.util.Random;
 
-import player.project.com.musicplayer.ultilities.Constant;
-import player.project.com.musicplayer.activities.MainActivity;
-import player.project.com.musicplayer.service.PlayerService;
 import player.project.com.musicplayer.R;
+import player.project.com.musicplayer.activities.MainActivity;
+import player.project.com.musicplayer.controllers.SettingManager;
 import player.project.com.musicplayer.controllers.SongController;
 import player.project.com.musicplayer.customadapter.SongListViewAdapter;
 import player.project.com.musicplayer.models.Song;
+import player.project.com.musicplayer.service.PlayerService;
+import player.project.com.musicplayer.ultilities.Constant;
 
 
-public class SongListFragment extends Fragment {
+public class SongFragment extends Fragment {
     RecyclerView mLvSongs;
     SongListViewAdapter mLvAdapter;
     ArrayList<Song> data;
     FloatingActionButton fabShuffleAll;
-    public SongListFragment() {
+
+    public SongFragment() {
         // Required empty public constructor
     }
 
@@ -78,6 +77,15 @@ public class SongListFragment extends Fragment {
         fabShuffleAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SettingManager.getInstance(getContext()).setsMode(Constant.SETTING_SHUFFLE_MODE_ON);
+                ((MainActivity) getActivity()).setBtnShuffle();
+                Random r = new Random();
+                int postion = r.nextInt(data.size() - 1);
+                Intent myIntent = new Intent(getContext(), PlayerService.class);
+                myIntent.setAction(Constant.ACTION_SONG_CHANGE);
+                myIntent.putExtra(Constant.SONG_LIST_EX, data);
+                myIntent.putExtra(Constant.SONG_POSTON_EX, postion);
+                getActivity().startService(myIntent);
                 Toast.makeText(getActivity(), "Shuffle all", Toast.LENGTH_SHORT).show();
             }
         });
