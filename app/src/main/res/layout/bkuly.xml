@@ -50,14 +50,14 @@
                         android:layout_height="wrap_content"
                         android:text="hha"
                         android:textColor="@android:color/white"
-                        android:textSize="@dimen/backdrop_title" />
+                        android:textSize="@dimen/detail_fragment_title_size" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="bbb"
                         android:textColor="@android:color/white"
-                        android:textSize="@dimen/backdrop_subtitle" />
+                        android:textSize="@dimen/detail_fragment_subtitle_size" />
 
                 </LinearLayout>
             </RelativeLayout>

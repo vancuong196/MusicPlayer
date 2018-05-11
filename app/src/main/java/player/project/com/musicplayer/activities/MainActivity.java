@@ -7,14 +7,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
@@ -28,8 +24,10 @@ import android.widget.Toast;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.controllers.SettingManager;
 import player.project.com.musicplayer.controllers.SongController;
 import player.project.com.musicplayer.controllers.SongScanner;
@@ -37,17 +35,16 @@ import player.project.com.musicplayer.customadapter.PendingSongListAdapter;
 import player.project.com.musicplayer.dialogs.LyricDialog;
 import player.project.com.musicplayer.dialogs.TimerDialog;
 import player.project.com.musicplayer.fragments.RootFragment;
-import player.project.com.musicplayer.R;
+import player.project.com.musicplayer.models.Song;
 import player.project.com.musicplayer.service.PlayerService;
 import player.project.com.musicplayer.ultilities.Constant;
 import player.project.com.musicplayer.ultilities.Ultility;
-import player.project.com.musicplayer.models.Song;
 
 
 /**
  * Created by Cuong on 2/1/2018.
  */
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     ImageView btnNext;
     ImageView btnPlay;
@@ -73,11 +70,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     PendingSongListAdapter mLvAdapter;
     SlidingUpPanelLayout.PanelSlideListener mLideUpListener;
     ArrayList<Song> currentSonglist;
-    Toolbar toolbar;
     long duration;
     Song currentSong;
-    //  private TabLayout tabLayout;
-    // private ViewPager viewPager;
+    private boolean isSeekBarOnSliding = false;
     private SlidingUpPanelLayout mSildingUpPanelLayout;
 
     @Override
@@ -103,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (slideOffset > previous && (slideOffset - previous > 0.2)) {
                     isup = true;
                     previous = slideOffset;
-                    if (pr != true) {
+                    if (!pr) {
                         state = 1;
                         pr = true;
                     } else {
@@ -114,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 } else if (slideOffset <= previous && (-slideOffset + previous > 0.2)) {
                     isup = false;
                     previous = slideOffset;
-                    if (pr != false) {
+                    if (pr) {
                         state = 1;
                         pr = false;
                     } else {
@@ -157,17 +152,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         };
 
         playerUiInit();
-
         setMiniWidgetVisible(false);
-
-        if (new SongController(getApplicationContext()).count() == 0) {
-            new SongScanner(this).scan();
-
-        }
         Intent myIntent = new Intent(this, PlayerService.class);
         myIntent.setAction(Constant.ACTION_UPDATE_UI_REQUEST);
         startService(myIntent);
-
     }
 
     public void pendSongListInit(ArrayList<Song> data, int postion) {
@@ -185,28 +173,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Constant.BROADCAST_CURRENT_PLAY_TIME)) {
+            if (Objects.equals(intent.getAction(), Constant.BROADCAST_CURRENT_PLAY_TIME)) {
 
                 long totalDuration = intent.getLongExtra(Constant.DURATION_EX, 0);
                 long currentDuration = intent.getLongExtra(Constant.CURRENT_EX, 0);
                 duration = totalDuration;
                 // Displaying Total Duration time
-                tvDuration.setText("" + Ultility.milisecondToDuration(totalDuration));
+                tvDuration.setText(Ultility.milisecondToDuration(totalDuration));
                 // Displaying time completed playing
-                tvCurrentTime.setText("" + Ultility.milisecondToDuration(currentDuration));
+                tvCurrentTime.setText(Ultility.milisecondToDuration(currentDuration));
                 // Updating progress bar
-                int progress = (int) (Ultility.getProgressPercentage(currentDuration, totalDuration));
+                int progress = (Ultility.getProgressPercentage(currentDuration, totalDuration));
                 //Log.d("Progress", ""+progress);
-                mainSeekBar.setProgress(progress);
+                if (!isSeekBarOnSliding) {
+                    mainSeekBar.setProgress(progress);
+                }
                 widgetSeekBar.setProgress(progress);
 
 
             }
-            if (intent.getAction().equals(Constant.BROADCAST_SONG_CHANGED)) {
+            if (Constant.BROADCAST_SONG_CHANGED.equals(intent.getAction())) {
                 Song song = (Song) intent.getSerializableExtra(Constant.SONG_EX);
-                int postion = intent.getIntExtra(Constant.SONG_POSTON_EX, 0);
+                final int postion = intent.getIntExtra(Constant.SONG_POSTON_EX, 0);
                 if (mLvAdapter != null) {
                     mLvAdapter.setItemSelected(postion);
+                    mLvSongs.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Call smooth scroll
+                            mLvSongs.smoothScrollToPosition(postion);
+                        }
+                    });
                 }
                 currentSong = song;
                 tvSongName.setText(song.getSongName());
@@ -230,7 +227,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
             }
-            if (intent.getAction().equals(Constant.BROADCAST_MEDIA_PLAYER_STATE_CHANGED)) {
+            if (Constant.BROADCAST_MEDIA_PLAYER_STATE_CHANGED.equals(intent.getAction())) {
                 int status = intent.getIntExtra(Constant.MEDIA_STATE_EX, 0);
                 if (status == Constant.MEDIA_PLAYER_PAUSED) {
                     btnPlay.setImageResource(R.drawable.play);
@@ -241,20 +238,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     btnWidgetPlay.setImageResource(R.drawable.pause);
                 }
             }
-            if (intent.getAction().equals(Constant.BROADCAST_TIMER)) {
+            if (Constant.BROADCAST_TIMER.equals(intent.getAction())) {
                 boolean state = intent.getBooleanExtra(Constant.TIMER_STATE_EX, false);
-                if (state == true) {
+                if (state) {
                     int timer = intent.getIntExtra(Constant.TIMER_EX, 0);
                     tvTimer.setText(Ultility.milisecondToDuration(timer * 1000));
                 } else {
                     tvTimer.setText("");
                 }
             }
-            if (intent.getAction().equals(Constant.BROADCAST_PLAYLIST_CHANGED)) {
+            if (Constant.BROADCAST_PLAYLIST_CHANGED.equals(intent.getAction())) {
                 ArrayList<Song> songs = (ArrayList<Song>) intent.getSerializableExtra(Constant.SONG_LIST_EX);
-                int postion = intent.getIntExtra(Constant.SONG_POSTON_EX, 0);
+                final int postion = intent.getIntExtra(Constant.SONG_POSTON_EX, 0);
                 setMiniWidgetVisible(true);
                 pendSongListInit(songs, postion);
+                mLvSongs.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Call smooth scroll
+                        mLvSongs.smoothScrollToPosition(postion);
+                    }
+                });
             }
         }
     };
@@ -287,6 +291,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void playerUiInit() {
+
         tvSingerNameWidget = findViewById(R.id.singer_name_widget);
         tvSongNameWidget = findViewById(R.id.song_name_widget);
         coverArt = findViewById(R.id.logo_widget);
@@ -297,6 +302,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         btnPlay = findViewById(R.id.btn_play);
         btnPrev = findViewById(R.id.btn_prev);
         btnRepeat = findViewById(R.id.btn_repeat);
+
+        mainSeekBar = findViewById(R.id.skb_progress);
+        widgetSeekBar = findViewById(R.id.mini_player_widget_skb);
+        tvDuration = findViewById(R.id.tv_duration);
+        tvCurrentTime = findViewById(R.id.tv_current_time);
+        tvSongName = findViewById(R.id.tv_song_name);
+        tvSingerName = findViewById(R.id.tv_singer_name);
+        btnWidgetPlay = findViewById(R.id.btn_play_widget);
+        btnWidgetNext = findViewById(R.id.btn_next_widget);
+
         int mode = mSettingManager.getrMode();
         if (mode == Constant.SETTING_REPEAT_MODE_ONE) {
             btnRepeat.setImageResource(R.drawable.repeat_once);
@@ -314,14 +329,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             btnShuffle.setImageResource(R.drawable.shuffle);
 
         }
-        mainSeekBar = findViewById(R.id.skb_progress);
-        widgetSeekBar = findViewById(R.id.mini_player_widget_skb);
-        tvDuration = findViewById(R.id.tv_duration);
-        tvCurrentTime = findViewById(R.id.tv_current_time);
-        tvSongName = findViewById(R.id.tv_song_name);
-        tvSingerName = findViewById(R.id.tv_singer_name);
-        btnWidgetPlay = findViewById(R.id.btn_play_widget);
-        btnWidgetNext = findViewById(R.id.btn_next_widget);
+
+
         btnWidgetPlay.setOnClickListener(this);
         btnWidgetNext.setOnClickListener(this);
         btnNext.setOnClickListener(this);
@@ -332,6 +341,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         btnShuffle.setOnClickListener(this);
         btnRepeat.setOnClickListener(this);
         mainSeekBar.setOnSeekBarChangeListener(this);
+
         // register recieve
         IntentFilter filter = new IntentFilter();
         filter.addAction(Constant.BROADCAST_MEDIA_PLAYER_STATE_CHANGED);
@@ -341,26 +351,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         filter.addAction(Constant.BROADCAST_PLAYLIST_CHANGED);
         registerReceiver(receiver, filter);
 
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-
-        } else if (id == R.id.nav_changlog) {
-
-        } else if (id == R.id.nav_feedback) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 
     @Override
@@ -374,7 +364,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.btn_prev) {
             Intent myIntent = new Intent(MainActivity.this, PlayerService.class);
             myIntent.setAction(Constant.ACTION_PREV);
-            IntentFilter filter = new IntentFilter();
             startService(myIntent);
         } else if (id == R.id.btn_play || id == R.id.btn_play_widget) {
             // check for already playing
@@ -383,7 +372,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             startService(myIntent);
         } else if (id == R.id.btn_menu) {
             new LyricDialog(this, currentSong).show();
-            return;
         } else if (id == R.id.btn_alarm) {
             showDialog(12);
 
@@ -432,7 +420,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (mSildingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
             mSildingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         } else {
-            if (isExit == true) {
+            if (isExit) {
                 finish();
             }
             isExit = true;
@@ -451,9 +439,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == 12) {
             new TimerDialog(this).show();
         }
-        if (id == 13) {
-
-        }
         return super.onCreateDialog(id);
     }
 
@@ -465,18 +450,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
 
-        unregisterReceiver(receiver);
+        isSeekBarOnSliding = true;
 
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Constant.BROADCAST_MEDIA_PLAYER_STATE_CHANGED);
-        filter.addAction(Constant.BROADCAST_SONG_CHANGED);
-        filter.addAction(Constant.BROADCAST_CURRENT_PLAY_TIME);
-        filter.addAction(Constant.BROADCAST_TIMER);
-        registerReceiver(receiver, filter);
+        isSeekBarOnSliding = false;
         int currentPosition = Ultility.progressToTimer(seekBar.getProgress(), duration);
         Intent myIntent = new Intent(this, PlayerService.class);
         myIntent.putExtra(Constant.SEEK_TO_POSTION_EX, currentPosition);
@@ -490,5 +470,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onDestroy() {
         unregisterReceiver(receiver);
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

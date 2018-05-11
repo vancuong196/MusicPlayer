@@ -349,6 +349,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                     .setSmallIcon(R.drawable.ic_music)
                     .setContentIntent(pendingIntent)
                     .setOngoing(true)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .addAction(R.drawable.previous,
                             "", ppreviousIntent)
                     .addAction(R.drawable.pause, "",

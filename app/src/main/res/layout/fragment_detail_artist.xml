@@ -47,10 +47,10 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tv_album_name"
+                        android:id="@+id/tv_artist_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text=""
+                        android:text="Name"
                         android:textColor="@android:color/white"
                         android:textSize="@dimen/detail_fragment_title_size" />
 
@@ -58,12 +58,11 @@
                         android:id="@+id/tv_number_songs"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text=""
+                        android:text="x songs"
                         android:textColor="@android:color/white"
                         android:textSize="@dimen/detail_fragment_subtitle_size" />
 
                 </LinearLayout>
-
             </RelativeLayout>
 
             <android.support.v7.widget.Toolbar
@@ -87,28 +86,8 @@
         tools:context="."
         tools:showIn="@layout/activity_main">
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/btn_shuffle_all"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:src="@drawable/shuffle"
-            app:fabSize="normal" />
-
-        <TextView
-            android:gravity="center"
-            android:textStyle="bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/lv_songs"
-            android:layout_alignTop="@+id/btn_shuffle_all"
-            android:layout_toEndOf="@+id/btn_shuffle_all"
-            android:padding="10dp"
-            android:text="Shuffle all" />
         <android.support.v7.widget.RecyclerView
-            android:layout_marginTop="10dp"
-            android:layout_below="@+id/btn_shuffle_all"
+
             android:id="@+id/lv_songs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -118,7 +97,5 @@
             >
 
         </android.support.v7.widget.RecyclerView>
-
     </RelativeLayout>
-
 </android.support.design.widget.CoordinatorLayout>

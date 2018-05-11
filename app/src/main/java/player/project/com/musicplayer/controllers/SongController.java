@@ -118,6 +118,35 @@ public class SongController extends SQLiteOpenHelper {
         return songs;
     }
 
+    public Song getSongsByPath(String path) {
+
+        ArrayList<Song> songs = new ArrayList<Song>();
+        String selectQuery = "SELECT * FROM " + TABLE_NAME + " where " + PATH + "='" + path + "'";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Song song = new Song();
+                song.setSongId(Integer.parseInt(cursor.getString(0)));
+                song.setSongName(cursor.getString(1));
+                song.setArtist(cursor.getString(2));
+                song.setAlbum(cursor.getString(3));
+                song.setDuration(cursor.getString(4));
+                song.setPath(cursor.getString(5));
+                songs.add(song);
+            } while (cursor.moveToNext());
+        }
+        db.close();
+        if (songs.size() == 1) {
+            return songs.get(0);
+        } else {
+            return null;
+        }
+
+    }
+
     public int count() {
 
         String countQuery = "SELECT * FROM " + TABLE_NAME;
@@ -204,7 +233,6 @@ public class SongController extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         db.close();
-        Ultility.sortSongList(songs);
         return songs;
     }
 

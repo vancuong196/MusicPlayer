@@ -22,7 +22,7 @@
 
             <include
 
-                layout="@layout/music_player_toolbar" />
+                layout="@layout/music_player_ui_toolbar" />
 
             <TextView
                 android:id="@+id/tv_song_name"
@@ -180,7 +180,7 @@
         android:id="@+id/miniLayout"
         android:layout_alignParentTop="true"
         android:visibility="visible"
-        layout="@layout/mini_player_widget"
+        layout="@layout/music_player_mini_widget"
         android:layout_width="match_parent"
         android:layout_height="60dp" />
 

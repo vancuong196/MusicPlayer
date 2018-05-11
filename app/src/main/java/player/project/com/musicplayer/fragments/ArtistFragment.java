@@ -57,13 +57,29 @@ public class ArtistFragment extends Fragment {
         mLvArtist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                String artistName = data.get(position).getName();
+//                ArrayList<Song> songs = songController.getAllSongBelongArtist(artistName);
+//                Intent myIntent = new Intent(getActivity(), PlayerService.class);
+//                myIntent.setAction(Constant.ACTION_SONG_CHANGE);
+//                myIntent.putExtra(Constant.SONG_LIST_EX, songs);
+//                myIntent.putExtra(Constant.SONG_POSTON_EX, 0);
+//                ((MainActivity) getActivity()).setMiniWidgetVisible(true);
+//                ((MainActivity) getActivity()).pendSongListInit(songs);
+//                getActivity().startService(myIntent);
+                Fragment artistDetailFragment = new DetailArtistFragment();
+                Bundle args = new Bundle();
                 String artistName = data.get(position).getName();
-                ArrayList<Song> songs = songController.getAllSongBelongArtist(artistName);
-                Intent myIntent = new Intent(getActivity(), PlayerService.class);
-                myIntent.setAction(Constant.ACTION_SONG_CHANGE);
-                myIntent.putExtra(Constant.SONG_LIST_EX, songs);
-                myIntent.putExtra(Constant.SONG_POSTON_EX, 0);
-                getActivity().startService(myIntent);
+                args.putString("name", artistName);
+                args.putSerializable("songList", songController.getAllSongBelongArtist(artistName));
+                artistDetailFragment.setArguments(args);
+                android.support.v4.app.FragmentManager fragmentManager = getActivity().
+                        getSupportFragmentManager();
+
+                fragmentManager.beginTransaction().setCustomAnimations(android.R.anim.fade_in,
+                        android.R.anim.fade_out).addToBackStack("frag").replace(R.id.root_fragment,
+                        artistDetailFragment, "TAG").commit();
+
+
             }
         });
     }

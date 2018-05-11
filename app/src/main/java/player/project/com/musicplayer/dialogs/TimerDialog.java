@@ -36,7 +36,7 @@ public class TimerDialog extends Dialog implements View.OnClickListener, SeekBar
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.timer_dialog_ui);
+        setContentView(R.layout.dialog_timer);
         btnOk = (Button) findViewById(R.id.btn_dialog_ok);
         btnCancel = (Button) findViewById(R.id.btn_dialog_cancel);
         seekBar = findViewById(R.id.skb_timer);

@@ -6,7 +6,7 @@
     android:padding="@dimen/activity_lyric_layout_padding"
     android:layout_height="match_parent"
     android:background="@color/light_brown_color"
-    tools:context="player.project.com.musicplayer.Dialog.LyricDialog">
+    tools:context="player.project.com.musicplayer.dialogs.LyricDialog">
 
     <TextView
         android:textStyle="bold"

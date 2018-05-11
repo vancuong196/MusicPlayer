@@ -174,7 +174,8 @@ public class XmlParser {
                         System.out.println("debug" + isItem);
                         if (isItem) {
                             Song item = new Song(songName, singerName, albumName, duration, path);
-                            item.setCoverPath(imageLink);
+                            //todo setcoverpath
+                            //item.setCoverPath(imageLink);
                             items.add(item);
                         }
 

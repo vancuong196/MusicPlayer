@@ -72,6 +72,14 @@ public class SongScanner {
                                 String singerName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
                                 String album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
                                 //coverart is an Imageview object
+                                boolean isHaveCoverImage = true;
+
+                                if (mmr.getEmbeddedPicture() == null) {
+                                    isHaveCoverImage = false;
+                                }
+                                if (duration == null) {
+                                    continue;
+                                }
 
                                 if (songName == null) {
                                     songName = file.getName().substring(0, file.getName().length() - ".mp3".length());
@@ -83,6 +91,7 @@ public class SongScanner {
                                     album = "unknown";
                                 }
                                 Song song = new Song(songName, singerName, album, duration, file.getPath());
+                                song.setHaveCoverImage(isHaveCoverImage);
                                 // Adding each song to SongList
                                 songController.addSong(song);
                             } catch (Exception e) {
@@ -97,7 +106,7 @@ public class SongScanner {
     }
 
     /**
-     * Class to filter files which are having .mp3 extension
+     * Class to filter files which are having .mp3,mp4 extension
      */
     class FileExtensionFilter implements FilenameFilter {
         public boolean accept(File dir, String name) {

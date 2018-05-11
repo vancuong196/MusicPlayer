@@ -2,8 +2,6 @@ package player.project.com.musicplayer.customadapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,13 +12,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import player.project.com.musicplayer.R;
-import player.project.com.musicplayer.activities.MainActivity;
 import player.project.com.musicplayer.models.Song;
 import player.project.com.musicplayer.service.PlayerService;
 import player.project.com.musicplayer.ultilities.Constant;
@@ -58,7 +53,7 @@ public class SongListViewAdapter extends RecyclerView.Adapter<SongListViewAdapte
     @Override
     public SongListViewAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.lv_songs_item, parent, false);
+                .inflate(R.layout.lv_song_item, parent, false);
 
         return new SongListViewAdapter.MyViewHolder(itemView);
     }

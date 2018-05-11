@@ -24,7 +24,7 @@ public class AlbumListViewAdapter extends ArrayAdapter<Album> {
     }
 
     public AlbumListViewAdapter(ArrayList<Album> data, Context context) {
-        super(context, R.layout.lv_albums_item, data);
+        super(context, R.layout.lv_album_item, data);
         this.dataSet = data;
         this.mContext = context;
         album = new Album();
@@ -38,7 +38,7 @@ public class AlbumListViewAdapter extends ArrayAdapter<Album> {
         View v = convertView;
         if (v == null) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
-            v = inflater.inflate(R.layout.lv_albums_item, null);
+            v = inflater.inflate(R.layout.lv_album_item, null);
         }
 
         TextView tvAlbumName = v.findViewById(R.id.album_title);

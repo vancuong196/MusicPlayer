@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import player.project.com.musicplayer.R;
+import player.project.com.musicplayer.controllers.SongController;
+import player.project.com.musicplayer.controllers.SongScanner;
 
 public class SplashScreen extends AppCompatActivity {
 
@@ -25,6 +27,11 @@ public class SplashScreen extends AppCompatActivity {
             if (!checkIfHavePermisson()) {
                 requestForPermission();
             } else {
+
+                if (new SongController(getApplicationContext()).count() == 0) {
+                    new SongScanner(this).scan();
+
+                }
                 startMainActivity();
             }
         }
@@ -56,6 +63,10 @@ public class SplashScreen extends AppCompatActivity {
                 }, 3000);
 
             } else {
+                if (new SongController(getApplicationContext()).count() == 0) {
+                    new SongScanner(this).scan();
+
+                }
                 startMainActivity();
             }
 

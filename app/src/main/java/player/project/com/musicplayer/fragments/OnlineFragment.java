@@ -33,14 +33,15 @@ import player.project.com.musicplayer.ultilities.XmlParser;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeFragment extends Fragment {
+public class OnlineFragment extends Fragment {
     private static final String INDEX_URL = "https://www.dropbox.com/s/r54qk8f0lqu66nt/index.xml?dl=1";
 
     private RecyclerView recyclerView;
     private OnlineAlbumListAdapter adapter;
     private ArrayList<OnlineAlbum> albumList;
     private ProgressBar prgStatus;
-    public HomeFragment() {
+
+    public OnlineFragment() {
         // Required empty public constructor
     }
 
@@ -49,7 +50,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        return inflater.inflate(R.layout.fragment_online, container, false);
     }
 
     @Override
@@ -202,13 +203,13 @@ import player.project.com.musicplayer.ultilities.XmlParser;
 
 
 
-public class HomeFragment extends Fragment {
+public class OnlineFragment extends Fragment {
     private static final String INDEX_URL="https://www.dropbox.com/s/r54qk8f0lqu66nt/index.xml?dl=1";
 
     private RecyclerView recyclerView;
     private OnlineAlbumListAdapter adapter;
     private ArrayList<OnlineAlbum> albumList;
-    public HomeFragment() {
+    public OnlineFragment() {
         // Required empty public constructor
     }
 

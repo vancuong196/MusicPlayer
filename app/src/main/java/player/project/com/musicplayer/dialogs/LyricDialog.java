@@ -33,7 +33,7 @@ public class LyricDialog extends Dialog implements View.OnClickListener {
 
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_lyric);
+        setContentView(R.layout.dialog_lyric);
         tvLyric = findViewById(R.id.tv_lyrics);
         tvTitle = findViewById(R.id.tv_title);
         prgWaiting = findViewById(R.id.prg_waiting);

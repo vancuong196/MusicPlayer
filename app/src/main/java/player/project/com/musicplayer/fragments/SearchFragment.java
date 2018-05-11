@@ -1,6 +1,7 @@
 package player.project.com.musicplayer.fragments;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -52,27 +54,12 @@ public class SearchFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         edtSearch = view.findViewById(R.id.inputSearch);
         edtSearch.requestFocus();
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         resultList = view.findViewById(R.id.lv_songs_search);
         resultSongs = new ArrayList<>();
         adapter = new SongListViewAdapter(resultSongs, getContext());
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 1);
         resultList.setLayoutManager(mLayoutManager);
         resultList.setAdapter(adapter);
-        /*
-        resultList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent myIntent = new Intent(getActivity(), PlayerService.class);
-                myIntent.setAction(Constant.ACTION_SONG_CHANGE);
-                myIntent.putExtra(Constant.SONG_LIST_EX, resultSongs);
-                myIntent.putExtra(Constant.SONG_POSTON_EX, position);
-                ((MainActivity) getActivity()).setMiniWidgetVisible(true);
-                ((MainActivity) getActivity()).pendSongListInit(resultSongs);
-                getActivity().startService(myIntent);
-            }
-        });
-        */
         Runnable getSongsTask = new Runnable() {
             @Override
             public void run() {
@@ -89,25 +76,12 @@ public class SearchFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                System.out.println("_____________________________________________");
                 performSearch();
             }
 
             @Override
             public void afterTextChanged(Editable s) {
 
-            }
-        });
-        edtSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    performSearch();
-                    return true;
-                }
-                return false;
             }
         });
 

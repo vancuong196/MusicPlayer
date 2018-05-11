@@ -25,7 +25,6 @@ import java.util.ArrayList;
 
 import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.activities.MainActivity;
-import player.project.com.musicplayer.fragments.DetailAlbumFragment;
 import player.project.com.musicplayer.fragments.DetailOnlineAlbumFragment;
 import player.project.com.musicplayer.models.OnlineAlbum;
 
@@ -63,7 +62,7 @@ public class OnlineAlbumListAdapter extends RecyclerView.Adapter<OnlineAlbumList
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.home_album_item, parent, false);
+                .inflate(R.layout.lv_online_album_item, parent, false);
 
         return new MyViewHolder(itemView);
     }

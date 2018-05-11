@@ -44,7 +44,7 @@ public class RootFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        return inflater.inflate(R.layout.content_main, container, false);
+        return inflater.inflate(R.layout.fragment_main, container, false);
     }
 
     @Override
@@ -113,7 +113,7 @@ public class RootFragment extends Fragment {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
-        adapter.addFragment(new HomeFragment(), "Online");
+        adapter.addFragment(new OnlineFragment(), "Online");
         adapter.addFragment(new SongFragment(), "Songs");
         adapter.addFragment(new PlaylistFragment(), "Playlist");
         adapter.addFragment(new ArtistFragment(), "Artist");
@@ -133,7 +133,6 @@ public class RootFragment extends Fragment {
             public void onClick(View v) {
                 Fragment searchFragment = new SearchFragment();
                 android.support.v4.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.saveFragmentInstanceState(RootFragment.this);
                 fragmentManager.beginTransaction().setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out).addToBackStack("frag").replace(R.id.root_fragment, searchFragment, "TAG").commit();
 
             }
@@ -146,10 +145,6 @@ public class RootFragment extends Fragment {
 
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
         if (id == R.id.action_recan) {
             new SongController(getActivity()).deleteAllSong();
             new SongScanner(getActivity()).scan();

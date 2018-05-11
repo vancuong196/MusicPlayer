@@ -2,8 +2,6 @@ package player.project.com.musicplayer.controllers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.Preference;
-import android.preference.PreferenceManager;
 
 import player.project.com.musicplayer.ultilities.Constant;
 
@@ -12,10 +10,8 @@ import player.project.com.musicplayer.ultilities.Constant;
  */
 
 public class SettingManager {
-    int sMode;
-    int rMode;
-    Context context;
-    SharedPreferences settings;
+    private Context context;
+    private SharedPreferences settings;
     private static class SettingMangagerHolder {
         static SettingManager instance = new SettingManager();
     }
