@@ -43,10 +43,6 @@ public class Song implements Serializable {
         this.songId = songId;
     }
 
-    public byte[] getCoverPicture() {
-        return null;
-    }
-
     public Song() {
 
     }

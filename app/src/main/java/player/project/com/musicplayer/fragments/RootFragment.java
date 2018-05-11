@@ -19,7 +19,7 @@ import android.view.ViewGroup;
 import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.activities.MainActivity;
 import player.project.com.musicplayer.controllers.SongController;
-import player.project.com.musicplayer.controllers.SongScanner;
+import player.project.com.musicplayer.ultilities.SongScanner;
 import player.project.com.musicplayer.customadapter.ViewPagerAdapter;
 
 /**

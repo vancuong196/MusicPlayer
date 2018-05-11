@@ -63,7 +63,7 @@
                 android:id="@+id/btn_explore"
                 android:layout_width="wrap_content"
                 android:text="Explore"
-                android:background="@android:color/transparent"
+                android:background="@drawable/background_selector"
                 android:layout_height="wrap_content" />
 
             <Button
@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tv_description"
                 android:layout_toEndOf="@+id/btn_explore"
-                android:background="@android:color/transparent"
+                android:background="@drawable/background_selector"
                 android:text="Shuffle" />
         </RelativeLayout>
 

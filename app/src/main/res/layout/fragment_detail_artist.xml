@@ -86,8 +86,29 @@
         tools:context="."
         tools:showIn="@layout/activity_main">
 
-        <android.support.v7.widget.RecyclerView
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/btn_shuffle_all"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/shuffle"
+            app:fabSize="normal" />
 
+        <TextView
+            android:gravity="center"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/lv_songs"
+            android:layout_alignTop="@+id/btn_shuffle_all"
+            android:layout_toEndOf="@+id/btn_shuffle_all"
+            android:padding="10dp"
+            android:text="Shuffle all" />
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_below="@id/btn_shuffle_all"
+            android:layout_marginTop="10dp"
             android:id="@+id/lv_songs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

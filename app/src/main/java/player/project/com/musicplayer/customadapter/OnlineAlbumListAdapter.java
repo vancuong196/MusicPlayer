@@ -5,6 +5,7 @@ package player.project.com.musicplayer.customadapter;
  */
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.PopupMenu;
@@ -21,12 +22,19 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.activities.MainActivity;
 import player.project.com.musicplayer.fragments.DetailOnlineAlbumFragment;
 import player.project.com.musicplayer.models.OnlineAlbum;
+import player.project.com.musicplayer.models.Song;
+import player.project.com.musicplayer.ultilities.StartServiceHelper;
+import player.project.com.musicplayer.ultilities.Ultility;
+import player.project.com.musicplayer.ultilities.XmlParser;
 
 
 public class OnlineAlbumListAdapter extends RecyclerView.Adapter<OnlineAlbumListAdapter.MyViewHolder> {
@@ -69,7 +77,7 @@ public class OnlineAlbumListAdapter extends RecyclerView.Adapter<OnlineAlbumList
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        OnlineAlbum album = albumList.get(position);
+        final OnlineAlbum album = albumList.get(position);
         holder.title.setText(album.getTittle());
         holder.count.setText(album.getNumberOfSong() + " songs");
         holder.description.setText(album.getDecription());
@@ -104,60 +112,54 @@ public class OnlineAlbumListAdapter extends RecyclerView.Adapter<OnlineAlbumList
         holder.btnShuffleAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "Btn Shuffle", Toast.LENGTH_SHORT).show();
+                new FetchOnlineAlbumTask().execute(album.getLink());
+                Toast.makeText(mContext, "Shuffle all now!", Toast.LENGTH_SHORT).show();
             }
         });
-        // holder.overflow.setOnClickListener(new View.OnClickListener() {
-        //     @Override
-        //     public void onClick(View view) {
-        //         showPopupMenu(holder.overflow);
-        //         Toast.makeText(mContext, "Thank you for trying this app, Find out more...",Toast.LENGTH_SHORT).show();
-        //     }
-        // });
+
     }
 
-    /**
-     * Showing popup menu when tapping on 3 dots
-     */
-    private void showPopupMenu(View view) {
-        // inflate menu
-        /*
-        PopupMenu popup = new PopupMenu(mContext, view);
-        MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.menu_album, popup.getMenu());
-        popup.setOnMenuItemClickListener(new MyMenuItemClickListener());
-        popup.show();
-        Glide.with(mContext).load(album.getThumbnail()).into(holder.thumbnail);
-        */
-    }
+    private class FetchOnlineAlbumTask extends AsyncTask<String, Void, Boolean> {
 
-    /**
-     * Click listener for popup menu items
-     */
-    class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
 
-        public MyMenuItemClickListener() {
+        ArrayList<Song> list;
+
+
+        @Override
+        protected void onPreExecute() {
+
         }
 
         @Override
-        public boolean onMenuItemClick(MenuItem menuItem) {
-          /*
-            switch (menuItem.getItemId()) {
-                case R.id.action_add_favourite:
-                    Toast.makeText(mContext, "Add to favourite", Toast.LENGTH_SHORT).show();
-                    return true;
-                case R.id.action_play_next:
-                    Toast.makeText(mContext, "Play next", Toast.LENGTH_SHORT).show();
-                    return true;
-                default:
+        protected Boolean doInBackground(String... path) {
+            //prgStatus.setVisibility(View.VISIBLE);
+            URL url = null;
+            try {
+                url = new URL(path[0]);
+                InputStream inputStream = url.openConnection().getInputStream();
+                list = new XmlParser().parseSongList(inputStream);
+                Ultility.sortSongList(list);
+                return true;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                return false;
+            } catch (Exception e) {
+                System.out.println(e);
+                return false;
             }
-        */
-            return false;
 
         }
 
+        @Override
+        protected void onPostExecute(Boolean success) {
+            //prgStatus.setVisibility(View.GONE);
+            if (success) {
+                StartServiceHelper.sendShuffleAllCommand(mContext, list);
+            } else {
+                Toast.makeText(mContext, "Cannot load online content, please try again later", Toast.LENGTH_LONG).show();
+            }
+        }
     }
-
     @Override
     public int getItemCount() {
         return albumList.size();

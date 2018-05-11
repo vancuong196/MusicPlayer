@@ -16,17 +16,16 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/Viewline"
-            android:layout_marginTop="10dp" />
+            android:background="@color/Viewline" />
 
         <Button
             android:background="@drawable/background_selector"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
             android:id="@+id/btn_add_playlist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Add Playlist"
+            android:text="ADD PLAYLIST"
             android:textAllCaps="false"
 
             />
@@ -34,13 +33,11 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/Viewline"
-            android:layout_marginTop="10dp" />
+            android:background="@color/Viewline" />
     </LinearLayout>
 
 
     <android.support.v7.widget.RecyclerView
-        android:layout_marginTop="10dp"
         android:layout_below="@id/c1"
         android:id="@+id/lv_playlist"
         android:layout_width="match_parent"

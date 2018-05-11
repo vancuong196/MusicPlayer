@@ -2,6 +2,7 @@ package player.project.com.musicplayer.customadapter;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +24,8 @@ import player.project.com.musicplayer.controllers.PlayListController;
 import player.project.com.musicplayer.fragments.DetailAlbumFragment;
 import player.project.com.musicplayer.fragments.DetailPlaylistFragment;
 import player.project.com.musicplayer.models.Playlist;
+import player.project.com.musicplayer.models.Song;
+import player.project.com.musicplayer.ultilities.StartServiceHelper;
 
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.MyViewHolder> {
 
@@ -124,7 +127,13 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.MyView
                     notifyItemChanged(selectedItemPostion);
                     return true;
                 case R.id.action_shuffe:
-                    Toast.makeText(mContext, "Play next", Toast.LENGTH_SHORT).show();
+                    new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            ArrayList<Song> songs = new PlayListController(mContext).getAllSongBeLongPlayList(dataSet.get(selectedItemPostion).getName());
+                            StartServiceHelper.sendShuffleAllCommand(mContext, songs);
+                        }
+                    });
                     return true;
                 default:
             }

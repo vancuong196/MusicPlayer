@@ -23,6 +23,7 @@ import player.project.com.musicplayer.customadapter.SongListViewAdapter;
 import player.project.com.musicplayer.models.Song;
 import player.project.com.musicplayer.service.PlayerService;
 import player.project.com.musicplayer.ultilities.Constant;
+import player.project.com.musicplayer.ultilities.StartServiceHelper;
 
 
 public class SongFragment extends Fragment {
@@ -77,16 +78,7 @@ public class SongFragment extends Fragment {
         fabShuffleAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SettingManager.getInstance(getContext()).setsMode(Constant.SETTING_SHUFFLE_MODE_ON);
-                ((MainActivity) getActivity()).setBtnShuffle();
-                Random r = new Random();
-                int postion = r.nextInt(data.size() - 1);
-                Intent myIntent = new Intent(getContext(), PlayerService.class);
-                myIntent.setAction(Constant.ACTION_SONG_CHANGE);
-                myIntent.putExtra(Constant.SONG_LIST_EX, data);
-                myIntent.putExtra(Constant.SONG_POSTON_EX, postion);
-                getActivity().startService(myIntent);
-                Toast.makeText(getActivity(), "Shuffle all", Toast.LENGTH_SHORT).show();
+                StartServiceHelper.sendShuffleAllCommand(getActivity(), data);
             }
         });
         super.onViewCreated(view, savedInstanceState);

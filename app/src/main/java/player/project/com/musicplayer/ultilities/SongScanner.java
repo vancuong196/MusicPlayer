@@ -1,4 +1,4 @@
-package player.project.com.musicplayer.controllers;
+package player.project.com.musicplayer.ultilities;
 
 /**
  * Created by Cuong on 2/4/2018.
@@ -15,16 +15,14 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 
 import player.project.com.musicplayer.activities.MainActivity;
+import player.project.com.musicplayer.controllers.SongController;
 import player.project.com.musicplayer.models.Song;
 
 public class SongScanner {
 
-
-    // SDCard Path
-    final String MEDIA_PATH_IN = Environment.getExternalStorageDirectory().getPath();
-    File[] list;
+    private File[] list;
     private ArrayList<Song> songsList = new ArrayList<Song>();
-    Context mContext;
+    private Context mContext;
     SongController songController;
     // Constructor
 
@@ -105,14 +103,5 @@ public class SongScanner {
         }
     }
 
-    /**
-     * Class to filter files which are having .mp3,mp4 extension
-     */
-    class FileExtensionFilter implements FilenameFilter {
-        public boolean accept(File dir, String name) {
-            return (name.endsWith(".mp3") || name.endsWith(".MP3") || name.endsWith(".mp4") || name.endsWith(".MP4"));
-        }
-
-    }
 }
 

@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -40,7 +41,6 @@ public class OnlineFragment extends Fragment {
     private OnlineAlbumListAdapter adapter;
     private ArrayList<OnlineAlbum> albumList;
     private ProgressBar prgStatus;
-
     public OnlineFragment() {
         // Required empty public constructor
     }
@@ -56,37 +56,13 @@ public class OnlineFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         prgStatus = view.findViewById(R.id.prg_status);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         albumList = new ArrayList<>();
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 1);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-
         prepareAlbums();
-
-        try {
-            Glide.with(this).load(R.drawable.background).into((ImageView) view.findViewById(R.id.backdrop));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-/*
-        MediaPlayer mMediaPlayer= new MediaPlayer();
-        try {
-            mMediaPlayer.setDataSource("https://www.dropbox.com/s/yvwz29xii0uxws8/Cung-Anh-Ngoc-Dolil-Hagi-STee.mp3?dl=1");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            mMediaPlayer.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("duration"+mMediaPlayer.getDuration());
-        mMediaPlayer.start();
-        mMediaPlayer.seekTo(10000);
-        */
     }
 
 
@@ -148,10 +124,6 @@ public class OnlineFragment extends Fragment {
         }
     }
 
-    private int dpToPx(int dp) {
-        Resources r = getResources();
-        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
-    }
 }
 /*
 package player.project.com.musicplayer.fragments;

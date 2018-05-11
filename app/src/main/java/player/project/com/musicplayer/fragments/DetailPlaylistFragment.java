@@ -1,11 +1,13 @@
 package player.project.com.musicplayer.fragments;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,16 +18,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.activities.MainActivity;
 import player.project.com.musicplayer.controllers.PlayListController;
+import player.project.com.musicplayer.controllers.SettingManager;
 import player.project.com.musicplayer.customadapter.SongListViewAdapter;
 import player.project.com.musicplayer.models.OnlineAlbum;
 import player.project.com.musicplayer.models.Playlist;
 import player.project.com.musicplayer.models.Song;
+import player.project.com.musicplayer.service.PlayerService;
+import player.project.com.musicplayer.ultilities.Constant;
+import player.project.com.musicplayer.ultilities.StartServiceHelper;
 
 /**
  * Created by Cuong on 5/3/2018.
@@ -74,6 +82,16 @@ public class DetailPlaylistFragment extends Fragment {
         tvNumberOfSong = view.findViewById(R.id.tv_number_songs);
         imgCover = view.findViewById(R.id.img_cover);
         mLvSongs = view.findViewById(R.id.lv_songs);
+
+        FloatingActionButton btnShuffleAll = view.findViewById(R.id.btn_shuffle_all);
+        btnShuffleAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (data != null && data.size() > 0) {
+                    StartServiceHelper.sendShuffleAllCommand(getActivity(), data);
+                }
+            }
+        });
 
         Bundle args = getArguments();
         playlist = (Playlist) args.getSerializable("playlist");

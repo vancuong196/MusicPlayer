@@ -11,7 +11,7 @@ import java.net.URL;
  */
 
 public class LyricsHelper {
-    static String baseAdress = "http://lyric-api.herokuapp.com/api/find/";
+    static final String BASE_API_URL = "http://lyric-api.herokuapp.com/api/find/";
     String output;
     Boolean success = false;
 
@@ -52,7 +52,7 @@ public class LyricsHelper {
         String tmp3;
         tmp1 = singerName.replaceAll(" ", "%20");
         tmp2 = songName.replaceAll(" ", "%20");
-        tmp3 = baseAdress + tmp1 + "/" + tmp2;
+        tmp3 = BASE_API_URL + tmp1 + "/" + tmp2;
         return tmp3;
     }
 

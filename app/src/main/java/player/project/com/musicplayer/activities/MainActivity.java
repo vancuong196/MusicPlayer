@@ -29,8 +29,6 @@ import java.util.Objects;
 import de.hdodenhof.circleimageview.CircleImageView;
 import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.controllers.SettingManager;
-import player.project.com.musicplayer.controllers.SongController;
-import player.project.com.musicplayer.controllers.SongScanner;
 import player.project.com.musicplayer.customadapter.PendingSongListAdapter;
 import player.project.com.musicplayer.dialogs.LyricDialog;
 import player.project.com.musicplayer.dialogs.TimerDialog;

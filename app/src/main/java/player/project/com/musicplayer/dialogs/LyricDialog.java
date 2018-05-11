@@ -28,6 +28,10 @@ public class LyricDialog extends Dialog implements View.OnClickListener {
         this.song = song;
     }
 
+    public LyricDialog(@NonNull Context context) {
+        super(context);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 

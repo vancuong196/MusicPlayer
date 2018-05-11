@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.controllers.SongController;
-import player.project.com.musicplayer.controllers.SongScanner;
+import player.project.com.musicplayer.ultilities.SongScanner;
 
 public class SplashScreen extends AppCompatActivity {
 
