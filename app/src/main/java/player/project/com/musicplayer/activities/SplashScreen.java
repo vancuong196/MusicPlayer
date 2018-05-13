@@ -4,12 +4,12 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.widget.Toast;
 
 import player.project.com.musicplayer.R;
@@ -30,7 +30,6 @@ public class SplashScreen extends AppCompatActivity {
 
                 if (new SongController(getApplicationContext()).count() == 0) {
                     new SongScanner(this).scan();
-
                 }
                 startMainActivity();
             }
@@ -79,10 +78,11 @@ public class SplashScreen extends AppCompatActivity {
 
     private boolean checkIfHavePermisson() {
         int result = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-        return result == PackageManager.PERMISSION_GRANTED ? true : false;
+        return result == PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestForPermission() {
+
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1010);
     }
 

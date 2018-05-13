@@ -20,12 +20,9 @@ import player.project.com.musicplayer.ultilities.Constant;
  */
 
 public class TimerDialog extends Dialog implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
-    Button btnOk;
-    Button btnCancel;
-    Button btnDisaleTimer;
-    SeekBar seekBar;
-    TextView textView;
-    Context context;
+    private SeekBar seekBar;
+    private TextView textView;
+    private Context context;
 
     public TimerDialog(@NonNull Context context) {
         super(context);
@@ -37,11 +34,11 @@ public class TimerDialog extends Dialog implements View.OnClickListener, SeekBar
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_timer);
-        btnOk = (Button) findViewById(R.id.btn_dialog_ok);
-        btnCancel = (Button) findViewById(R.id.btn_dialog_cancel);
+        Button btnOk = (Button) findViewById(R.id.btn_dialog_ok);
+        Button btnCancel = (Button) findViewById(R.id.btn_dialog_cancel);
         seekBar = findViewById(R.id.skb_timer);
         textView = findViewById(R.id.tv_dialog_time);
-        btnDisaleTimer = findViewById(R.id.btn_dialog_disable_timer);
+        Button btnDisaleTimer = findViewById(R.id.btn_dialog_disable_timer);
         btnDisaleTimer.setOnClickListener(this);
         btnCancel.setOnClickListener(this);
         btnOk.setOnClickListener(this);
@@ -54,7 +51,7 @@ public class TimerDialog extends Dialog implements View.OnClickListener, SeekBar
         Intent myIntent = new Intent(context, PlayerService.class);
         switch (v.getId()) {
             case R.id.btn_dialog_ok:
-                myIntent.putExtra(Constant.TIMER_EX, seekBar.getProgress());
+                myIntent.putExtra(Constant.TIMER_EX, seekBar.getProgress() + 1);
                 myIntent.setAction(Constant.ACTION_UPDATE_TIMER);
                 context.startService(myIntent);
                 break;
@@ -72,7 +69,7 @@ public class TimerDialog extends Dialog implements View.OnClickListener, SeekBar
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        textView.setText(String.valueOf(progress) + " minutes");
+        textView.setText(String.valueOf(progress + 1) + " minutes");
     }
 
     @Override

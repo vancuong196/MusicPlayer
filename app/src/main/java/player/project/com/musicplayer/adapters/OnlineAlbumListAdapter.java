@@ -1,17 +1,11 @@
-package player.project.com.musicplayer.customadapter;
-
-/**
- * Created by Cuong on 5/7/2018.
- */
+package player.project.com.musicplayer.adapters;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -42,13 +36,14 @@ public class OnlineAlbumListAdapter extends RecyclerView.Adapter<OnlineAlbumList
     private Context mContext;
     private ArrayList<OnlineAlbum> albumList;
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView title, count, description;
-        public ImageView thumbnail;
-        public LinearLayout cardView;
-        public Button btnExplore;
-        public Button btnShuffleAll;
-        public MyViewHolder(View view) {
+    class MyViewHolder extends RecyclerView.ViewHolder {
+        TextView title, count, description;
+        ImageView thumbnail;
+        LinearLayout cardView;
+        Button btnExplore;
+        Button btnShuffleAll;
+
+        MyViewHolder(View view) {
             super(view);
             btnExplore = view.findViewById(R.id.btn_explore);
             btnShuffleAll = view.findViewById(R.id.btn_shuffle);
@@ -78,11 +73,15 @@ public class OnlineAlbumListAdapter extends RecyclerView.Adapter<OnlineAlbumList
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         final OnlineAlbum album = albumList.get(position);
-        holder.title.setText(album.getTittle());
+        holder.title.setText(album.getTittle().toUpperCase());
         holder.count.setText(album.getNumberOfSong() + " songs");
         holder.description.setText(album.getDecription());
         // loading album cover using Glide library
-        Glide.with(mContext).load("https://www.dropbox.com/s/m9ttkxuw9ltgq8o/userqltk.jpg?dl=1").into(holder.thumbnail);
+        try {
+            Glide.with(mContext).load(album.getImageLink()).into(holder.thumbnail);
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
         final int pos = position;
         holder.thumbnail.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,14 +111,15 @@ public class OnlineAlbumListAdapter extends RecyclerView.Adapter<OnlineAlbumList
         holder.btnShuffleAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new FetchOnlineAlbumTask().execute(album.getLink());
-                Toast.makeText(mContext, "Shuffle all now!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Loading your music!", Toast.LENGTH_SHORT).show();
+                new FetchOnlineAlbumSongListTask().execute(album.getLink());
+
             }
         });
 
     }
 
-    private class FetchOnlineAlbumTask extends AsyncTask<String, Void, Boolean> {
+    private class FetchOnlineAlbumSongListTask extends AsyncTask<String, Void, Boolean> {
 
 
         ArrayList<Song> list;
@@ -133,7 +133,7 @@ public class OnlineAlbumListAdapter extends RecyclerView.Adapter<OnlineAlbumList
         @Override
         protected Boolean doInBackground(String... path) {
             //prgStatus.setVisibility(View.VISIBLE);
-            URL url = null;
+            URL url;
             try {
                 url = new URL(path[0]);
                 InputStream inputStream = url.openConnection().getInputStream();
@@ -144,7 +144,7 @@ public class OnlineAlbumListAdapter extends RecyclerView.Adapter<OnlineAlbumList
                 e.printStackTrace();
                 return false;
             } catch (Exception e) {
-                System.out.println(e);
+                System.out.println(e.toString());
                 return false;
             }
 

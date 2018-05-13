@@ -1,7 +1,6 @@
 package player.project.com.musicplayer.fragments;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,12 +12,9 @@ import android.widget.GridView;
 
 import java.util.ArrayList;
 
-import player.project.com.musicplayer.activities.MainActivity;
 import player.project.com.musicplayer.controllers.SongController;
-import player.project.com.musicplayer.customadapter.AlbumListViewAdapter;
+import player.project.com.musicplayer.adapters.AlbumListViewAdapter;
 import player.project.com.musicplayer.R;
-import player.project.com.musicplayer.service.PlayerService;
-import player.project.com.musicplayer.ultilities.Constant;
 import player.project.com.musicplayer.models.Album;
 
 
@@ -71,7 +67,7 @@ public class AlbumFragment extends Fragment {
                 /*
                 String albumName = data.get(position).getAlbumName();
                 Intent myIntent = new Intent(getActivity(), PlayerService.class);
-                myIntent.setAction(Constant.ACTION_SONG_CHANGE);
+                myIntent.setAction(Constant.ACTION_CHANGE_PLAYLIST);
                 myIntent.putExtra(Constant.SONG_LIST_EX, songController.getAllSongBelongToAlbums(albumName, data.get(position).getArtist()));
                 myIntent.putExtra(Constant.SONG_POSTON_EX, 0);
                 ((MainActivity) getActivity()).setMiniWidgetVisible(true);

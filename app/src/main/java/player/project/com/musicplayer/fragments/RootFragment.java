@@ -1,6 +1,7 @@
 package player.project.com.musicplayer.fragments;
 
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -15,19 +16,20 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.activities.MainActivity;
 import player.project.com.musicplayer.controllers.SongController;
 import player.project.com.musicplayer.ultilities.SongScanner;
-import player.project.com.musicplayer.customadapter.ViewPagerAdapter;
+import player.project.com.musicplayer.adapters.ViewPagerAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class RootFragment extends Fragment {
 
-    Toolbar toolbar;
+    Toolbar mToolbar;
 
     public RootFragment() {
         // Required empty public constructor
@@ -53,61 +55,10 @@ public class RootFragment extends Fragment {
         setupViewPager(viewPager);
         TabLayout tabLayout = view.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
-
-        toolbar = view.findViewById(R.id.toolbar);
-        toolbar.setTitle("Music");
-        /*
-        drawer = ((MainActivity)getActivity()).drawer;
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                getActivity(), drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-        */
-        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
+        mToolbar = view.findViewById(R.id.toolbar);
+        mToolbar.setTitle("MUSIC");
+        ((MainActivity) getActivity()).setSupportActionBar(mToolbar);
         setHasOptionsMenu(true);
-        //  getActivity().setSupportActionBar(toolbar);
-        //((MainActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        /*
-        tabLayout.getTabAt(0).setIcon(R.drawable.music_note);
-        tabLayout.getTabAt(1).setIcon(R.drawable.music_note);
-        tabLayout.getTabAt(2).setIcon(R.drawable.playlist_play);
-        tabLayout.getTabAt(3).setIcon(R.drawable.artist);
-        tabLayout.getTabAt(4).setIcon(R.drawable.album);
-
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-
-                switch (tab.getPosition()) {
-                    case 0:
-                        toolbar.setTitle("Home");
-                        break;
-                    case 1:
-                        toolbar.setTitle("Song");
-                        break;
-                    case 2:
-                        toolbar.setTitle("Playlist");
-                        break;
-                    case 3:
-                        toolbar.setTitle("Artist");
-                        break;
-                    case 4:
-                        toolbar.setTitle("Album");
-                        break;
-                }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-        */
         super.onViewCreated(view, savedInstanceState);
     }
 
@@ -146,16 +97,31 @@ public class RootFragment extends Fragment {
         int id = item.getItemId();
 
         if (id == R.id.action_recan) {
-            new SongController(getActivity()).deleteAllSong();
-            new SongScanner(getActivity()).scan();
-
-            //mLvAdapter.addAll(new SongController(this).getAllSongs());
-            //mLvAdapter.notifyDataSetChanged();
-        }
-        if (id == R.id.action_exit) {
+            new ScanMusicInBackgroundTask().execute((Void) null);
+        } else if (id == R.id.action_exit) {
             getActivity().finish();
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private class ScanMusicInBackgroundTask extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            new SongController(getActivity()).deleteAllSong();
+            new SongScanner(getActivity()).scan();
+            return true;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            Toast.makeText(getActivity(), "Your music library is updating", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean bool) {
+            Toast.makeText(getActivity(), "Your music library is updated! Restart application to see changes", Toast.LENGTH_SHORT).show();
+
+        }
+    }
 }

@@ -1,6 +1,5 @@
 package player.project.com.musicplayer.fragments;
 
-import android.content.Intent;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,21 +17,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.activities.MainActivity;
 import player.project.com.musicplayer.controllers.PlayListController;
-import player.project.com.musicplayer.controllers.SettingManager;
-import player.project.com.musicplayer.customadapter.SongListViewAdapter;
+import player.project.com.musicplayer.adapters.SongListViewAdapter;
 import player.project.com.musicplayer.models.OnlineAlbum;
 import player.project.com.musicplayer.models.Playlist;
 import player.project.com.musicplayer.models.Song;
-import player.project.com.musicplayer.service.PlayerService;
-import player.project.com.musicplayer.ultilities.Constant;
 import player.project.com.musicplayer.ultilities.StartServiceHelper;
 
 /**
@@ -40,13 +34,13 @@ import player.project.com.musicplayer.ultilities.StartServiceHelper;
  */
 
 public class DetailPlaylistFragment extends Fragment {
-    RecyclerView mLvSongs;
-    SongListViewAdapter mLvAdapter;
-    ArrayList<Song> data;
-    TextView tvPlaylistName;
-    TextView tvNumberOfSong;
-    Playlist playlist;
-    ImageView imgCover;
+    private RecyclerView mLvSongs;
+    private SongListViewAdapter mLvAdapter;
+    private ArrayList<Song> data;
+    private TextView tvPlaylistName;
+    private TextView tvNumberOfSong;
+    private Playlist mCurrentPlaylist;
+    private ImageView imgCover;
 
     public DetailPlaylistFragment() {
         // Required empty public constructor
@@ -65,7 +59,7 @@ public class DetailPlaylistFragment extends Fragment {
                              Bundle savedInstanceState) {
 
 
-        return inflater.inflate(R.layout.fragment_detail_album, container, false);
+        return inflater.inflate(R.layout.fragment_details_playlist, container, false);
     }
 
     @Override
@@ -94,16 +88,16 @@ public class DetailPlaylistFragment extends Fragment {
         });
 
         Bundle args = getArguments();
-        playlist = (Playlist) args.getSerializable("playlist");
+        mCurrentPlaylist = (Playlist) args.getSerializable("playlist");
 
-        tvPlaylistName.setText(playlist.getName());
-        tvNumberOfSong.setText(String.valueOf(playlist.getNumberOfSongs()) + " songs");
+        tvPlaylistName.setText(mCurrentPlaylist.getName());
+        tvNumberOfSong.setText(String.valueOf(mCurrentPlaylist.getNumberOfSongs()) + " songs");
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         ((MainActivity) getActivity()).setSupportActionBar(toolbar);
-
-        initCollapsingToolbar();
         ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //tvNumberOfSong.setText(String.valueOf(data.size()));
+        initCollapsingToolbar();
+
+
         data = new ArrayList<>();
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 1);
         mLvSongs.setLayoutManager(mLayoutManager);
@@ -115,13 +109,12 @@ public class DetailPlaylistFragment extends Fragment {
     }
 
     private void initCollapsingToolbar() {
-        final CollapsingToolbarLayout collapsingToolbar =
-                (CollapsingToolbarLayout) getView().findViewById(R.id.collapsing_toolbar);
+        final CollapsingToolbarLayout collapsingToolbar = getView().findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(" ");
-        AppBarLayout appBarLayout = (AppBarLayout) getView().findViewById(R.id.appbar);
+        AppBarLayout appBarLayout = getView().findViewById(R.id.appbar);
         appBarLayout.setExpanded(true);
 
-        // hiding & showing the title when toolbar expanded & collapsed
+        // hiding & showing the title when mToolbar expanded & collapsed
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             boolean isShow = false;
             int scrollRange = -1;
@@ -132,7 +125,7 @@ public class DetailPlaylistFragment extends Fragment {
                     scrollRange = appBarLayout.getTotalScrollRange();
                 }
                 if (scrollRange + verticalOffset == 0) {
-                    collapsingToolbar.setTitle("Playlist: " + playlist.getName());
+                    collapsingToolbar.setTitle("Playlist: " + mCurrentPlaylist.getName());
                     isShow = true;
                 } else if (isShow) {
                     collapsingToolbar.setTitle(" ");
@@ -158,9 +151,8 @@ public class DetailPlaylistFragment extends Fragment {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            //prgStatus.setVisibility(View.VISIBLE);
-            data = new PlayListController(getActivity()).getAllSongBeLongPlayList(playlist.getName());
 
+            data = new PlayListController(getActivity()).getAllSongBeLongPlayList(mCurrentPlaylist.getName());
             return true;
         }
 
@@ -169,11 +161,6 @@ public class DetailPlaylistFragment extends Fragment {
             mLvAdapter = new SongListViewAdapter(data, getActivity());
             mLvSongs.setAdapter(mLvAdapter);
         }
-    }
-
-    private int dpToPx(int dp) {
-        Resources r = getResources();
-        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
     }
 
 }

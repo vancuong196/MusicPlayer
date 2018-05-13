@@ -1,22 +1,12 @@
 package player.project.com.musicplayer.models;
 
-/**
- * Created by Cuong on 4/2/2018.
- */
-
 public class Artist {
-    String name;
-    int numberOfSong;
-    int numberOfAlbum;
+    private String name;
+    private int numberOfSong;
+    private int numberOfAlbum;
 
     public Artist() {
 
-    }
-
-    public Artist(String name, int numberOfSong, int numberOfAlbum) {
-        this.name = name;
-        this.numberOfSong = numberOfSong;
-        this.numberOfAlbum = numberOfAlbum;
     }
 
     public String getName() {

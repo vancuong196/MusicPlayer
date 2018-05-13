@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.controllers.PlayListController;
 import player.project.com.musicplayer.controllers.SongController;
-import player.project.com.musicplayer.customadapter.SelectableSongAdapter;
+import player.project.com.musicplayer.adapters.SelectableSongAdapter;
 import player.project.com.musicplayer.models.Playlist;
 import player.project.com.musicplayer.models.Song;
 

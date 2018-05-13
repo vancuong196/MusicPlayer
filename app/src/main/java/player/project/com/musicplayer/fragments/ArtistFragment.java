@@ -1,7 +1,6 @@
 package player.project.com.musicplayer.fragments;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,14 +12,10 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-import player.project.com.musicplayer.activities.MainActivity;
 import player.project.com.musicplayer.controllers.SongController;
-import player.project.com.musicplayer.customadapter.ListViewArtistAdapter;
+import player.project.com.musicplayer.adapters.ListViewArtistAdapter;
 import player.project.com.musicplayer.R;
-import player.project.com.musicplayer.service.PlayerService;
-import player.project.com.musicplayer.ultilities.Constant;
 import player.project.com.musicplayer.models.Artist;
-import player.project.com.musicplayer.models.Song;
 
 
 /**
@@ -60,7 +55,7 @@ public class ArtistFragment extends Fragment {
 //                String artistName = data.get(position).getName();
 //                ArrayList<Song> songs = songController.getAllSongBelongArtist(artistName);
 //                Intent myIntent = new Intent(getActivity(), PlayerService.class);
-//                myIntent.setAction(Constant.ACTION_SONG_CHANGE);
+//                myIntent.setAction(Constant.ACTION_CHANGE_PLAYLIST);
 //                myIntent.putExtra(Constant.SONG_LIST_EX, songs);
 //                myIntent.putExtra(Constant.SONG_POSTON_EX, 0);
 //                ((MainActivity) getActivity()).setMiniWidgetVisible(true);

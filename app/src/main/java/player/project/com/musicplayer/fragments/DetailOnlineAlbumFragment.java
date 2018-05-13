@@ -1,8 +1,6 @@
 package player.project.com.musicplayer.fragments;
 
-import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,28 +13,25 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
+import java.io.EOFException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Random;
 
 import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.activities.MainActivity;
-import player.project.com.musicplayer.controllers.SettingManager;
-import player.project.com.musicplayer.customadapter.OnlineAlbumListAdapter;
-import player.project.com.musicplayer.customadapter.SongListViewAdapter;
+import player.project.com.musicplayer.adapters.SongListViewAdapter;
 import player.project.com.musicplayer.models.OnlineAlbum;
 import player.project.com.musicplayer.models.Song;
-import player.project.com.musicplayer.service.PlayerService;
-import player.project.com.musicplayer.ultilities.Constant;
 import player.project.com.musicplayer.ultilities.StartServiceHelper;
 import player.project.com.musicplayer.ultilities.Ultility;
 import player.project.com.musicplayer.ultilities.XmlParser;
@@ -46,14 +41,13 @@ import player.project.com.musicplayer.ultilities.XmlParser;
  */
 
 public class DetailOnlineAlbumFragment extends Fragment {
-    RecyclerView mLvSongs;
-    SongListViewAdapter mLvAdapter;
-    ArrayList<Song> data;
-    TextView tvAlbumName;
-    TextView tvNumberOfSong;
-    TextView tvArtistName;
-    ImageView imgCover;
-    OnlineAlbum onlineAlbum;
+    private RecyclerView mLvSongs;
+    private SongListViewAdapter mLvAdapter;
+    private ArrayList<Song> data;
+    private TextView tvAlbumName;
+    private TextView tvNumberOfSong;
+    private ImageView imgCover;
+    private OnlineAlbum onlineAlbum;
     public DetailOnlineAlbumFragment() {
         // Required empty public constructor
     }
@@ -71,7 +65,7 @@ public class DetailOnlineAlbumFragment extends Fragment {
                              Bundle savedInstanceState) {
 
 
-        return inflater.inflate(R.layout.fragment_detail_album, container, false);
+        return inflater.inflate(R.layout.fragment_detail_online_album, container, false);
     }
 
     @Override
@@ -88,6 +82,7 @@ public class DetailOnlineAlbumFragment extends Fragment {
         imgCover = view.findViewById(R.id.img_cover);
         mLvSongs = view.findViewById(R.id.lv_songs);
 
+
         FloatingActionButton btnShuffleAll = view.findViewById(R.id.btn_shuffle_all);
         btnShuffleAll.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,19 +93,27 @@ public class DetailOnlineAlbumFragment extends Fragment {
             }
         });
 
+
         Bundle args = getArguments();
         onlineAlbum = (OnlineAlbum) args.getSerializable("album");
 
-        tvAlbumName.setText(onlineAlbum.getTittle());
+        if (onlineAlbum == null) {
+            Toast.makeText(getActivity(), "Error when loading details of album", Toast.LENGTH_SHORT).show();
+            getActivity().onBackPressed();
+        }
+        try {
+            Glide.with(getContext()).load(onlineAlbum.getImageLink()).into(imgCover);
+        } catch (Exception e) {
+            System.out.println("error when load cover image of album");
+        }
+        tvAlbumName.setText(onlineAlbum.getTittle().toUpperCase());
         tvNumberOfSong.setText(onlineAlbum.getNumberOfSong() + " songs");
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
         ((MainActivity) getActivity()).setSupportActionBar(toolbar);
-
-        initCollapsingToolbar();
         ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //tvNumberOfSong.setText(String.valueOf(data.size()));
-        data = new ArrayList<>();
+        initCollapsingToolbar();
 
+        data = new ArrayList<>();
         mLvAdapter = new SongListViewAdapter(data, getView().getContext());
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 1);
         mLvSongs.setLayoutManager(mLayoutManager);
@@ -123,13 +126,12 @@ public class DetailOnlineAlbumFragment extends Fragment {
     }
 
     private void initCollapsingToolbar() {
-        final CollapsingToolbarLayout collapsingToolbar =
-                (CollapsingToolbarLayout) getView().findViewById(R.id.collapsing_toolbar);
+        final CollapsingToolbarLayout collapsingToolbar = getView().findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(" ");
-        AppBarLayout appBarLayout = (AppBarLayout) getView().findViewById(R.id.appbar);
+        AppBarLayout appBarLayout = getView().findViewById(R.id.appbar);
         appBarLayout.setExpanded(true);
 
-        // hiding & showing the title when toolbar expanded & collapsed
+        // hiding & showing the title when mToolbar expanded & collapsed
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             boolean isShow = false;
             int scrollRange = -1;
@@ -196,10 +198,6 @@ public class DetailOnlineAlbumFragment extends Fragment {
                 Toast.makeText(getActivity(), "Cannot load online content, please try again later", Toast.LENGTH_LONG).show();
             }
         }
-    }
-    private int dpToPx(int dp) {
-        Resources r = getResources();
-        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
     }
 
 }

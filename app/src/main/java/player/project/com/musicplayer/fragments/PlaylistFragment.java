@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.controllers.PlayListController;
-import player.project.com.musicplayer.customadapter.PlaylistAdapter;
+import player.project.com.musicplayer.adapters.PlaylistAdapter;
 import player.project.com.musicplayer.models.Playlist;
 
 /**
@@ -23,10 +23,10 @@ import player.project.com.musicplayer.models.Playlist;
  */
 public class PlaylistFragment extends Fragment {
 
-    ArrayList<Playlist> playlists;
-    private Button adđButton;
-    RecyclerView recyclerViewPlaylist;
-    private PlaylistAdapter adapter;
+    private ArrayList<Playlist> playlists;
+    private Button mAddButton;
+    private RecyclerView mRecyclerViewPlaylist;
+    private PlaylistAdapter mLvAdapter;
     public PlaylistFragment() {
         // Required empty public constructor
     }
@@ -43,13 +43,13 @@ public class PlaylistFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         playlists = new PlayListController(getActivity()).getPlayList();
-        adapter = new PlaylistAdapter(playlists, getActivity());
-        recyclerViewPlaylist = view.findViewById(R.id.lv_playlist);
+        mLvAdapter = new PlaylistAdapter(playlists, getActivity());
+        mRecyclerViewPlaylist = view.findViewById(R.id.lv_playlist);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 1);
-        recyclerViewPlaylist.setLayoutManager(mLayoutManager);
-        recyclerViewPlaylist.setAdapter(adapter);
-        adđButton = view.findViewById(R.id.btn_add_playlist);
-        adđButton.setOnClickListener(new View.OnClickListener() {
+        mRecyclerViewPlaylist.setLayoutManager(mLayoutManager);
+        mRecyclerViewPlaylist.setAdapter(mLvAdapter);
+        mAddButton = view.findViewById(R.id.btn_add_playlist);
+        mAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AddPlaylistFragment addLyricFragment = new AddPlaylistFragment();

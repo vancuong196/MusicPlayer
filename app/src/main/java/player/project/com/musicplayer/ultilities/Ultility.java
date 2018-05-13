@@ -1,28 +1,20 @@
 package player.project.com.musicplayer.ultilities;
 
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
-import android.net.Uri;
-import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.models.Song;
-
-/**
- * Created by Cuong on 3/4/2018.
- */
 
 public class Ultility {
     public static String milisecondToDuration(String str) {
         long milliseconds = Long.valueOf(str);
         String finalTimerString = "";
-        String secondsString = "";
+        String secondsString;
 
         // Convert total duration into time
         int hours = (int) (milliseconds / (1000 * 60 * 60));
@@ -47,14 +39,13 @@ public class Ultility {
     }
 
     public static String milisecondToDuration(long mili) {
-        long milliseconds = mili;
         String finalTimerString = "";
-        String secondsString = "";
+        String secondsString;
 
         // Convert total duration into time
-        int hours = (int) (milliseconds / (1000 * 60 * 60));
-        int minutes = (int) (milliseconds % (1000 * 60 * 60)) / (1000 * 60);
-        int seconds = (int) ((milliseconds % (1000 * 60 * 60)) % (1000 * 60) / 1000);
+        int hours = (int) (mili / (1000 * 60 * 60));
+        int minutes = (int) (mili % (1000 * 60 * 60)) / (1000 * 60);
+        int seconds = (int) ((mili % (1000 * 60 * 60)) % (1000 * 60) / 1000);
         // Add hours if there
         if (hours > 0) {
             finalTimerString = hours + ":";
@@ -74,7 +65,7 @@ public class Ultility {
     }
 
     public static int getProgressPercentage(long currentDuration, long totalDuration) {
-        Double percentage = (double) 0;
+        Double percentage;
 
         long currentSeconds = (int) (currentDuration / 1000);
         long totalSeconds = (int) (totalDuration / 1000);
@@ -88,7 +79,7 @@ public class Ultility {
 
 
     public static int progressToTimer(int progress, long totalDuration) {
-        int currentDuration = 0;
+        int currentDuration;
         totalDuration = (int) (totalDuration / 1000);
         currentDuration = (int) ((((double) progress) / 100) * totalDuration);
 
@@ -96,27 +87,20 @@ public class Ultility {
         return currentDuration * 1000;
     }
 
-    public static Bitmap getCoverImageofSong(String path, boolean accept_null, Resources r) {
+    public static Bitmap getCoverImageofSong(String path) {
         try {
 
             MediaMetadataRetriever mmr = new MediaMetadataRetriever();
             mmr.setDataSource(path);
             byte[] b = mmr.getEmbeddedPicture();
             if (b == null) {
-                if (!accept_null) {
-                    return BitmapFactory.decodeResource(r, R.drawable.ic_music);
-                } else {
-                    return null;
-                }
+                return null;
             } else return BitmapFactory.decodeByteArray(b, 0, b.length);
-        } catch (IllegalArgumentException e) {
-            if (!accept_null) {
-                return BitmapFactory.decodeResource(r, R.drawable.ic_music);
-            } else {
+        } catch (Exception e) {
                 return null;
             }
         }
-    }
+
 
     public static ArrayList<Song> randomSongListMaker(ArrayList<Song> songs, int postion) {
         ArrayList<Song> cSongs = (ArrayList<Song>) songs.clone();

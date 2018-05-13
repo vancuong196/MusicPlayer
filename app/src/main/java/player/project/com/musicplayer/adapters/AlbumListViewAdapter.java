@@ -1,4 +1,4 @@
-package player.project.com.musicplayer.customadapter;
+package player.project.com.musicplayer.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -15,25 +15,19 @@ import player.project.com.musicplayer.models.Album;
 public class AlbumListViewAdapter extends ArrayAdapter<Album> {
 
 
-    ArrayList<Album> dataSet;
-    Context mContext;
-    Album album;
-
-    public AlbumListViewAdapter(Context context, int textViewResourceId) {
-        super(context, textViewResourceId);
-    }
+    private ArrayList<Album> dataSet;
+    private Context mContext;
 
     public AlbumListViewAdapter(ArrayList<Album> data, Context context) {
         super(context, R.layout.lv_album_item, data);
         this.dataSet = data;
         this.mContext = context;
-        album = new Album();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        album = dataSet.get(position);
+        Album album = dataSet.get(position);
         // Check if an existing view is being reused, otherwise inflate the view
         View v = convertView;
         if (v == null) {

@@ -47,11 +47,11 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:textColor="@color/white"
                         android:id="@+id/tv_album_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text=""
-                        android:textColor="@android:color/white"
+                        android:text="Haha"
                         android:textSize="@dimen/detail_fragment_title_size" />
 
                     <TextView
@@ -59,7 +59,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=""
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/white"
                         android:textSize="@dimen/detail_fragment_subtitle_size" />
 
                 </LinearLayout>
@@ -87,7 +87,14 @@
         tools:context="."
         tools:showIn="@layout/activity_main">
 
+        <View
+
+            android:id="@+id/c4"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="@color/Viewline" />
         <android.support.design.widget.FloatingActionButton
+            android:layout_below="@+id/c4"
             android:id="@+id/btn_shuffle_all"
             android:layout_width="50dp"
             android:layout_height="50dp"
@@ -97,18 +104,27 @@
             app:fabSize="normal" />
 
         <TextView
-            android:gravity="center"
-            android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/lv_songs"
+            android:layout_above="@+id/c3"
             android:layout_alignTop="@+id/btn_shuffle_all"
             android:layout_toEndOf="@+id/btn_shuffle_all"
+            android:gravity="center"
             android:padding="10dp"
-            android:text="Shuffle all" />
-        <android.support.v7.widget.RecyclerView
+            android:text="Shuffle all"
+            android:textStyle="bold" />
+
+        <View
             android:layout_marginTop="10dp"
             android:layout_below="@+id/btn_shuffle_all"
+            android:id="@+id/c3"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="@color/Viewline" />
+
+        <android.support.v7.widget.RecyclerView
+
+            android:layout_below="@+id/c3"
             android:id="@+id/lv_songs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

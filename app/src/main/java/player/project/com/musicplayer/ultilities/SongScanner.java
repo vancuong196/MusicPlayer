@@ -1,41 +1,29 @@
 package player.project.com.musicplayer.ultilities;
 
-/**
- * Created by Cuong on 2/4/2018.
- */
-
 import android.content.Context;
 import android.media.MediaMetadataRetriever;
-import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 
 import java.io.File;
-import java.io.FilenameFilter;
-import java.util.ArrayList;
 
-import player.project.com.musicplayer.activities.MainActivity;
 import player.project.com.musicplayer.controllers.SongController;
 import player.project.com.musicplayer.models.Song;
 
 public class SongScanner {
 
     private File[] list;
-    private ArrayList<Song> songsList = new ArrayList<Song>();
-    private Context mContext;
-    SongController songController;
+    private SongController songController;
     // Constructor
 
     public SongScanner(@NonNull Context context) {
-        mContext = context;
-        list = mContext.getExternalFilesDirs(null);
-        songController = new SongController(mContext);
+        list = context.getExternalFilesDirs(null);
+        songController = new SongController(context);
     }
 
     public void scan() {
-        for (int i = 0; i < list.length; i++) {
-            System.out.println("Path----------------" + list[i].getParentFile().getParentFile().getParentFile().getParentFile().getPath());
-            scanPath(list[i].getParentFile().getParentFile().getParentFile().getParentFile().getPath());
+        for (File aList : list) {
+            System.out.println("Path----------------" + aList.getParentFile().getParentFile().getParentFile().getParentFile().getPath());
+            scanPath(aList.getParentFile().getParentFile().getParentFile().getParentFile().getPath());
         }
     }
     /**
@@ -58,7 +46,7 @@ public class SongScanner {
                     {
                         String tmp = file.getName();
                         if (tmp.toLowerCase().endsWith(".mp3") || tmp.toLowerCase().endsWith(".mp4")) {
-                            System.out.println(file.getPath().toString());
+                            System.out.println(file.getPath());
                             MediaMetadataRetriever mmr = new MediaMetadataRetriever();
                             try {
 
@@ -70,10 +58,10 @@ public class SongScanner {
                                 String singerName = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
                                 String album = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
                                 //coverart is an Imageview object
-                                boolean isHaveCoverImage = true;
+                                boolean isHaveCoverImage = false;
 
-                                if (mmr.getEmbeddedPicture() == null) {
-                                    isHaveCoverImage = false;
+                                if (mmr.getEmbeddedPicture() != null) {
+                                    isHaveCoverImage = true;
                                 }
                                 if (duration == null) {
                                     continue;
@@ -88,12 +76,16 @@ public class SongScanner {
                                 if (album == null) {
                                     album = "unknown";
                                 }
+
                                 Song song = new Song(songName, singerName, album, duration, file.getPath());
                                 song.setHaveCoverImage(isHaveCoverImage);
-                                // Adding each song to SongList
+
                                 songController.addSong(song);
+
                             } catch (Exception e) {
+
                                 System.out.println("Loi");
+
                             }
                         }
                     }

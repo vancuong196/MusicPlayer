@@ -1,7 +1,5 @@
 package player.project.com.musicplayer.fragments;
 
-import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,29 +8,23 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.activities.MainActivity;
-import player.project.com.musicplayer.controllers.SettingManager;
-import player.project.com.musicplayer.customadapter.SongListViewAdapter;
+import player.project.com.musicplayer.adapters.SongListViewAdapter;
 import player.project.com.musicplayer.models.Song;
-import player.project.com.musicplayer.service.PlayerService;
-import player.project.com.musicplayer.ultilities.Constant;
 import player.project.com.musicplayer.ultilities.StartServiceHelper;
 import player.project.com.musicplayer.ultilities.Ultility;
 
@@ -77,7 +69,7 @@ public class DetailAlbumFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+
         tvAlbumName = view.findViewById(R.id.tv_album_name);
         tvNumberOfSong = view.findViewById(R.id.tv_number_songs);
         imgCover = view.findViewById(R.id.img_cover);
@@ -94,36 +86,48 @@ public class DetailAlbumFragment extends Fragment {
             }
         });
 
-
         Bundle args = getArguments();
         data = (ArrayList<Song>) args.getSerializable("songList");
         albumName = args.getString("name");
         tvAlbumName.setText(albumName);
-        tvNumberOfSong.setText(String.valueOf(data.size()));
-
-        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
-        initCollapsingToolbar();
-        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        tvNumberOfSong.setText(String.valueOf(data.size()) + " songs");
         setCoverBackgroundImage();
 
+        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        initCollapsingToolbar();
+
+
         mLvAdapter = new SongListViewAdapter(data, getView().getContext());
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 1);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         mLvSongs.setLayoutManager(mLayoutManager);
         mLvSongs.setAdapter(mLvAdapter);
+        super.onViewCreated(view, savedInstanceState);
 
     }
 
     private void setCoverBackgroundImage() {
         for (int i = 0; i < data.size(); i++) {
             if (data.get(i).isHaveCoverImage()) {
-                Bitmap bm = Ultility.getCoverImageofSong(data.get(i).getPath(), true, null);
+                Bitmap bm = Ultility.getCoverImageofSong(data.get(i).getPath());
                 if (bm != null) {
-                    imgCover.setImageBitmap(bm);
+                    try {
+                        Glide.with(getContext()).load(bm).into(imgCover);
+                    break;
+                    } catch (Exception e) {
+                        System.out.println(e.toString());
+                    }
+                }
+            }
+            if (i == data.size() - 1) {
+                try {
+
+                    Glide.with(getContext()).load(R.drawable.background).into(imgCover);
+                } catch (Exception e) {
+                    System.out.println(e.toString());
                     break;
                 }
             }
-
         }
 
     }
@@ -133,7 +137,7 @@ public class DetailAlbumFragment extends Fragment {
         AppBarLayout appBarLayout = getView().findViewById(R.id.appbar);
         appBarLayout.setExpanded(true);
 
-        // hiding & showing the title when toolbar expanded & collapsed
+        // hiding & showing the title when mToolbar expanded & collapsed
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             boolean isShow = false;
             int scrollRange = -1;

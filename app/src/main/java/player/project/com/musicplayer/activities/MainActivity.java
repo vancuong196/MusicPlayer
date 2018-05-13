@@ -1,6 +1,5 @@
 package player.project.com.musicplayer.activities;
 
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +9,9 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
@@ -29,7 +30,7 @@ import java.util.Objects;
 import de.hdodenhof.circleimageview.CircleImageView;
 import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.controllers.SettingManager;
-import player.project.com.musicplayer.customadapter.PendingSongListAdapter;
+import player.project.com.musicplayer.adapters.PendingSongListAdapter;
 import player.project.com.musicplayer.dialogs.LyricDialog;
 import player.project.com.musicplayer.dialogs.TimerDialog;
 import player.project.com.musicplayer.fragments.RootFragment;
@@ -38,24 +39,21 @@ import player.project.com.musicplayer.service.PlayerService;
 import player.project.com.musicplayer.ultilities.Constant;
 import player.project.com.musicplayer.ultilities.Ultility;
 
-
-/**
- * Created by Cuong on 2/1/2018.
- */
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, PopupMenu.OnMenuItemClickListener {
 
     ImageView btnNext;
     ImageView btnPlay;
     ImageView btnPrev;
-    ImageView btnMenu;
-    ImageView btnAlarm;
+
+    ImageView btnBackArrow;
+    ImageView btnMenuArrow;
     ImageView btnRepeat;
     ImageView btnShuffle;
     ImageView btnWidgetPlay;
     ImageView btnWidgetNext;
-    CircleImageView coverArt;
-    TextView tvSongNameWidget;
-    TextView tvSingerNameWidget;
+    CircleImageView imgWidgetArt;
+    TextView tvWidgetSongName;
+    TextView tvWidgetSingerName;
     SeekBar mainSeekBar;
     SeekBar widgetSeekBar;
     TextView tvDuration;
@@ -127,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     m.startAnimation(animate);
                     btnWidgetNext.setVisibility(View.GONE);
                     btnWidgetPlay.setVisibility(View.GONE);
+                    btnBackArrow.setVisibility(View.VISIBLE);
                 } else if (!isup && state == 1) {
                     m.setVisibility(View.VISIBLE);
                     m.setActivated(true);
@@ -138,6 +137,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     animate.setDuration(500);
                     animate.setFillAfter(true);
                     m.startAnimation(animate);
+                    btnBackArrow.setVisibility(View.GONE);
                     btnWidgetNext.setVisibility(View.VISIBLE);
                     btnWidgetPlay.setVisibility(View.VISIBLE);
                 }
@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         playerUiInit();
         setMiniWidgetVisible(false);
         Intent myIntent = new Intent(this, PlayerService.class);
-        myIntent.setAction(Constant.ACTION_UPDATE_UI_REQUEST);
+        myIntent.setAction(Constant.REQUEST_UPDATE_UI);
         startService(myIntent);
     }
 
@@ -205,33 +205,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 currentSong = song;
                 tvSongName.setText(song.getSongName());
-                tvSongNameWidget.setText(song.getSongName());
+                tvWidgetSongName.setText(song.getSongName());
                 tvSingerName.setText(song.getSingerName());
-                tvSingerNameWidget.setText(song.getSingerName());
+                tvWidgetSingerName.setText(song.getSingerName());
                 btnPlay.setImageResource(R.drawable.pause);
                 btnWidgetPlay.setImageResource(R.drawable.pause);
-                //     byte [] data= song.getCoverPicture();
-                //    Bitmap bitmap;
-                //    if(data != null)
-                //    {
-                //      bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-
-                //     }
-                //     else
-                //     {
-                //        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_music); //any default cover resourse folder
-                //   }
-                //     coverArt.setImageBitmap(bitmap);
-
 
             }
             if (Constant.BROADCAST_MEDIA_PLAYER_STATE_CHANGED.equals(intent.getAction())) {
                 int status = intent.getIntExtra(Constant.MEDIA_STATE_EX, 0);
-                if (status == Constant.MEDIA_PLAYER_PAUSED) {
+                if (status == Constant.MEDIA_PLAYER_STATE_PAUSED) {
                     btnPlay.setImageResource(R.drawable.play);
                     btnWidgetPlay.setImageResource(R.drawable.play);
                 }
-                if (status == Constant.MEDIA_PLAYER_PLAYING) {
+                if (status == Constant.MEDIA_PLAYER_STATE_PLAYING) {
                     btnPlay.setImageResource(R.drawable.pause);
                     btnWidgetPlay.setImageResource(R.drawable.pause);
                 }
@@ -240,9 +227,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 boolean state = intent.getBooleanExtra(Constant.TIMER_STATE_EX, false);
                 if (state) {
                     int timer = intent.getIntExtra(Constant.TIMER_EX, 0);
-                    tvTimer.setText(Ultility.milisecondToDuration(timer * 1000));
+                    tvTimer.setText("TM: " + Ultility.milisecondToDuration(timer * 1000));
+
                 } else {
                     tvTimer.setText("");
+
                 }
             }
             if (Constant.BROADCAST_PLAYLIST_CHANGED.equals(intent.getAction())) {
@@ -270,6 +259,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         final float scale = this.getResources().getDisplayMetrics().density;
         int pixels = (int) (60 * scale + 0.5f);
         if (b) {
+
             FrameLayout layout = findViewById(R.id.root_fragment);
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) layout.getLayoutParams();
             params.setMargins(0, 0, 0, pixels);
@@ -278,11 +268,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mSildingUpPanelLayout.addPanelSlideListener(mLideUpListener);
 
         } else {
-
+  /*
             FrameLayout layout = findViewById(R.id.root_fragment);
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) layout.getLayoutParams();
             params.setMargins(0, 0, 0, 0);
             layout.setLayoutParams(params);
+  */
             mSildingUpPanelLayout.setPanelHeight(0);
             mSildingUpPanelLayout.removePanelSlideListener(mLideUpListener);
         }
@@ -290,25 +281,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void playerUiInit() {
 
-        tvSingerNameWidget = findViewById(R.id.singer_name_widget);
-        tvSongNameWidget = findViewById(R.id.song_name_widget);
-        coverArt = findViewById(R.id.logo_widget);
-        btnMenu = findViewById(R.id.btn_menu);
-        btnAlarm = findViewById(R.id.btn_alarm);
-        tvTimer = findViewById(R.id.tv_timer);
+        tvWidgetSingerName = findViewById(R.id.singer_name_widget);
+        tvWidgetSongName = findViewById(R.id.song_name_widget);
+        btnWidgetPlay = findViewById(R.id.btn_play_widget);
+        btnWidgetNext = findViewById(R.id.btn_next_widget);
+        imgWidgetArt = findViewById(R.id.logo_widget);
+
+
         btnNext = findViewById(R.id.btn_next);
         btnPlay = findViewById(R.id.btn_play);
         btnPrev = findViewById(R.id.btn_prev);
         btnRepeat = findViewById(R.id.btn_repeat);
-
         mainSeekBar = findViewById(R.id.skb_progress);
         widgetSeekBar = findViewById(R.id.mini_player_widget_skb);
         tvDuration = findViewById(R.id.tv_duration);
         tvCurrentTime = findViewById(R.id.tv_current_time);
         tvSongName = findViewById(R.id.tv_song_name);
         tvSingerName = findViewById(R.id.tv_singer_name);
-        btnWidgetPlay = findViewById(R.id.btn_play_widget);
-        btnWidgetNext = findViewById(R.id.btn_next_widget);
+
+
+        btnBackArrow = findViewById(R.id.btn_back_arrow);
+        btnMenuArrow = findViewById(R.id.btn_down_menu);
+        tvTimer = findViewById(R.id.tv_timer);
 
         int mode = mSettingManager.getrMode();
         if (mode == Constant.SETTING_REPEAT_MODE_ONE) {
@@ -328,19 +322,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
 
-
+        btnMenuArrow.setOnClickListener(this);
+        btnBackArrow.setOnClickListener(this);
         btnWidgetPlay.setOnClickListener(this);
         btnWidgetNext.setOnClickListener(this);
         btnNext.setOnClickListener(this);
         btnPlay.setOnClickListener(this);
-        btnMenu.setOnClickListener(this);
-        btnAlarm.setOnClickListener(this);
         btnPrev.setOnClickListener(this);
         btnShuffle.setOnClickListener(this);
         btnRepeat.setOnClickListener(this);
         mainSeekBar.setOnSeekBarChangeListener(this);
 
-        // register recieve
+        // register reciever
         IntentFilter filter = new IntentFilter();
         filter.addAction(Constant.BROADCAST_MEDIA_PLAYER_STATE_CHANGED);
         filter.addAction(Constant.BROADCAST_SONG_CHANGED);
@@ -368,11 +361,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Intent myIntent = new Intent(MainActivity.this, PlayerService.class);
             myIntent.setAction(Constant.ACTION_PLAY);
             startService(myIntent);
-        } else if (id == R.id.btn_menu) {
-            new LyricDialog(this, currentSong).show();
-        } else if (id == R.id.btn_alarm) {
-            showDialog(12);
-
+        } else if (id == R.id.btn_back_arrow) {
+            onBackPressed();
+        } else if (id == R.id.btn_down_menu) {
+            showMusicUiPopupMenu(btnMenuArrow);
         } else if (id == R.id.btn_repeat) {
             int mode = mSettingManager.getrMode();
             if (mode == Constant.SETTING_REPEAT_MODE_ONE) {
@@ -433,14 +425,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    protected Dialog onCreateDialog(int id) {
-        if (id == 12) {
-            new TimerDialog(this).show();
-        }
-        return super.onCreateDialog(id);
-    }
-
-    @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
     }
@@ -480,5 +464,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showMusicUiPopupMenu(View view) {
+        // inflate menu
+        PopupMenu popup = new PopupMenu(this, view);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.music_ui_menu, popup.getMenu());
+        popup.setOnMenuItemClickListener(this);
+        popup.show();
+
+    }
+
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_show_timer_dialog) {
+            new TimerDialog(this).show();
+        } else if (id == R.id.action_show_lyric) {
+            new LyricDialog(this, currentSong).show();
+        }
+        return false;
     }
 }

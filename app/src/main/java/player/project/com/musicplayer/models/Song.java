@@ -1,13 +1,7 @@
 package player.project.com.musicplayer.models;
 
-import android.graphics.Bitmap;
-import android.media.MediaMetadataRetriever;
-
 import java.io.Serializable;
 
-/**
- * Created by Cuong on 2/1/2018.
- */
 
 public class Song implements Serializable {
     private String songName;

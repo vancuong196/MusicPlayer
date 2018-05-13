@@ -12,10 +12,6 @@ import player.project.com.musicplayer.controllers.SettingManager;
 import player.project.com.musicplayer.models.Song;
 import player.project.com.musicplayer.service.PlayerService;
 
-/**
- * Created by Cuong on 5/11/2018.
- */
-
 public class StartServiceHelper {
     public static void sendShuffleAllCommand(Context context, ArrayList<Song> data) {
         SettingManager.getInstance(context).setsMode(Constant.SETTING_SHUFFLE_MODE_ON);
@@ -30,10 +26,10 @@ public class StartServiceHelper {
             return;
         }
         Intent myIntent = new Intent(context, PlayerService.class);
-        myIntent.setAction(Constant.ACTION_SONG_CHANGE);
+        myIntent.setAction(Constant.ACTION_CHANGE_PLAYLIST);
         myIntent.putExtra(Constant.SONG_LIST_EX, data);
         myIntent.putExtra(Constant.SONG_POSTON_EX, postion);
         context.startService(myIntent);
-        Toast.makeText(context, "Shuffle all", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "Shuffle all now", Toast.LENGTH_SHORT).show();
     }
 }

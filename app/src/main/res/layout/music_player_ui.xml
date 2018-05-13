@@ -17,7 +17,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/music_player_ui_layout_height"
-            android:background="@drawable/background"
+            android:background="@drawable/parallax"
             android:orientation="vertical">
 
             <include
@@ -25,39 +25,37 @@
                 layout="@layout/music_player_ui_toolbar" />
 
             <TextView
+                android:textAllCaps="true"
+                android:lines="2"
                 android:id="@+id/tv_song_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/music_player_ui_tv_song_name_margin_top"
-                android:singleLine="true"
                 android:paddingLeft="@dimen/music_player_ui_tv_song_name_margin_left"
-                android:paddingTop="@dimen/music_player_ui_tv_song_name_padding_top"
-                android:text="Look What You Made Me Do"
                 android:textColor="#ffffff"
                 android:textSize="@dimen/music_player_ui_tv_song_name_size" />
 
             <TextView
-                android:paddingTop="@dimen/music_player_ui_tv_singer_name_padding_top"
                 android:id="@+id/tv_singer_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/music_player_ui_tv_singer_name_margin_top"
                 android:paddingLeft="@dimen/music_player_ui_tv_singer_name_margin_left"
-                android:text="Taylor Swift"
+                android:text=""
                 android:singleLine="true"
-                android:textColor="@color/white_color"
+                android:textColor="#ffffff"
                 android:textSize="@dimen/music_player_ui_tv_singer_name_size" />
 
 
             <SeekBar
-                android:paddingTop="@dimen/music_player_ui_seekbar_padding_top"
+                android:layout_marginTop="@dimen/music_player_ui_seekbar_padding_top"
                 android:id="@+id/skb_progress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/music_player_ui_seekbar_margin_left"
                 android:layout_marginRight="@dimen/music_player_ui_seekbar_margin_right"
-                android:layout_marginTop="@dimen/music_player_ui_seekbar_margin_top"
-                android:progressBackgroundTint="@color/white"
+                android:progressTint="#008000"
+                android:progressBackgroundTint="@android:color/holo_orange_dark"
                 android:theme="@style/MySeekBarTheme" />
 
             <LinearLayout
@@ -93,6 +91,10 @@
             </LinearLayout>
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="@color/Viewline" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
@@ -165,7 +167,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="3dp"
         android:background="@color/Viewline" />
 
         <android.support.v7.widget.RecyclerView

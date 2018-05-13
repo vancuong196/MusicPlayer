@@ -1,8 +1,7 @@
 package player.project.com.musicplayer.fragments;
 
-import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -12,39 +11,42 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Random;
 
 import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.activities.MainActivity;
-import player.project.com.musicplayer.controllers.SettingManager;
-import player.project.com.musicplayer.customadapter.SongListViewAdapter;
+import player.project.com.musicplayer.adapters.SongListViewAdapter;
+import player.project.com.musicplayer.models.OnlineAlbum;
 import player.project.com.musicplayer.models.Song;
-import player.project.com.musicplayer.service.PlayerService;
-import player.project.com.musicplayer.ultilities.Constant;
 import player.project.com.musicplayer.ultilities.StartServiceHelper;
 import player.project.com.musicplayer.ultilities.Ultility;
+import player.project.com.musicplayer.ultilities.XmlParser;
 
 /**
  * Created by nqminh on 09/05/2018.
  */
 
 public class DetailArtistFragment extends Fragment {
-    RecyclerView mLvSongs;
-    SongListViewAdapter mLvAdapter;
-    ArrayList<Song> data;
-    TextView tvNumberOfSong;
-    TextView tvArtistName;
+    private RecyclerView mLvSongs;
+    private SongListViewAdapter mLvAdapter;
+    private ArrayList<Song> data;
+    private TextView tvNumberOfSong;
+    private TextView tvArtistName;
+    private Button btnShowInfo;
     ImageView imgCover;
-    String artistName;
+    private String artistName;
 
     public DetailArtistFragment() {
         // Required empty public constructor
@@ -74,12 +76,12 @@ public class DetailArtistFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        System.out.println("ON CrEATED WIEW");
 
         tvArtistName = view.findViewById(R.id.tv_artist_name);
         tvNumberOfSong = view.findViewById(R.id.tv_number_songs);
         imgCover = view.findViewById(R.id.img_cover);
         mLvSongs = view.findViewById(R.id.lv_songs);
+        btnShowInfo = view.findViewById(R.id.btn_show_artist_info);
 
         FloatingActionButton btnShuffleAll = view.findViewById(R.id.btn_shuffle_all);
         btnShuffleAll.setOnClickListener(new View.OnClickListener() {
@@ -91,62 +93,49 @@ public class DetailArtistFragment extends Fragment {
             }
         });
 
+
         Bundle args = getArguments();
         data = (ArrayList<Song>) args.getSerializable("songList");
         artistName = args.getString("name");
-
-        tvArtistName.setText(artistName);
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
-
-        initCollapsingToolbar();
-        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         tvNumberOfSong.setText(String.valueOf(data.size()) + " songs");
+        tvArtistName.setText(artistName);
+        btnShowInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment artistInfoFragment = new ArtistInfoFragment();
+                Bundle args = new Bundle();
+                args.putString("name", artistName);
+                artistInfoFragment.setArguments(args);
+                android.support.v4.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction().setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out).addToBackStack("frag").replace(R.id.root_fragment, artistInfoFragment, "TAG").commit();
 
-        for (int i = 0; i < data.size(); i++) {
-            String path = data.get(i).getPath();
-            Bitmap bm = Ultility.getCoverImageofSong(path, true, null);
-            if (bm != null) {
-                imgCover.setImageBitmap(bm);
-                break;
             }
-            if (bm == null && i == data.size() - 1) {
-                imgCover.setImageResource(R.drawable.background);
-            }
-            ;
-        }
+        });
+        btnShowInfo.setEnabled(false);
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
+        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        initCollapsingToolbar();
+
+
+        new FetchArtistInfo().execute(artistName);
 
         mLvAdapter = new SongListViewAdapter(data, getView().getContext());
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 1);
         mLvSongs.setLayoutManager(mLayoutManager);
-        /*
-        mLvSongs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent myIntent = new Intent(getActivity(), PlayerService.class);
-                myIntent.setAction(Constant.ACTION_SONG_CHANGE);
-                myIntent.putExtra(Constant.SONG_LIST_EX, data);
-                myIntent.putExtra(Constant.SONG_POSTON_EX, position);
-                ((MainActivity) getActivity()).setMiniWidgetVisible(true);
-                ((MainActivity) getActivity()).pendSongListInit(data);
-                getActivity().startService(myIntent);
-            }
-        });*/
         mLvSongs.setAdapter(mLvAdapter);
         super.onViewCreated(view, savedInstanceState);
-
 
         // Inflate the layout for this fragment
     }
 
     private void initCollapsingToolbar() {
-        final CollapsingToolbarLayout collapsingToolbar =
-                (CollapsingToolbarLayout) getView().findViewById(R.id.collapsing_toolbar);
+        final CollapsingToolbarLayout collapsingToolbar = getView().findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(" ");
-        AppBarLayout appBarLayout = (AppBarLayout) getView().findViewById(R.id.appbar);
+        AppBarLayout appBarLayout = getView().findViewById(R.id.appbar);
         appBarLayout.setExpanded(true);
 
-        // hiding & showing the title when toolbar expanded & collapsed
+        // hiding & showing the title when mToolbar expanded & collapsed
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             boolean isShow = false;
             int scrollRange = -1;
@@ -167,8 +156,63 @@ public class DetailArtistFragment extends Fragment {
         });
     }
 
-    private int dpToPx(int dp) {
-        Resources r = getResources();
-        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
+    private class FetchArtistInfo extends AsyncTask<String, Void, Boolean> {
+
+
+        ArrayList<String> info;
+        String BASE_URL = "http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=-artistname-&api_key=0995e324520c21274d839a0e593126cd";
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Boolean doInBackground(String... strings) {
+            String artistName = strings[0];
+            artistName = artistName.split(",")[0];
+            artistName = artistName.split("&")[0];
+            artistName = artistName.trim();
+            artistName = artistName.replaceAll(" ", "%20");
+            BASE_URL = BASE_URL.replaceAll("-artistname-", artistName);
+            URL url = null;
+            try {
+
+                url = new URL(BASE_URL);
+                InputStream inputStream = url.openConnection().getInputStream();
+                info = new XmlParser().parseArtist(inputStream);
+                if (info != null) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                return false;
+            } catch (Exception e) {
+                System.out.println(e);
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+
+            if (success) {
+                try {
+                    Glide.with(getContext()).load(info.get(0)).into(imgCover);
+                    btnShowInfo.setEnabled(true);
+                } catch (Exception e) {
+                    System.out.println(e.toString());
+                }
+
+            } else {
+                try {
+                    Glide.with(getContext()).load(R.drawable.artist_parallax).into(imgCover);
+                } catch (Exception e) {
+                    System.out.println(e.toString());
+                }
+            }
+        }
     }
 }

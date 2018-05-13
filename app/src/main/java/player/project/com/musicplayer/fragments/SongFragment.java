@@ -1,6 +1,5 @@
 package player.project.com.musicplayer.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -11,18 +10,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+
 import java.util.ArrayList;
-import java.util.Random;
 
 import player.project.com.musicplayer.R;
-import player.project.com.musicplayer.activities.MainActivity;
-import player.project.com.musicplayer.controllers.SettingManager;
 import player.project.com.musicplayer.controllers.SongController;
-import player.project.com.musicplayer.customadapter.SongListViewAdapter;
+import player.project.com.musicplayer.adapters.SongListViewAdapter;
 import player.project.com.musicplayer.models.Song;
-import player.project.com.musicplayer.service.PlayerService;
-import player.project.com.musicplayer.ultilities.Constant;
 import player.project.com.musicplayer.ultilities.StartServiceHelper;
 
 
@@ -30,7 +24,7 @@ public class SongFragment extends Fragment {
     RecyclerView mLvSongs;
     SongListViewAdapter mLvAdapter;
     ArrayList<Song> data;
-    FloatingActionButton fabShuffleAll;
+    FloatingActionButton mFabShuffleAll;
 
     public SongFragment() {
         // Required empty public constructor
@@ -61,7 +55,7 @@ public class SongFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         System.out.println("ON CrEATED WIEW");
-        fabShuffleAll = view.findViewById(R.id.fab_button);
+        mFabShuffleAll = view.findViewById(R.id.fab_button);
         mLvSongs = view.findViewById(R.id.lv_songs);
 
         new Handler().post(new Runnable() {
@@ -75,7 +69,7 @@ public class SongFragment extends Fragment {
             }
         });
 
-        fabShuffleAll.setOnClickListener(new View.OnClickListener() {
+        mFabShuffleAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 StartServiceHelper.sendShuffleAllCommand(getActivity(), data);

@@ -13,10 +13,6 @@ import java.util.ArrayList;
 import player.project.com.musicplayer.models.OnlineAlbum;
 import player.project.com.musicplayer.models.Song;
 
-/**
- * Created by Cuong on 5/7/2018.
- */
-
 public class XmlParser {
 
     public ArrayList<OnlineAlbum> parsePlayList(InputStream inputStream) throws XmlPullParserException,
@@ -102,17 +98,17 @@ public class XmlParser {
         }
     }
 
-    public String[] parseArtist(InputStream inputStream) throws XmlPullParserException,
+    public ArrayList<String> parseArtist(InputStream inputStream) throws XmlPullParserException,
             IOException {
         String info = null;
         String link = null;
+        String content = null;
 
         try {
             XmlPullParser xmlPullParser = Xml.newPullParser();
             xmlPullParser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
             xmlPullParser.setInput(inputStream, null);
             while (xmlPullParser.next() != XmlPullParser.END_DOCUMENT) {
-                int eventType = xmlPullParser.getEventType();
 
                 String name = xmlPullParser.getName();
                 if (name == null) {
@@ -122,22 +118,30 @@ public class XmlParser {
                 String result = "";
                 if (xmlPullParser.next() == XmlPullParser.TEXT) {
                     result = xmlPullParser.getText();
-                    xmlPullParser.nextTag();
+
                 }
 
                 if (name.equalsIgnoreCase("image")) {
+                    if (link != null && !link.isEmpty()) {
+                        continue;
+                    }
                     link = result;
+                    System.out.println(link);
                 } else if (name.equalsIgnoreCase("summary")) {
                     info = result;
+                    System.out.println("info" + info);
+                } else if (name.equalsIgnoreCase("content")) {
+                    content = result;
+
                 }
-                if (info != null && link != null) {
-                    String[] a = new String[2];
-                    a[0] = link;
-                    a[1] = info;
-                    return a;
+                if (info != null && link != null && content != null) {
+                    ArrayList<String> results = new ArrayList<>();
+                    results.add(link.replace("34s", "300x300"));
+                    results.add(info);
+                    results.add(content);
+                    return results;
                 }
             }
-
 
             return null;
 
@@ -160,8 +164,6 @@ public class XmlParser {
             XmlPullParser xmlPullParser = Xml.newPullParser();
             xmlPullParser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
             xmlPullParser.setInput(inputStream, null);
-
-            xmlPullParser.nextTag();
             while (xmlPullParser.next() != XmlPullParser.END_DOCUMENT) {
                 int eventType = xmlPullParser.getEventType();
 
@@ -184,9 +186,7 @@ public class XmlParser {
                         duration = null;
                         albumName = null;
                         singerName = null;
-                        isItem = false;
                         imageLink = null;
-
                         isItem = false;
                     }
                     continue;
@@ -222,8 +222,6 @@ public class XmlParser {
                 } else if (name.equalsIgnoreCase("image")) {
                     imageLink = "fake";
                 }
-                //songName != null && path != null && duration != null && albumName != null && singerName != null&&imageLink!=null
-
             }
 
 

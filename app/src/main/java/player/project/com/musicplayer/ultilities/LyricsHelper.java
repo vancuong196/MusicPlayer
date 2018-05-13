@@ -6,14 +6,10 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/**
- * Created by Cuong on 4/1/2018.
- */
-
 public class LyricsHelper {
-    static final String BASE_API_URL = "http://lyric-api.herokuapp.com/api/find/";
-    String output;
-    Boolean success = false;
+    private static final String BASE_API_URL = "http://lyric-api.herokuapp.com/api/find/";
+    private String mOutputLyric;
+    private Boolean mIsSuccess = false;
 
     public LyricsHelper(String singerName, String songName) {
         String urlString = makeUrl(singerName, songName);
@@ -28,19 +24,21 @@ public class LyricsHelper {
                 sb.append(tmp);
             }
             if (sb.toString().contains("err\":\"not found\"")) {
-                success = false;
+                mIsSuccess = false;
             } else {
-                output = sb.toString();
-                success = true;
+                mOutputLyric = sb.toString();
+                mIsSuccess = true;
             }
         } catch (IOException e) {
             e.printStackTrace();
-            success = false;
+            mIsSuccess = false;
         }
         try {
 
         } finally {
-            urlConnection.disconnect();
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
         }
 
 
@@ -57,11 +55,11 @@ public class LyricsHelper {
     }
 
     public boolean isFound() {
-        return success;
+        return mIsSuccess;
     }
 
     public String getLyics() {
-        return makeLyric(output);
+        return makeLyric(mOutputLyric);
     }
 
     private String makeLyric(String str) {

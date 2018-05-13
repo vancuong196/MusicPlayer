@@ -16,20 +16,16 @@ import player.project.com.musicplayer.ultilities.LyricsHelper;
 import player.project.com.musicplayer.models.Song;
 
 public class LyricDialog extends Dialog implements View.OnClickListener {
-    Context mContext;
-    Song song;
-    TextView tvTitle;
-    TextView tvLyric;
-    ProgressBar prgWaiting;
+    private Context mContext;
+    private Song song;
+    private TextView tvTitle;
+    private TextView tvLyric;
+    private ProgressBar prgWaiting;
 
     public LyricDialog(@NonNull Context context, Song song) {
         super(context);
         mContext = context;
         this.song = song;
-    }
-
-    public LyricDialog(@NonNull Context context) {
-        super(context);
     }
 
     @Override

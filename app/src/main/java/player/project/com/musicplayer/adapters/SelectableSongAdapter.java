@@ -1,20 +1,16 @@
-package player.project.com.musicplayer.customadapter;
+package player.project.com.musicplayer.adapters;
 
 import android.content.Context;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import player.project.com.musicplayer.models.Song;
 
-/**
- * Created by Cuong on 5/11/2018.
- */
 
 public class SelectableSongAdapter extends SongListViewAdapter {
-    ArrayList<Integer> selectedSongsIndex;
-    ArrayList<Song> selectedSongs;
+    private ArrayList<Integer> selectedSongsIndex;
+    private ArrayList<Song> selectedSongs;
 
     public SelectableSongAdapter(ArrayList<Song> data, Context context) {
         super(data, context);

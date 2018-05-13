@@ -1,11 +1,9 @@
-package player.project.com.musicplayer.customadapter;
+package player.project.com.musicplayer.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -24,20 +22,19 @@ public class SongListViewAdapter extends RecyclerView.Adapter<SongListViewAdapte
 
 
     ArrayList<Song> dataSet;
-    Context mContext;
-    Song song;
+    private Context mContext;
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    class MyViewHolder extends RecyclerView.ViewHolder {
         CircleImageView imgIcon;
         TextView tvSingerName;
         TextView tvSongName;
         LinearLayout line;
 
-        public MyViewHolder(View v) {
+        MyViewHolder(View v) {
             super(v);
             imgIcon = v.findViewById(R.id.logo);
-            tvSingerName = (TextView) v.findViewById(R.id.singer_name);
-            tvSongName = (TextView) v.findViewById(R.id.song_name);
+            tvSingerName = v.findViewById(R.id.singer_name);
+            tvSongName = v.findViewById(R.id.song_name);
             line = v.findViewById(R.id.song_line);
         }
     }
@@ -46,7 +43,6 @@ public class SongListViewAdapter extends RecyclerView.Adapter<SongListViewAdapte
     public SongListViewAdapter(ArrayList<Song> data, Context context) {
         this.dataSet = data;
         this.mContext = context;
-        song = new Song();
     }
 
 
@@ -69,7 +65,7 @@ public class SongListViewAdapter extends RecyclerView.Adapter<SongListViewAdapte
             public void onClick(View v) {
 
                 Intent myIntent = new Intent(mContext, PlayerService.class);
-                myIntent.setAction(Constant.ACTION_SONG_CHANGE);
+                myIntent.setAction(Constant.ACTION_CHANGE_PLAYLIST);
                 myIntent.putExtra(Constant.SONG_LIST_EX, dataSet);
                 myIntent.putExtra(Constant.SONG_POSTON_EX, pos);
                 mContext.startService(myIntent);
@@ -77,59 +73,6 @@ public class SongListViewAdapter extends RecyclerView.Adapter<SongListViewAdapte
 
             }
         });
-        String path = song.getPath();
-        // loading album cover using Glide library
-        // Glide.with(mContext).load()
-
-        // holder.overflow.setOnClickListener(new View.OnClickListener() {
-        //     @Override
-        //     public void onClick(View view) {
-        //         showPopupMenu(holder.overflow);
-        //         Toast.makeText(mContext, "Thank you for trying this app, Find out more...",Toast.LENGTH_SHORT).show();
-        //     }
-        // });
-    }
-
-    /**
-     * Showing popup menu when tapping on 3 dots
-     */
-    private void showPopupMenu(View view) {
-        // inflate menu
-        /*
-        PopupMenu popup = new PopupMenu(mContext, view);
-        MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.menu_album, popup.getMenu());
-        popup.setOnMenuItemClickListener(new MyMenuItemClickListener());
-        popup.show();
-        Glide.with(mContext).load(album.getThumbnail()).into(holder.thumbnail);
-        */
-    }
-
-    /**
-     * Click listener for popup menu items
-     */
-    class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
-
-        public MyMenuItemClickListener() {
-        }
-
-        @Override
-        public boolean onMenuItemClick(MenuItem menuItem) {
-          /*
-            switch (menuItem.getItemId()) {
-                case R.id.action_add_favourite:
-                    Toast.makeText(mContext, "Add to favourite", Toast.LENGTH_SHORT).show();
-                    return true;
-                case R.id.action_play_next:
-                    Toast.makeText(mContext, "Play next", Toast.LENGTH_SHORT).show();
-                    return true;
-                default:
-            }
-        */
-            return false;
-
-        }
-
     }
 
     @Override

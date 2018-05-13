@@ -1,7 +1,6 @@
 package player.project.com.musicplayer.fragments;
 
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -10,21 +9,16 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.controllers.SongController;
-import player.project.com.musicplayer.customadapter.SongListViewAdapter;
+import player.project.com.musicplayer.adapters.SongListViewAdapter;
 import player.project.com.musicplayer.models.Song;
 
 /**
@@ -33,9 +27,9 @@ import player.project.com.musicplayer.models.Song;
 public class SearchFragment extends Fragment {
     ArrayList<Song> songs;
     ArrayList<Song> resultSongs;
-    EditText edtSearch;
-    RecyclerView resultList;
-    SongListViewAdapter adapter;
+    EditText mEdtSearch;
+    RecyclerView mRecyclerViewResultList;
+    SongListViewAdapter mLvAdapter;
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -52,14 +46,14 @@ public class SearchFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        edtSearch = view.findViewById(R.id.inputSearch);
-        edtSearch.requestFocus();
-        resultList = view.findViewById(R.id.lv_songs_search);
+        mEdtSearch = view.findViewById(R.id.inputSearch);
+        mEdtSearch.requestFocus();
+        mRecyclerViewResultList = view.findViewById(R.id.lv_songs_search);
         resultSongs = new ArrayList<>();
-        adapter = new SongListViewAdapter(resultSongs, getContext());
+        mLvAdapter = new SongListViewAdapter(resultSongs, getContext());
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 1);
-        resultList.setLayoutManager(mLayoutManager);
-        resultList.setAdapter(adapter);
+        mRecyclerViewResultList.setLayoutManager(mLayoutManager);
+        mRecyclerViewResultList.setAdapter(mLvAdapter);
         Runnable getSongsTask = new Runnable() {
             @Override
             public void run() {
@@ -68,7 +62,7 @@ public class SearchFragment extends Fragment {
         };
         Handler handler = new Handler();
         handler.post(getSongsTask);
-        edtSearch.addTextChangedListener(new TextWatcher() {
+        mEdtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -88,20 +82,20 @@ public class SearchFragment extends Fragment {
     }
 
     public void performSearch() {
-        if (songs == null || songs.isEmpty() || edtSearch.getText().toString().isEmpty()) {
+        if (songs == null || songs.isEmpty() || mEdtSearch.getText().toString().isEmpty()) {
 
-            adapter = new SongListViewAdapter(new ArrayList<Song>(), getContext());
-            resultList.setAdapter(adapter);
+            mLvAdapter = new SongListViewAdapter(new ArrayList<Song>(), getContext());
+            mRecyclerViewResultList.setAdapter(mLvAdapter);
         } else {
             resultSongs.clear();
             for (int i = 0; i < songs.size(); i++) {
-                if (songs.get(i).getSongName().toLowerCase().contains(edtSearch.getText().toString().toLowerCase())) {
+                if (songs.get(i).getSongName().toLowerCase().contains(mEdtSearch.getText().toString().toLowerCase())) {
                     resultSongs.add(songs.get(i));
                     System.out.println("-----------------------------------------");
                 }
             }
-            adapter = new SongListViewAdapter(resultSongs, getContext());
-            resultList.setAdapter(adapter);
+            mLvAdapter = new SongListViewAdapter(resultSongs, getContext());
+            mRecyclerViewResultList.setAdapter(mLvAdapter);
         }
     }
 }

@@ -1,4 +1,4 @@
-package player.project.com.musicplayer.customadapter;
+package player.project.com.musicplayer.adapters;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -14,14 +14,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.activities.MainActivity;
 import player.project.com.musicplayer.controllers.PlayListController;
-import player.project.com.musicplayer.fragments.DetailAlbumFragment;
 import player.project.com.musicplayer.fragments.DetailPlaylistFragment;
 import player.project.com.musicplayer.models.Playlist;
 import player.project.com.musicplayer.models.Song;
@@ -30,18 +28,18 @@ import player.project.com.musicplayer.ultilities.StartServiceHelper;
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.MyViewHolder> {
 
 
-    ArrayList<Playlist> dataSet;
-    Context mContext;
-    int selectedItemPostion = 0;
+    private ArrayList<Playlist> dataSet;
+    private Context mContext;
+    private int selectedItemPostion = 0;
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvNumberOfSong;
         TextView tvPlaylistName;
         ImageView imgThreeDot;
         LinearLayout line;
 
-        public MyViewHolder(View v) {
+        MyViewHolder(View v) {
             super(v);
 
             tvPlaylistName = v.findViewById(R.id.tv_playlist_name);
@@ -70,7 +68,6 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.MyView
                 showPopupMenu(holder.imgThreeDot, position);
             }
         });
-        final int pos = position;
         holder.line.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,7 +111,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.MyView
 
     class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
 
-        public MyMenuItemClickListener() {
+        MyMenuItemClickListener() {
         }
 
         @Override
@@ -124,7 +121,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.MyView
                 case R.id.action_remove:
                     new PlayListController(mContext).deletePlayList(dataSet.get(selectedItemPostion));
                     dataSet.remove(selectedItemPostion);
-                    notifyItemChanged(selectedItemPostion);
+                    notifyDataSetChanged();
                     return true;
                 case R.id.action_shuffe:
                     new Handler().post(new Runnable() {
