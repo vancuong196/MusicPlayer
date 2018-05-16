@@ -6,6 +6,7 @@ public final class Constant {
     public static String BROADCAST_TIMER = "com.cuong.musicplayer.broadcast.currenttimer";
     public static String BROADCAST_MEDIA_PLAYER_STATE_CHANGED = "com.cuong.musicplayer.broadcast.mediaplayerchange";
     public static String BROADCAST_PLAYLIST_CHANGED = "com.cuong.musicplayer.broadcast.playlistchanged";
+    public static String BROADCAST_ERROR = "com.cuong.musicplayer.broadcast.error_when_play_song";
 
     public static String ACTION_PLAY = "1";
     public static String ACTION_PREV = "3";

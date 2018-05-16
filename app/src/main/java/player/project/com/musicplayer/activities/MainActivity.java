@@ -22,6 +22,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
@@ -189,8 +190,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 widgetSeekBar.setProgress(progress);
 
 
-            }
-            if (Constant.BROADCAST_SONG_CHANGED.equals(intent.getAction())) {
+            } else if (Constant.BROADCAST_SONG_CHANGED.equals(intent.getAction())) {
                 Song song = (Song) intent.getSerializableExtra(Constant.SONG_EX);
                 final int postion = intent.getIntExtra(Constant.SONG_POSTON_EX, 0);
                 if (mLvAdapter != null) {
@@ -211,8 +211,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 btnPlay.setImageResource(R.drawable.pause);
                 btnWidgetPlay.setImageResource(R.drawable.pause);
 
-            }
-            if (Constant.BROADCAST_MEDIA_PLAYER_STATE_CHANGED.equals(intent.getAction())) {
+
+            } else if (Constant.BROADCAST_MEDIA_PLAYER_STATE_CHANGED.equals(intent.getAction())) {
                 int status = intent.getIntExtra(Constant.MEDIA_STATE_EX, 0);
                 if (status == Constant.MEDIA_PLAYER_STATE_PAUSED) {
                     btnPlay.setImageResource(R.drawable.play);
@@ -222,8 +222,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     btnPlay.setImageResource(R.drawable.pause);
                     btnWidgetPlay.setImageResource(R.drawable.pause);
                 }
-            }
-            if (Constant.BROADCAST_TIMER.equals(intent.getAction())) {
+            } else if (Constant.BROADCAST_TIMER.equals(intent.getAction())) {
                 boolean state = intent.getBooleanExtra(Constant.TIMER_STATE_EX, false);
                 if (state) {
                     int timer = intent.getIntExtra(Constant.TIMER_EX, 0);
@@ -233,8 +232,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     tvTimer.setText("");
 
                 }
-            }
-            if (Constant.BROADCAST_PLAYLIST_CHANGED.equals(intent.getAction())) {
+            } else if (Constant.BROADCAST_PLAYLIST_CHANGED.equals(intent.getAction())) {
                 ArrayList<Song> songs = (ArrayList<Song>) intent.getSerializableExtra(Constant.SONG_LIST_EX);
                 final int postion = intent.getIntExtra(Constant.SONG_POSTON_EX, 0);
                 setMiniWidgetVisible(true);
@@ -246,6 +244,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         mLvSongs.smoothScrollToPosition(postion);
                     }
                 });
+
+            } else if (Constant.BROADCAST_ERROR.equals(intent.getAction())) {
+
+                Toast.makeText(getApplication(), "Can't not play this song, playing next song...", Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -268,12 +270,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mSildingUpPanelLayout.addPanelSlideListener(mLideUpListener);
 
         } else {
-  /*
-            FrameLayout layout = findViewById(R.id.root_fragment);
-            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) layout.getLayoutParams();
-            params.setMargins(0, 0, 0, 0);
-            layout.setLayoutParams(params);
-  */
             mSildingUpPanelLayout.setPanelHeight(0);
             mSildingUpPanelLayout.removePanelSlideListener(mLideUpListener);
         }
@@ -340,6 +336,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         filter.addAction(Constant.BROADCAST_CURRENT_PLAY_TIME);
         filter.addAction(Constant.BROADCAST_TIMER);
         filter.addAction(Constant.BROADCAST_PLAYLIST_CHANGED);
+        filter.addAction(Constant.BROADCAST_ERROR);
         registerReceiver(receiver, filter);
 
     }
@@ -405,10 +402,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onBackPressed() {
         Fragment f = getSupportFragmentManager().findFragmentById(R.id.root_fragment);
-        if (!(f instanceof RootFragment)) {
-            getSupportFragmentManager().popBackStackImmediate();
-        } else if (mSildingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
+        if (mSildingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
             mSildingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        } else if (!(f instanceof RootFragment)) {
+            getSupportFragmentManager().popBackStackImmediate();
         } else {
             if (isExit) {
                 finish();

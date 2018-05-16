@@ -24,19 +24,20 @@
                 android:enabled="true"
                 android:focusable="true"
                 android:layout_height="wrap_content"
-                android:drawableRight="@android:drawable/ic_menu_search"
+                android:drawableRight="@drawable/search"
                 android:hint="Type to search..." />
             <TextView
+                android:gravity="center"
                 android:background="@color/white"
                 android:text="Songs"
                 android:textStyle="bold"
                 android:paddingLeft="@dimen/fragment_search_tv_song_padding_left"
-                android:textAlignment="textStart"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/fragment_search_tv_song_layout_height" />
             </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
+            android:paddingTop="10dp"
                 android:id="@+id/lv_songs_search"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">

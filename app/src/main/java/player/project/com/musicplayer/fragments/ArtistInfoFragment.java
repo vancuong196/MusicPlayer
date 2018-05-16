@@ -48,7 +48,6 @@ public class ArtistInfoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
         return inflater.inflate(R.layout.fragment_artist_info, container, false);
     }
 
@@ -72,9 +71,7 @@ public class ArtistInfoFragment extends Fragment {
                 getActivity().onBackPressed();
             }
         });
-
         Bundle args = getArguments();
-
         String artistName = args.getString("name");
         tvArtistName.setText(artistName);
         new FetchArtistInfo().execute(artistName);

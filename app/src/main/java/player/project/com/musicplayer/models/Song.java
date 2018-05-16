@@ -12,6 +12,19 @@ public class Song implements Serializable {
     private boolean isHaveCoverImage;
     private int songId;
 
+    @Override
+    public String toString() {
+        return "Song{" +
+                "songName='" + songName + '\'' +
+                ", duration='" + duration + '\'' +
+                ", artist='" + artist + '\'' +
+                ", album='" + album + '\'' +
+                ", path='" + path + '\'' +
+                ", isHaveCoverImage=" + isHaveCoverImage +
+                ", songId=" + songId +
+                '}';
+    }
+
     public boolean isHaveCoverImage() {
         return isHaveCoverImage;
     }

@@ -2,6 +2,8 @@ package player.project.com.musicplayer.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,13 +12,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
 import de.hdodenhof.circleimageview.CircleImageView;
 import player.project.com.musicplayer.R;
 import player.project.com.musicplayer.models.Song;
 import player.project.com.musicplayer.service.PlayerService;
 import player.project.com.musicplayer.ultilities.Constant;
+import player.project.com.musicplayer.ultilities.Ultility;
 
 public class SongListViewAdapter extends RecyclerView.Adapter<SongListViewAdapter.MyViewHolder> {
 

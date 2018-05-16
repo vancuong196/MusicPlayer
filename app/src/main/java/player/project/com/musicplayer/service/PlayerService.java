@@ -1,9 +1,13 @@
 package player.project.com.musicplayer.service;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Handler;
@@ -182,16 +186,30 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             System.out.println(mPlayList.get(postion).getPath());
             mMediaPlayer.setDataSource(mPlayList.get(postion).getPath());
         } catch (IOException e) {
+            broadcastMediaStateChange(Constant.MEDIA_PLAYER_STATE_PAUSED);
+            broadcastError();
             // Todo broadcast to activity that service cant not play this song.
-            e.printStackTrace();
+            mCurrentPostion = postion;
+            mMediaPlayer.reset();
             next();
+            e.printStackTrace();
+            return;
         }
         try {
             mMediaPlayer.prepare();
+
         } catch (IOException e) {
             e.printStackTrace();
+            mCurrentPostion = postion;
+            broadcastMediaStateChange(Constant.MEDIA_PLAYER_STATE_PAUSED);
+            broadcastError();
             // Todo broadcast to activity that service cant not play this song.
+
+            mMediaPlayer.reset();
             next();
+            e.printStackTrace();
+            return;
+            // Todo broadcast to activity that service cant not play this song.
         }
         mMediaPlayer.start();
         broadcastSongChange(postion);
@@ -200,6 +218,10 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         buildNotification(mPlayList.get(postion), true);
     }
 
+    public void broadcastError() {
+        Intent myIntent = new Intent(Constant.BROADCAST_ERROR);
+        sendBroadcast(myIntent);
+    }
     public void broadcastSongChange(int postion) {
         Intent myIntent = new Intent(Constant.BROADCAST_SONG_CHANGED);
         myIntent.putExtra(Constant.SONG_POSTON_EX, postion);
@@ -338,16 +360,20 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         nextIntent.setAction(Constant.ACTION_NEXT);
         PendingIntent pnextIntent = PendingIntent.getService(this, 0,
                 nextIntent, 0);
-//Todo fix error here
-        //     Bitmap icon = BitmapFactory.decodeResource(Resources.getSystem(),R.drawable.ic_music);
+        Bitmap icon = Ultility.getCoverImageofSong(song.getPath());
+        if (icon == null) {
+            icon = BitmapFactory.decodeResource(getResources(), R.drawable.artist_parallax);
+        }
+        icon = Bitmap.createScaledBitmap(icon, 128, 128, false);
         if (isOnGoing) {
 
             mNotification = new NotificationCompat.Builder(this)
-                    .setUsesChronometer(true)
                     .setContentTitle(song.getSongName())
                     .setTicker(song.getSongName())
                     .setContentText(song.getSingerName())
                     .setSmallIcon(R.drawable.ic_music)
+                    .setLargeIcon(icon)
+                    .setColorized(true)
                     .setContentIntent(pendingIntent)
                     .setOngoing(true)
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -360,25 +386,27 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
 
             startForeground(12, mNotification);
         } else {
-
+            stopForeground(false);
             mNotification = new NotificationCompat.Builder(this)
-                    .setUsesChronometer(true)
                     .setContentTitle(song.getSongName())
                     .setTicker(song.getSongName())
                     .setContentText(song.getSingerName())
                     .setSmallIcon(R.drawable.ic_music)
                     .setContentIntent(pendingIntent)
                     .setOngoing(false)
+                    .setColorized(true)
                     .setAutoCancel(true)
-                    .setPriority(Notification.PRIORITY_DEFAULT)
+                    .setLargeIcon(icon)
+                    .setPriority(Notification.PRIORITY_HIGH)
                     .addAction(R.drawable.previous,
                             "", ppreviousIntent)
                     .addAction(R.drawable.play, "",
                             pplayIntent)
                     .addAction(R.drawable.next, "",
                             pnextIntent).build();
-            stopForeground(true);
-
+            mNotification.flags = NotificationCompat.FLAG_AUTO_CANCEL;
+            NotificationManager notificationManager = (NotificationManager) getSystemService(getApplicationContext().NOTIFICATION_SERVICE);
+            notificationManager.notify(12, mNotification);
 
         }
 

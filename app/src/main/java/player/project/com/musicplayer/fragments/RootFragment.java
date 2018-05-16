@@ -120,6 +120,7 @@ public class RootFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Boolean bool) {
+            if (getActivity() == null) return;
             Toast.makeText(getActivity(), "Your music library is updated! Restart application to see changes", Toast.LENGTH_SHORT).show();
 
         }
